@@ -33,7 +33,7 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
 }
 
 
-export async function generateStaticParams() {
+async function generateStaticParams() {
   const codesDirectory = path.join(process.cwd(), 'src/data/codes')
   const filenames = await fs.readdir(codesDirectory);
 
@@ -41,7 +41,7 @@ export async function generateStaticParams() {
   return ids;
 }
 
-export async function getCodeData(id: string) {
+async function getCodeData(id: string) {
   const filePath = path.join(process.cwd(), 'src/data/codes', `${id}.json`);
   try {
     const fileContents = await fs.readFile(filePath, 'utf8');
