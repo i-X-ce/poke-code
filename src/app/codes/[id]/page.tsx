@@ -4,7 +4,7 @@ import React from 'react'
 import { Stack } from '@mui/material'
 
 interface CodePageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 interface CodeType {
@@ -14,7 +14,7 @@ interface CodeType {
 }
 
 const CodePage: React.FC<CodePageProps> = async ({ params }) => {
-  const { id } = params
+  const { id } = await params
   const codeData = await getCodeData(id)
 
   if (!codeData) {
@@ -33,7 +33,7 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
 }
 
 
-async function generateStaticParams() {
+export async function generateStaticParams() {
   const codesDirectory = path.join(process.cwd(), 'src/data/codes')
   const filenames = await fs.readdir(codesDirectory);
 
