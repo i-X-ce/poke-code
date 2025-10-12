@@ -5,6 +5,7 @@ import Side from "./_components/Side";
 import { Typography } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import CustomThemeProvider from "./_components/CustomThemeProvider";
+import AppTitle from "./_components/AppTitle";
 
 
 const geistSans = Geist({
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AppRouterCacheProvider>
           <CustomThemeProvider>
-            <Typography variant="h2" gutterBottom>Poke Code</Typography>
+            <AppTitle />
             <Side />
             {children}
           </CustomThemeProvider>
