@@ -7,6 +7,9 @@ function CustomThemeProvider({ children }: { children: React.ReactNode }) {
   const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = createTheme({
     palette: { mode: isDarkMode ? "dark" : "light" },
+    typography: {
+      fontFamily: "Zen Kaku Gothic New"
+    }
   })
 
   return (
