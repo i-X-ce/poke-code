@@ -1,9 +1,12 @@
 import { Typography } from '@mui/material'
 import React from 'react'
+import CommonSection from './CommonSection'
 
 function AppTitle() {
     return (
-        <Typography variant='h3'>Poke Code</Typography>
+        <CommonSection>
+            <Typography fontSize={"3rem"}>Poke Code</Typography>
+        </CommonSection>
     )
 }
 
