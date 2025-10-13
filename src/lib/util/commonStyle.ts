@@ -1,3 +1,3 @@
 export const commonStyles = {
-  maxWidth: "1200px",
+  maxWidth: "1470px",
 };
