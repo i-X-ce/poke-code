@@ -1,7 +1,7 @@
 import { CodeDataModel } from '@/lib/model/CodeDataModel'
 import { PokeVersions } from '@/lib/model/PokeVersion'
 import { CalendarMonth, Straighten } from '@mui/icons-material'
-import { Card, CardContent, Chip, Stack, Typography } from '@mui/material'
+import { Card, CardContent, Chip, Divider, Stack, Typography } from '@mui/material'
 import React from 'react'
 import VersionChip from './VersionChip'
 
