@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material'
 
 function VersionChip({ version, disable }: { version: PokeVersionType, disable?: boolean }) {
     const theme = useTheme();
-    const backgroundColor = disable ? theme.palette.grey["300"] : ver2css(version);
+    const backgroundColor = disable ? str2css("gray") : ver2css(version);
     const borderRadius = theme.shape.borderRadius;
     const color = theme.palette.background.paper;
 

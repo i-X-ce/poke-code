@@ -6,5 +6,26 @@
   --bc-green: #69cf69;
   --bc-blue: #7b9df2;
   --bc-yellow: #ffd633;
-  --bc-gray: #b6b6b6;
+  --bc-gray: #d2d2d2;
+}
+
+body {
+  background-color: var(--background);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #171717;
+    --foreground: #ffffff;
+
+    --bc-red: #ff4c4c;
+    --bc-green: #4cd964;
+    --bc-blue: #4a90e2;
+    --bc-yellow: #ffcc00;
+    --bc-gray: #636363;
+  }
+
+  body {
+    background-color: var(--background);
+  }
 }
