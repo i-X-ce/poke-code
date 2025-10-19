@@ -5,3 +5,17 @@
   border-radius: 5px;
   background-color: gray;
 }
+
+.root .item:nth-child(n + 2):nth-last-child(n + 2) {
+  border-radius: 0px;
+}
+
+.root .item:first-child {
+  border-end-start-radius: 0px;
+  border-end-end-radius: 0px;
+}
+
+.root .item:last-child {
+  border-start-start-radius: 0px;
+  border-start-end-radius: 0px;
+}
