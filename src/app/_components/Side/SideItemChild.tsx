@@ -2,7 +2,7 @@ import { CodeDataModel } from "@/lib/model/CodeDataModel"
 import { CardActionArea, IconButton, Stack, Typography } from "@mui/material"
 import CodeInfo from "../CodeInfo"
 import styles from './styles.module.css'
-import { Favorite, FavoriteBorder } from "@mui/icons-material"
+import { FavoriteBorder } from "@mui/icons-material"
 
 function SideItemChild({ data }: { data: CodeDataModel }) {
     return (
