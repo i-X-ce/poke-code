@@ -1,12 +1,43 @@
 .root {
   flex-shrink: 0;
-  width: 400px;
-  height: 700px;
-  border-radius: 5px;
-  background-color: gray;
+  width: 300px;
 }
 
-.root .item:nth-child(n + 2):nth-last-child(n + 2) {
+.content {
+  background-color: var(--bc-gray);
+  border-radius: 4px;
+  border: 1px solid var(--bc-gray);
+  overflow: hidden;
+}
+
+.item,
+.itemChild {
+  background-color: var(--background);
+  border-bottom: 1px solid var(--bc-gray);
+}
+
+.root .item:last-child {
+  border-bottom: none;
+}
+
+.itemChild {
+  margin-left: 20px;
+  position: relative;
+}
+
+.itemChildInfoContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemChildTitle {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* .root .item:nth-child(n + 2):nth-last-child(n + 2) {
   border-radius: 0px;
 }
 
@@ -18,4 +49,4 @@
 .root .item:last-child {
   border-start-start-radius: 0px;
   border-start-end-radius: 0px;
-}
+} */
