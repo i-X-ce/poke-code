@@ -1,13 +1,14 @@
 import { CodeDataModel } from '@/lib/model/CodeDataModel'
 import { PokeVersions } from '@/lib/model/PokeVersion'
 import { FavoriteBorder, MoreVert } from '@mui/icons-material'
-import {  Card, CardActionArea, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material'
+import { Card, CardActionArea, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material'
 import React from 'react'
 import VersionChip from '../VersionChip'
 import CodeInfo from '@/app/_components/CodeInfo'
 import styles from './styles.module.css'
 import DevelopmentComponent from '@/app/_components/DevelopmentComponent'
 import { PATH } from '@/lib/constant/paths'
+import CodeTags from '@/app/_components/CodeTags'
 
 interface CodeCardProps {
     data: CodeDataModel
@@ -24,13 +25,7 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
                     </Typography>
                     <Stack gap={1}>
                         <CodeInfo data={data} />
-                        <Stack direction={"row"} gap={1}>
-                            {
-                                data.tags.map(tag => (
-                                    <Chip key={tag} label={tag} variant="outlined" />
-                                ))
-                            }
-                        </Stack>
+                        <CodeTags data={data} />
                         <Typography color="textSecondary" className={styles.detail}>
                             {data.detail}
                         </Typography>
