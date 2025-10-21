@@ -5,7 +5,7 @@ import CommonSection from './CommonSection'
 function AppTitle() {
     return (
         <CommonSection>
-            <Typography fontSize={"3rem"}>Poke Code</Typography>
+            <Typography fontSize={"3rem"} color="textPrimary">Poke Code</Typography>
         </CommonSection>
     )
 }
