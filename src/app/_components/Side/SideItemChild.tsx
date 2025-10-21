@@ -1,5 +1,5 @@
 import { CodeDataModel } from "@/lib/model/CodeDataModel"
-import { CardActionArea, IconButton, Stack, Typography } from "@mui/material"
+import { Box, CardActionArea, IconButton, Stack, Typography } from "@mui/material"
 import CodeInfo from "../CodeInfo"
 import styles from './styles.module.css'
 import { FavoriteBorder } from "@mui/icons-material"
@@ -15,12 +15,14 @@ function SideItemChild({ data }: { data: CodeDataModel }) {
                         </Typography>
                         <CodeInfo data={data} size="small" />
                     </Stack>
-                    <IconButton>
-                        <FavoriteBorder />
-                    </IconButton>
                 </Stack>
             </CardActionArea>
-        </div>
+            <div className={styles.itemChildIconWrapper}>
+                <IconButton>
+                    <FavoriteBorder />
+                </IconButton>
+            </div>
+        </div >
     )
 }
 

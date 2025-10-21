@@ -28,6 +28,7 @@
 .itemChildInfoContainer {
   flex: 1;
   min-width: 0;
+  padding-right: 40px;
 }
 
 .itemChildTitle {
@@ -35,6 +36,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.itemChildIconWrapper {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
 }
 
 /* .root .item:nth-child(n + 2):nth-last-child(n + 2) {
