@@ -9,6 +9,7 @@ import styles from './styles.module.css'
 import DevelopmentComponent from '@/app/_components/DevelopmentComponent'
 import { PATH } from '@/lib/constant/paths'
 import CodeTags from '@/app/_components/CodeTags'
+import Link from 'next/link'
 
 interface CodeCardProps {
     data: CodeDataModel
@@ -17,7 +18,7 @@ interface CodeCardProps {
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
     return (
         <Card sx={{ position: "relative" }}>
-            <CardActionArea LinkComponent={"a"} href={PATH.DETAIL(data.id)}>
+            <CardActionArea LinkComponent={Link} href={PATH.DETAIL(data.id)}>
                 <CardContent>
                     <Typography variant='h6' gutterBottom className={styles.title}>
                         {/* <Typography component={"span"} fontSize={"1.8rem"}>{data.icon}</Typography> */}
