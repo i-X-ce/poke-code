@@ -1,6 +1,7 @@
 import { Divider, Typography } from '@mui/material'
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import CustomMarkdownCodeComponent from './CustomMarkdownCodeComponent';
 
 function CustomMarkdown({ children }: { children: string }) {
     return (
@@ -84,16 +85,9 @@ function CustomMarkdown({ children }: { children: string }) {
                 }
                 ,
                 pre: ({ children }) =>
-                    <Typography
-                        component={"pre"}
-                        borderRadius={1}
-                        sx={{
-                            boxShadow: "inset var(--sh-regular)",
-                            padding: 2,
-                        }}
-                    >
+                    <CustomMarkdownCodeComponent>
                         {children}
-                    </Typography>
+                    </CustomMarkdownCodeComponent>
                 ,
                 blockquote: ({ children }) =>
                     <Typography
