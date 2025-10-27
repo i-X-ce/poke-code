@@ -95,6 +95,14 @@ function CustomMarkdown({ children }: { children: string }) {
                         {children}
                     </Typography>
                 ,
+                blockquote: ({ children }) =>
+                    <Typography
+                        component={"blockquote"}
+                        my={1} ml={3} mr={0} p={1.5}
+                        borderLeft={"2px solid var(--bc-gray)"}
+                    >
+                        {children}
+                    </Typography>
             }}
         >
             {children}
