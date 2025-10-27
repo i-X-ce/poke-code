@@ -21,7 +21,7 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
 
   return (
     <div>
-      <Typography variant='h4' gutterBottom>{data.icon} {data.title}</Typography>
+      <Typography variant='h4' fontWeight={"500"} gutterBottom>{data.icon} {data.title}</Typography>
       <Stack gap={2}>
         <CodeTags data={data} />
         <CodeInfo data={data} />
