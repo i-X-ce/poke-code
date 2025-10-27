@@ -29,6 +29,7 @@ function CodeContentView({ content }: { content: CodeContentModel[] }) {
             <Stack
                 borderRadius={1}
                 p={2}
+                gap={1.5}
                 sx={{
                     borderStartStartRadius: 0,
                     boxShadow: (theme) => theme.shadows[2].split('),').map(s => `inset ${s.trim()}`).join('),'),
