@@ -2,10 +2,12 @@ import { Divider, Typography } from '@mui/material'
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import CustomMarkdownCodeComponent from './CustomMarkdownCodeComponent';
+import rehypeRaw from 'rehype-raw';
 
 function CustomMarkdown({ children }: { children: string }) {
     return (
         <ReactMarkdown
+            rehypePlugins={[rehypeRaw]}
             components={{
                 h1: ({ children }) =>
                     <>

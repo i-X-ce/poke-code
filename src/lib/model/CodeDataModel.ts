@@ -75,6 +75,9 @@ function helloWorld() {
 aaa  
 aaa![画像のテスト](../../test.bmp) aaa  
 aaa  
+
+<img src="../../test.bmp" alt="画像のテスト" />
+
 | Parameter | Type | Default Value |
 |------------------------|-------------|----------------|
 | text | String | Empty String |
