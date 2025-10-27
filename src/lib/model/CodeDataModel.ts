@@ -69,9 +69,11 @@ function helloWorld() {
 - リストアイテム4
 
 > これは引用のテストです。
+---
 
 [リンクのテスト](https://example.com)  
 ![画像のテスト](../../test.bmp)
+
 
 | Parameter | Type | Default Value |
 |------------------------|-------------|----------------|
