@@ -96,7 +96,12 @@ function CustomMarkdown({ children }: { children: string }) {
                         borderLeft={"2px solid var(--bc-gray)"}
                     >
                         {children}
-                    </Typography>
+                    </Typography>,
+                img: ({ src, alt }) =>
+                    <img
+                        src={src} alt={alt}
+                        style={{ boxShadow: "var(--sh-regular)", maxWidth: "100%", minWidth: "40%" }}
+                    />
             }}
         >
             {children}
