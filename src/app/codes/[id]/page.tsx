@@ -6,6 +6,7 @@ import { createMockCodeData } from '@/lib/model/CodeDataModel'
 import CodeInfo from '@/app/_components/CodeInfo'
 import CodeTags from '@/app/_components/CodeTags'
 import CustomMarkdown from '@/app/_components/CustomMarkdown'
+import CodeContentView from '@/app/_components/CodeContentView'
 
 interface CodePageProps {
   params: Promise<{ id: string }>
@@ -31,6 +32,7 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
       <CustomMarkdown>
         {data.description}
       </CustomMarkdown>
+      <CodeContentView content={data.content} />
     </div>
   )
 }
