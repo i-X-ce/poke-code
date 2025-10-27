@@ -22,10 +22,15 @@ export interface CodeBlockModel {
 }
 
 export function createMockCodeData(num: number): CodeDataModel {
-  const randomVersion = (): PokeVersionType => {
+  // const randomVersion = (): PokeVersionType => {
+  //   const versions: PokeVersionType[] = Object.values(PokeVersions);
+  //   return versions[Math.floor(Math.random() * versions.length)];
+  // };
+
+  const romVersions = ((num: number): PokeVersionType[] => {
     const versions: PokeVersionType[] = Object.values(PokeVersions);
-    return versions[Math.floor(Math.random() * versions.length)];
-  };
+    return versions.filter((_, i) => (num >> i) % 2 === 1);
+  })(Math.floor(Math.random() * ((1 << 10) - 1)) + 1);
 
   return {
     id: `mock-id-${num}`,
@@ -87,16 +92,35 @@ aaa
 <!-- コメントのテスト -->
 
     `,
-    content: [...Array(Math.floor(Math.random() * 5) + 1)].map((_, i) => ({
-      version: randomVersion(),
-      blocks: [
-        {
-          title: `コードブロック${i + 1}`,
-          code: Array((Math.floor(Math.random() * 10) + 1) * 5)
-            .fill(Math.random().toString(16).slice(2, 4).toUpperCase())
-            .join(""),
-        },
-      ],
-    })),
+    content: [
+      ...Array.from({ length: romVersions.length }).map((_, i) => ({
+        version: romVersions[i],
+        blocks: [
+          ...Array.from({ length: Math.floor(Math.random() * 3) + 1 }).map(
+            (_, j) => ({
+              title: `コードブロック${j + 1}`,
+              code: Array.from({
+                length: Math.floor(Math.random() * 20) + 10,
+              })
+                .map(() => Math.random().toString(16).slice(2, 4).toUpperCase())
+                .join(""),
+            })
+          ),
+        ],
+      })),
+    ],
   };
 }
+
+// content: [...Array(Math.floor(Math.random() * 5) + 1)].map((_, i) => ({
+//       version: randomVersion(),
+//       blocks: [
+//         {
+//           title: `コードブロック${i + 1}`,
+//           code: Array((Math.floor(Math.random() * 10) + 1) * 5)
+//             .fill(Math.random().toString(16).slice(2, 4).toUpperCase())
+//             .join(""),
+//         },
+//       ],
+//     })),
+//   };
