@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, WDXL_Lubrifont_JP_N, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Geist, Geist_Mono, Google_Sans_Code, WDXL_Lubrifont_JP_N, Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
 import Side from "./_components/Side";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
@@ -21,8 +21,14 @@ const geistMono = Geist_Mono({
 });
 
 const ZenKakuGothicNew = Zen_Kaku_Gothic_New({
-  weight: ["400", "700"],
+  weight: ["300", "400", "500", "700", "900"],
   variable: "--font-zen-kaku-gothic-new",
+  subsets: ["latin"],
+})
+
+const GoogleSansCode = Google_Sans_Code({
+  weight: ["300", "400", "500", "700", "800"],
+  variable: "--font-google-sans-code",
   subsets: ["latin"],
 })
 
@@ -38,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${ZenKakuGothicNew.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${ZenKakuGothicNew.variable} ${GoogleSansCode.variable}`}>
         <AppRouterCacheProvider>
           <CustomThemeProvider>
             <AppTitle />
