@@ -7,6 +7,9 @@
   --bc-blue: #7b9df2;
   --bc-yellow: #ffd633;
   --bc-gray: #d2d2d2;
+  --bc-shadow: rgba(0, 0, 0, 0.2);
+
+  --sh-regular: 0 0 5px var(--bc-shadow);
 }
 
 body {
@@ -23,6 +26,7 @@ body {
     --bc-blue: #4a90e2;
     --bc-yellow: #ffcc00;
     --bc-gray: #636363;
+    --bc-shadow: rgba(255, 255, 255, 0.2);
   }
 
   body {
