@@ -46,7 +46,7 @@ export function createMockCodeData(num: number): CodeDataModel {
 **太字**  
 *斜体*  
 ~~取り消し線~~  
-\`インラインコード\`  
+\`inline code\`  テスト
 
 \`\`\`javascript
 function helloWorld() {
