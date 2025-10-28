@@ -36,7 +36,11 @@ const useCopyClipboard = <T extends HTMLElement | string>(content?: T) => {
         }
     };
 
-    return [contentRef, handleCopy, copied] as const;
+    const setContent = (newContent: T) => {
+        contentRef.current = newContent;
+    };
+
+    return [contentRef, handleCopy, copied, setContent] as const;
 };
 
 export default useCopyClipboard;
