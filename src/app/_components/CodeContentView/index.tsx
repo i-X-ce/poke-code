@@ -15,6 +15,7 @@ function CodeContentView({ content }: { content: CodeContentModel[] }) {
 
     return (
         <Stack>
+            {/* バージョンタグ部 */}
             <Stack direction={"row"} alignItems={"end"}>
                 {content.map((c, index) => (
                     <VersionTab
@@ -26,6 +27,8 @@ function CodeContentView({ content }: { content: CodeContentModel[] }) {
                     />
                 ))}
             </Stack>
+
+            {/* コードブロック部 */}
             <Stack
                 borderRadius={1}
                 p={2}
