@@ -1,19 +1,11 @@
 "use client"
-import { ContentCopy } from '@mui/icons-material';
+import useCopyClipboard from '@/lib/hooks/useCopyClipboard';
+import { Check, ContentCopy } from '@mui/icons-material';
 import { Box, IconButton } from '@mui/material';
 import React from 'react'
 
 function CustomMarkdownCodeComponent({ children }: { children: React.ReactNode }) {
-    const contentRef = React.useRef<HTMLDivElement>(null);
-
-    const handleCopy = async () => {
-        const textToCopy = contentRef.current?.innerText || "";
-        try {
-            await navigator.clipboard.writeText(textToCopy);
-        } catch (error) {
-            console.error("クリップボードへのコピーに失敗しました:", error);
-        }
-    }
+    const [contentRef, handleCopy, copied] = useCopyClipboard<HTMLDivElement>();
 
     return (<Box
         component={"pre"}
@@ -28,8 +20,10 @@ function CustomMarkdownCodeComponent({ children }: { children: React.ReactNode }
         <IconButton
             sx={{ position: "absolute", top: 0, right: 0, margin: 1 }}
             onClick={handleCopy}
+            color={copied ? "success" : "default"}
         >
-            <ContentCopy fontSize='small' />
+            {copied ? <Check fontSize='small' /> : <ContentCopy fontSize='small' />}
+
         </IconButton>
     </Box>)
 }
