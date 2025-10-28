@@ -3,6 +3,7 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import CustomMarkdownCodeComponent from './CustomMarkdownCodeComponent';
 import rehypeRaw from 'rehype-raw';
+import { GoogleSansCode } from '@/lib/util/fonts';
 
 function CustomMarkdown({ children }: { children: string }) {
     return (
@@ -77,7 +78,7 @@ function CustomMarkdown({ children }: { children: string }) {
                         color='textSecondary'
                         border={isInline ? '1px solid var(--bc-gray)' : 'none'}
                         sx={{
-                            fontFamily: "var(--font-google-sans-code)",
+                            fontFamily: GoogleSansCode.style.fontFamily,
                             paddingX: isInline ? 1 : 0,
                             borderRadius: 1,
                         }}

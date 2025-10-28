@@ -1,4 +1,5 @@
 import { PokeVersions, PokeVersionType } from '@/lib/model/PokeVersion'
+import { GoogleSansCode } from '@/lib/util/fonts';
 import ver2css from '@/lib/util/str2css'
 import { Box, CardActionArea, Typography } from '@mui/material'
 import React from 'react'
@@ -22,7 +23,7 @@ function VersionTab({ version, selected = false, radius, onClick }: { version: P
                     }}>
                     <Typography
                         fontSize={"large"}
-                        fontFamily={"var(--font-google-sans-code)"}
+                        fontFamily={GoogleSansCode.style.fontFamily}
                         color='var(--background)'
                     >
                         {version.toUpperCase()}
