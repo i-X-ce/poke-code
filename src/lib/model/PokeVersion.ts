@@ -1,22 +1,13 @@
-export type PokeVersionType =
-  | "r0"
-  | "r1"
-  | "g0"
-  | "g1"
-  | "b"
-  | "y0"
-  | "y1"
-  | "y2"
-  | "y3";
+export const PokeVersions = {
+    R0: "R0",
+    R1: "R1",
+    G0: "G0",
+    G1: "G1",
+    B: "B",
+    Y0: "Y0",
+    Y1: "Y1",
+    Y2: "Y2",
+    Y3: "Y3",
+} as const;
 
-export const PokeVersions: Record<string, PokeVersionType> = {
-  R0: "r0",
-  R1: "r1",
-  G0: "g0",
-  G1: "g1",
-  B: "b",
-  Y0: "y0",
-  Y1: "y1",
-  Y2: "y2",
-  Y3: "y3",
-};
+export type PokeVersionType = (typeof PokeVersions)[keyof typeof PokeVersions];
