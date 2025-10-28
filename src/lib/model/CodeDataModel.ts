@@ -1,46 +1,46 @@
 import { PokeVersions, PokeVersionType } from "./PokeVersion";
 
 export interface CodeDataModel {
-  id: string;
-  icon: string;
-  title: string;
-  date: Date;
-  tags: string[];
-  detail: string;
-  description: string;
-  content: CodeContentModel[];
+    id: string;
+    icon: string;
+    title: string;
+    date: Date;
+    tags: string[];
+    detail: string;
+    description: string;
+    content: CodeContentModel[];
 }
 
 export interface CodeContentModel {
-  version: PokeVersionType;
-  blocks: CodeBlockModel[];
+    version: PokeVersionType;
+    blocks: CodeBlockModel[];
 }
 
 export interface CodeBlockModel {
-  title: string;
-  code: string;
+    title: string;
+    address: string;
+    code: string;
 }
 
 export function createMockCodeData(num: number): CodeDataModel {
-  // const randomVersion = (): PokeVersionType => {
-  //   const versions: PokeVersionType[] = Object.values(PokeVersions);
-  //   return versions[Math.floor(Math.random() * versions.length)];
-  // };
+    // const randomVersion = (): PokeVersionType => {
+    //   const versions: PokeVersionType[] = Object.values(PokeVersions);
+    //   return versions[Math.floor(Math.random() * versions.length)];
+    // };
 
-  const romVersions = ((num: number): PokeVersionType[] => {
-    const versions: PokeVersionType[] = Object.values(PokeVersions);
-    return versions.filter((_, i) => (num >> i) % 2 === 1);
-  })(Math.floor(Math.random() * ((1 << 10) - 1)) + 1);
+    const romVersions = ((num: number): PokeVersionType[] => {
+        const versions: PokeVersionType[] = Object.values(PokeVersions);
+        return versions.filter((_, i) => (num >> i) % 2 === 1);
+    })(Math.floor(Math.random() * ((1 << 10) - 1)) + 1);
 
-  return {
-    id: `mock-id-${num}`,
-    icon: "🤡",
-    title: `セレクトバグ修正セレクトバグ修正セレクトバグ修正-${num}`,
-    date: new Date(),
-    tags: ["ツール", "ゲーム", "攻略", "バグ", "裏技", "便利"],
-    detail:
-      "HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。",
-    description: `
+    return {
+        id: `mock-id-${num}`,
+        icon: "🤡",
+        title: `セレクトバグ修正セレクトバグ修正セレクトバグ修正-${num}`,
+        date: new Date(),
+        tags: ["ツール", "ゲーム", "攻略", "バグ", "裏技", "便利"],
+        detail: "HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。",
+        description: `
 # h1テスト  
 ## h2テスト
 ### h3テスト
@@ -92,24 +92,33 @@ aaa
 <!-- コメントのテスト -->
 
     `,
-    content: [
-      ...Array.from({ length: romVersions.length }).map((_, i) => ({
-        version: romVersions[i],
-        blocks: [
-          ...Array.from({ length: Math.floor(Math.random() * 3) + 1 }).map(
-            (_, j) => ({
-              title: `コードブロック${j + 1}`,
-              code: Array.from({
-                length: Math.floor(Math.random() * 20) + 10,
-              })
-                .map(() => Math.random().toString(16).slice(2, 4).toUpperCase())
-                .join(""),
-            })
-          ),
+        content: [
+            ...Array.from({ length: romVersions.length }).map((_, i) => ({
+                version: romVersions[i],
+                blocks: [
+                    ...Array.from({
+                        length: Math.floor(Math.random() * 3) + 1,
+                    }).map((_, j) => ({
+                        title: `コードブロック${j + 1}`,
+                        address: Math.floor(Math.random() * 0xffff)
+                            .toString(16)
+                            .toUpperCase()
+                            .padStart(4, "0"),
+                        code: Array.from({
+                            length: Math.floor(Math.random() * 20) + 10,
+                        })
+                            .map(() =>
+                                Math.random()
+                                    .toString(16)
+                                    .slice(2, 4)
+                                    .toUpperCase()
+                            )
+                            .join(""),
+                    })),
+                ],
+            })),
         ],
-      })),
-    ],
-  };
+    };
 }
 
 // content: [...Array(Math.floor(Math.random() * 5) + 1)].map((_, i) => ({
