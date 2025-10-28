@@ -3,6 +3,7 @@ import useCopyClipboard from '@/lib/hooks/useCopyClipboard';
 import { Check, ContentCopy } from '@mui/icons-material';
 import { Box, IconButton } from '@mui/material';
 import React from 'react'
+import CopyButton from '../CopyButton';
 
 function CustomMarkdownCodeComponent({ children }: { children: React.ReactNode }) {
     const [contentRef, handleCopy, copied] = useCopyClipboard<HTMLDivElement>();
@@ -17,14 +18,12 @@ function CustomMarkdownCodeComponent({ children }: { children: React.ReactNode }
         <div ref={contentRef}>
             {children}
         </div>
-        <IconButton
+        <Box
             sx={{ position: "absolute", top: 0, right: 0, margin: 1 }}
-            onClick={handleCopy}
-            color={copied ? "success" : "default"}
         >
-            {copied ? <Check fontSize='small' /> : <ContentCopy fontSize='small' />}
+            <CopyButton copied={copied} onClick={handleCopy} />
+        </Box>
 
-        </IconButton>
     </Box>)
 }
 
