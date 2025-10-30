@@ -14,7 +14,7 @@ function CodeContentView({ content }: { content: CodeContentModel[] }) {
     }
 
     return (
-        <Stack>
+        <Stack marginTop={10}>
             {/* バージョンタグ部 */}
             <Stack direction={"row"} alignItems={"end"}>
                 {content.map((c, index) => (

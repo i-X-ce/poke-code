@@ -19,7 +19,7 @@ function VersionTab({ version, selected = false, radius, onClick }: { version: P
                     py={selected ? 1 : .5}
                     sx={{
                         backgroundColor: ver2css(version),
-                        opacity: selected ? 1 : 0.5,
+                        opacity: selected ? 1 : 0.6,
                     }}>
                     <Typography
                         fontSize={"large"}
