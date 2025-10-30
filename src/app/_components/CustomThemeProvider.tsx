@@ -1,5 +1,6 @@
 "use client"
 
+import { ZenKakuGothicNew } from '@/lib/util/fonts';
 import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material'
 import React from 'react'
 
@@ -8,7 +9,7 @@ function CustomThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = createTheme({
     palette: { mode: isDarkMode ? "dark" : "light" },
     typography: {
-      fontFamily: "Zen Kaku Gothic New"
+      fontFamily: ZenKakuGothicNew.style.fontFamily,
     }
   })
 

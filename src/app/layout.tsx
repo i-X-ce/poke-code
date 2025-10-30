@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, WDXL_Lubrifont_JP_N, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Geist, Geist_Mono, Google_Sans_Code, WDXL_Lubrifont_JP_N, Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
 import Side from "./_components/Side";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
@@ -8,23 +8,6 @@ import AppTitle from "./_components/AppTitle";
 import CommonSection from "./_components/CommonSection";
 import styles from "./layout.module.css";
 import CommonFooter from "./_components/CommonFooter";
-
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const ZenKakuGothicNew = Zen_Kaku_Gothic_New({
-  weight: ["400", "700"],
-  variable: "--font-zen-kaku-gothic-new",
-  subsets: ["latin"],
-})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -38,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${ZenKakuGothicNew.variable}`}>
+      <body>
         <AppRouterCacheProvider>
           <CustomThemeProvider>
             <AppTitle />

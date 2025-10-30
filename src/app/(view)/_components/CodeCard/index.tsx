@@ -1,12 +1,15 @@
 import { CodeDataModel } from '@/lib/model/CodeDataModel'
 import { PokeVersions } from '@/lib/model/PokeVersion'
 import { FavoriteBorder, MoreVert } from '@mui/icons-material'
-import { Box, Card, CardActionArea, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material'
+import { Card, CardActionArea, CardContent, Chip, IconButton, Stack, Typography } from '@mui/material'
 import React from 'react'
 import VersionChip from '../VersionChip'
 import CodeInfo from '@/app/_components/CodeInfo'
 import styles from './styles.module.css'
 import DevelopmentComponent from '@/app/_components/DevelopmentComponent'
+import { PATH } from '@/lib/constant/paths'
+import CodeTags from '@/app/_components/CodeTags'
+import Link from 'next/link'
 
 interface CodeCardProps {
     data: CodeDataModel
@@ -15,7 +18,7 @@ interface CodeCardProps {
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
     return (
         <Card sx={{ position: "relative" }}>
-            <CardActionArea>
+            <CardActionArea LinkComponent={Link} href={PATH.DETAIL(data.id)}>
                 <CardContent>
                     <Typography variant='h6' gutterBottom className={styles.title}>
                         {/* <Typography component={"span"} fontSize={"1.8rem"}>{data.icon}</Typography> */}
@@ -23,13 +26,7 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
                     </Typography>
                     <Stack gap={1}>
                         <CodeInfo data={data} />
-                        <Stack direction={"row"} gap={1}>
-                            {
-                                data.tags.map(tag => (
-                                    <Chip key={tag} label={tag} variant="outlined" />
-                                ))
-                            }
-                        </Stack>
+                        <CodeTags data={data} />
                         <Typography color="textSecondary" className={styles.detail}>
                             {data.detail}
                         </Typography>
