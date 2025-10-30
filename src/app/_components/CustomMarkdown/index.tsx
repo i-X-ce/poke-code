@@ -66,8 +66,7 @@ function CustomMarkdown({ children }: { children: string }) {
                         {children}
                     </Typography>
                 ,
-                div: ({ children }) =>
-                    <Divider sx={{ marginBottom: 1 }}>{children}</Divider>
+                hr: () => <Divider sx={{ marginY: 2 }} />
                 ,
                 code: ({ children, node }) => {
                     const isInline = node?.position?.start.line === node?.position?.end.line;
