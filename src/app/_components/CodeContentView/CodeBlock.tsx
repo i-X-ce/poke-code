@@ -5,80 +5,30 @@ import { Box, Grid, GridProps, Stack, SxProps, Theme, Typography } from '@mui/ma
 import React from 'react'
 import CopyButton from '../CopyButton'
 import { GoogleSansCode } from '@/lib/util/fonts'
+import CodeGrid from './CodeGrid'
+import { PosType } from '@/lib/model/PosType'
 
 const num2Hex = (num: number, pad: number, fillString: string = '0') => {
     return num.toString(16).toUpperCase().padStart(pad, fillString);
 }
 
-const cellStyle: GridProps = {
-    py: .5,
-    pl: 1,
-};
-
-interface BorderExist {
-    x: boolean,
-    y: boolean
-}
-
-const CELL_TYPES = {
-    NORMAL: "normal",
-    HOVERED: "hovered",
-    SELECTED: "selected",
-} as const;
-type CellType = typeof CELL_TYPES[keyof typeof CELL_TYPES];
-
-// 共通のセルのスタイル
-const commonCellSx = (border: BorderExist): SxProps<Theme> => {
-    return {
-        borderRight: theme => `${border.x ? 1 : 0}px ${theme.palette.divider} solid`,
-        borderBottom: theme => `${border.y ? 1 : 0}px ${theme.palette.divider} solid`,
-        color: theme => theme.palette.text.secondary,
-    }
-}
-
-// セルのスタイル
-const cellSx = (cellType: CellType, notBorder: BorderExist): SxProps<Theme> => {
-    return {
-        ...commonCellSx(notBorder),
-        ...(() => {
-            if (cellType === CELL_TYPES.NORMAL) {
-                return {};
-            } else if (cellType === CELL_TYPES.HOVERED) {
-                return { backgroundColor: theme => theme.palette.action.hover };
-            } else if (cellType === CELL_TYPES.SELECTED) {
-                return { backgroundColor: theme => theme.palette.action.selected };
-            }
-        })()
-    }
-}
-
-// 端のセルのスタイル
-const markCellSx = (cellType: CellType, notBorder: BorderExist): SxProps<Theme> => {
-    return {
-        ...commonCellSx(notBorder),
-        ...(() => {
-            if (cellType === CELL_TYPES.NORMAL) {
-                return { backgroundColor: theme => theme.palette.action.hover };
-            } else if (cellType === CELL_TYPES.HOVERED) {
-                return {
-                    color: theme => theme.palette.background.default,
-                    backgroundColor: theme => theme.palette.primary.main,
-                };
-            } else if (cellType === CELL_TYPES.SELECTED) {
-                return {};
-            }
-        })(),
-    }
-}
-
 function CodeBlock({ block }: { block: CodeBlockModel }) {
     const { handleCopy, copied } = useCopyClipboard(block.code);
+    const [mousePos, setMousePos] = React.useState<PosType>({ x: -1, y: -1 });
 
     const codeLength = Math.floor(block.code.length / 2);
     const startAddress = block.address ? parseInt(block.address, 16) : 0;
     const startRange = block.address ? parseInt(block.address, 16) & 0xFFF0 : 0;
     const endRange = (startAddress + codeLength - 1) | 0xF;
     const addressRange = endRange - startRange;
+
+    const handleEnter = (pos: PosType) => {
+        setMousePos(pos);
+    }
+
+    const handleLeave = () => {
+        setMousePos({ x: -1, y: -1 });
+    }
 
     return (
         <Stack position={"relative"} gap={1}>
@@ -102,20 +52,21 @@ function CodeBlock({ block }: { block: CodeBlockModel }) {
                     border: theme => `1px ${theme.palette.divider} solid`,
                     borderRadius: 1,
                     // borderStartStartRadius: 0
+                    overflow: 'hidden',
+                    cursor: 'default'
                 }}
             >
-                <Grid container columns={18} fontFamily={GoogleSansCode.style.fontFamily}>
+                <Grid
+                    container
+                    columns={18}
+                    fontFamily={GoogleSansCode.style.fontFamily}
+                >
                     {/* 上端の数値 */}
                     {
                         Array.from({ length: 17 }).map((_, i) => (
-                            <Grid
-                                size={i === 0 ? 2 : 1}
-                                key={i}
-                                {...cellStyle}
-                                sx={markCellSx(CELL_TYPES.NORMAL, { x: i !== 16, y: true })}
-                            >
+                            <CodeGrid key={i} pos={{ x: i, y: 0 }} mousePos={mousePos} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
                                 {i === 0 ? "" : num2Hex(i - 1, 2, 'x')}
-                            </Grid>
+                            </CodeGrid>
                         ))
                     }
                     {/* アドレスとコード部 */}
@@ -123,14 +74,9 @@ function CodeBlock({ block }: { block: CodeBlockModel }) {
                         Array.from({ length: Math.ceil(addressRange / 16) }).map((_, addressIndex) => (
                             <React.Fragment key={addressIndex}>
                                 {/* アドレス部 */}
-                                <Grid
-                                    size={2}
-                                    key={startRange + addressIndex * 16}
-                                    {...cellStyle}
-                                    sx={markCellSx(CELL_TYPES.NORMAL, { x: true, y: startRange + addressIndex * 16 <= endRange - 16 })}
-                                >
+                                <CodeGrid pos={{ x: 0, y: addressIndex + 1 }} mousePos={mousePos} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
                                     {num2Hex(startRange + addressIndex * 16, 4).substring(0, 3) + 'x'}
-                                </Grid>
+                                </CodeGrid>
 
                                 {/* コード部 */}
                                 {
@@ -138,16 +84,19 @@ function CodeBlock({ block }: { block: CodeBlockModel }) {
                                         const address = startRange + addressIndex * 16 + byteIndex;
                                         const sub = address - startAddress;
                                         return (
-                                            <Grid size={1} key={address}
-                                                {...cellStyle}
-                                                sx={cellSx(CELL_TYPES.NORMAL, { x: byteIndex !== 15, y: startRange + addressIndex * 16 <= endRange - 16 })}
+                                            <CodeGrid
+                                                key={address}
+                                                pos={{ x: byteIndex + 1, y: addressIndex + 1 }}
+                                                mousePos={mousePos}
+                                                onMouseEnter={handleEnter}
+                                                onMouseLeave={handleLeave}
                                             >
                                                 {
                                                     sub < 0 || sub >= codeLength
                                                         ? ""
                                                         : block.code.substring(sub * 2, (sub + 1) * 2)
                                                 }
-                                            </Grid>
+                                            </CodeGrid>
                                         )
                                     })
                                 }
