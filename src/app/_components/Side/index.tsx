@@ -7,6 +7,7 @@ import { createMockCodeData } from '@/lib/model/CodeDataModel'
 import SideItemChild from './SideItemChild'
 import DevelopmentComponent from '../DevelopmentComponent'
 import { PATH } from '@/lib/constant/paths'
+import Link from 'next/link'
 
 const getCodeData = () => {
     return Array.from({ length: 5 }).map((_, i) => createMockCodeData(i))
@@ -31,7 +32,7 @@ function Side() {
                 </Stack>
             </div>
             <DevelopmentComponent>
-                <Button endIcon={<Add />} fullWidth variant='contained' sx={{ marginTop: 2 }}>
+                <Button LinkComponent={Link} href={PATH.CREATE} endIcon={<Add />} fullWidth variant='contained' sx={{ marginTop: 2 }}>
                     新規作成
                 </Button>
             </DevelopmentComponent>
