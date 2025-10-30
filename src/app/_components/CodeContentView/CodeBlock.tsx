@@ -6,8 +6,8 @@ import React from 'react'
 import CopyButton from '../CopyButton'
 import { GoogleSansCode } from '@/lib/util/fonts'
 
-const num2Hex = (num: number, pad: number) => {
-    return num.toString(16).toUpperCase().padStart(pad, "0");
+const num2Hex = (num: number, pad: number, fillString: string = '0') => {
+    return num.toString(16).toUpperCase().padStart(pad, fillString);
 }
 
 const cellStyle: GridProps = {
@@ -56,7 +56,6 @@ const cellSx = (cellType: CellType, notBorder: BorderExist): SxProps<Theme> => {
 const markCellSx = (cellType: CellType, notBorder: BorderExist): SxProps<Theme> => {
     return {
         ...commonCellSx(notBorder),
-        fontWeight: 'bold',
         ...(() => {
             if (cellType === CELL_TYPES.NORMAL) {
                 return { backgroundColor: theme => theme.palette.action.hover };
@@ -115,7 +114,7 @@ function CodeBlock({ block }: { block: CodeBlockModel }) {
                                 {...cellStyle}
                                 sx={markCellSx(CELL_TYPES.NORMAL, { x: i !== 16, y: true })}
                             >
-                                {i === 0 ? "" : num2Hex(i - 1, 2)}
+                                {i === 0 ? "" : num2Hex(i - 1, 2, 'x')}
                             </Grid>
                         ))
                     }
@@ -130,7 +129,7 @@ function CodeBlock({ block }: { block: CodeBlockModel }) {
                                     {...cellStyle}
                                     sx={markCellSx(CELL_TYPES.NORMAL, { x: true, y: startRange + addressIndex * 16 <= endRange - 16 })}
                                 >
-                                    {num2Hex(startRange + addressIndex * 16, 4)}
+                                    {num2Hex(startRange + addressIndex * 16, 4).substring(0, 3) + 'x'}
                                 </Grid>
 
                                 {/* コード部 */}
