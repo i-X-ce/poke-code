@@ -4,7 +4,7 @@ export interface CodeDataModel {
     id: string;
     icon: string;
     title: string;
-    date: Date;
+    date: string | Date;
     tags: string[];
     detail: string;
     description: string;
