@@ -1,12 +1,14 @@
 "use client"
-import { CodeDataModel } from '@/lib/model/CodeDataModel';
-import { InsertEmoticon } from '@mui/icons-material';
-import { Box, Button, FormControl, IconButton, Popover, Stack, TextField } from '@mui/material';
+import CodeContentView from '@/app/_components/CodeContentView';
+import { CodeBlockModel, CodeContentModel, CodeDataModel } from '@/lib/model/CodeDataModel';
+import { PokeVersions, PokeVersionType } from '@/lib/model/PokeVersion';
+import { Delete, InsertEmoticon } from '@mui/icons-material';
+import { Box, Button, Chip, FormControl, IconButton, Popover, Stack, TextField } from '@mui/material';
 import EmojiPicker, { Emoji } from 'emoji-picker-react';
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form';
 
-const CREATE_LABELS: { [K in keyof CodeDataModel]: string } = {
+const CODE_DATA_LABELS: { [K in keyof CodeDataModel]: string } = {
     id: 'ID',
     icon: 'アイコン',
     title: 'タイトル',
@@ -16,12 +18,26 @@ const CREATE_LABELS: { [K in keyof CodeDataModel]: string } = {
     description: '説明(Markdown)',
     content: 'コード内容'
 };
+const CODE_BLOCK_LABELS: { [K in keyof CodeBlockModel]: string } = {
+    title: 'タイトル',
+    address: '開始アドレス',
+    code: 'コード'
+};
+const INIT_CODE_BLOCK: CodeBlockModel = { title: '', address: 'DA00', code: '' } as const;
+const INIT_CODE_CONTENT = (version: PokeVersionType): CodeContentModel => ({ version, blocks: [INIT_CODE_BLOCK] });
 
 const Date2String = (date: Date): string => date.toISOString().split('T')[0];
 
 function CreateForm() {
-    const { register, handleSubmit, formState: { errors }, control } = useForm<CodeDataModel>({ mode: "onChange", defaultValues: { date: Date2String(new Date()) } });
+    const { register, handleSubmit, formState: { errors }, control } = useForm<CodeDataModel>({
+        mode: "onChange",
+        defaultValues: {
+            date: Date2String(new Date()),
+            content: [INIT_CODE_CONTENT(PokeVersions.G1)]
+        }
+    });
     const [emojiPickerAnchorEl, setEmojiPickerAnchorEl] = React.useState<HTMLElement | null>(null);
+    const [selectedVersion, setSelectedVersion] = React.useState<PokeVersionType>("G1");
 
     const handleEmojiPickerOpen = (event: React.MouseEvent<HTMLElement>) => {
         setEmojiPickerAnchorEl(event.currentTarget);
@@ -53,18 +69,101 @@ function CreateForm() {
                         </>
                     )}
                 />
-                <TextField variant='filled' fullWidth label={CREATE_LABELS.title} slotProps={{ inputLabel: { shrink: true } }} {...register("title", { required: "タイトルは必須です" })} error={!!errors.title?.message} helperText={errors.title?.message} />
+                <TextField variant='filled' fullWidth label={CODE_DATA_LABELS.title} slotProps={{ inputLabel: { shrink: true } }} {...register("title", { required: "タイトルは必須です" })} error={!!errors.title?.message} helperText={errors.title?.message} />
             </Stack>
             <Stack gap={2}>
                 <Stack direction={"row"} gap={2} flexWrap={'wrap'}>
-                    <TextField fullWidth={false} type='date' label={CREATE_LABELS.date} slotProps={{ inputLabel: { shrink: true } }}  {...register("date", { required: "日時は必須です" })} error={!!errors.date?.message} helperText={errors.date?.message} />
-                    <TextField sx={{ flex: 1 }} label={CREATE_LABELS.tags} slotProps={{ inputLabel: { shrink: true } }} {...register("tags")} />
+                    <TextField fullWidth={false} type='date' label={CODE_DATA_LABELS.date} slotProps={{ inputLabel: { shrink: true } }}  {...register("date", { required: "日時は必須です" })} error={!!errors.date?.message} helperText={errors.date?.message} />
+                    <TextField sx={{ flex: 1 }} label={CODE_DATA_LABELS.tags} slotProps={{ inputLabel: { shrink: true } }} {...register("tags")} />
                 </Stack>
-                <TextField multiline minRows={3} label={CREATE_LABELS.detail} slotProps={{ inputLabel: { shrink: true } }} {...register("detail", { required: "概要は必須です" })} error={!!errors.detail?.message} helperText={errors.detail?.message} />
+                <TextField multiline minRows={3} label={CODE_DATA_LABELS.detail} slotProps={{ inputLabel: { shrink: true } }} {...register("detail", { required: "概要は必須です" })} error={!!errors.detail?.message} helperText={errors.detail?.message} />
             </Stack>
-            <TextField multiline minRows={10} label={CREATE_LABELS.description} slotProps={{ inputLabel: { shrink: true } }} {...register("description", { required: "説明は必須です" })} error={!!errors.description?.message} helperText={errors.description?.message} />
-            <Button variant='contained' type='submit'>送信</Button>
-        </Stack>
+            <TextField multiline minRows={10} label={CODE_DATA_LABELS.description} slotProps={{ inputLabel: { shrink: true } }} {...register("description", { required: "説明は必須です" })} error={!!errors.description?.message} helperText={errors.description?.message} />
+
+            <Controller
+                name='content'
+                control={control}
+                render={({ field, fieldState }) => (
+                    <CodeContentView key={selectedVersion} content={field.value} mode="edit">
+                        {
+                            field.value.find(c => c.version === selectedVersion)?.blocks.map((b, bi) => (
+                                <Stack
+                                    key={`${selectedVersion}-${bi}`}
+                                    position={"relative"}
+                                    gap={2}
+                                    p={2}
+                                    borderRadius={1}
+                                    sx={{ border: theme => `1px solid ${theme.palette.divider}` }}
+                                >
+                                    <Stack direction={"row"} gap={2}>
+                                        <TextField
+                                            value={b.title}
+                                            label={CODE_BLOCK_LABELS.title}
+                                            slotProps={{ inputLabel: { shrink: true } }}
+                                            onChange={(e) => {
+                                                const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks];
+                                                newBlocks[bi] = { ...newBlocks[bi], title: e.target.value };
+                                                const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                                field.onChange(newContent);
+                                            }}
+                                        />
+                                        <TextField
+                                            value={b.address}
+                                            label={CODE_BLOCK_LABELS.address}
+                                            slotProps={{ inputLabel: { shrink: true } }}
+                                        />
+                                    </Stack>
+                                    <TextField
+                                        value={b.code}
+                                        label={CODE_BLOCK_LABELS.code}
+                                        slotProps={{ inputLabel: { shrink: true } }}
+                                        fullWidth
+                                        multiline
+                                        minRows={4}
+                                    />
+                                    <Box position={"absolute"} top={0} right={0} p={2}>
+                                        <IconButton
+                                            color='error'
+                                            onClick={() => {
+                                                const newBlocks = field.value.find(c => c.version === selectedVersion)!.blocks.filter((_, i) => i !== bi);
+                                                const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                                field.onChange(newContent);
+                                            }}
+                                        >
+                                            <Delete />
+                                        </IconButton>
+                                    </Box>
+                                </Stack>
+                            ))
+                        }
+                        <Box
+                            display={"flex"}
+                            justifyContent={"center"}
+                            bottom={0}
+                        >
+                            <Chip
+                                label="ブロック追加"
+                                variant='outlined'
+                                clickable
+                                color='primary'
+                                sx={{
+                                    px: 2,
+                                    backgroundColor: theme => theme.palette.background.paper,
+                                }}
+                                onClick={() => {
+                                    const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks, INIT_CODE_BLOCK];
+                                    const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                    field.onChange(newContent);
+                                }}
+                            />
+                        </Box>
+                    </CodeContentView>
+                )
+                }
+            />
+
+            < Button variant='contained' type='submit' > 作成</Button >
+        </Stack >
     )
 }
 
