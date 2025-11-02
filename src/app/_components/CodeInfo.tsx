@@ -10,7 +10,7 @@ function CodeInfo({ data, size = "medium" }: { data: CodeDataModel, size?: "smal
 
     return (
         <Stack direction={"row"} gap={2}>
-            <IconAndText size={size} icon={<CalendarMonth fontSize={size} />} text={data.date.toLocaleDateString()} />
+            <IconAndText size={size} icon={<CalendarMonth fontSize={size} />} text={typeof data.date === "string" ? data.date : data.date.toLocaleDateString()} />
             <IconAndText size={size} icon={<Straighten fontSize={size} />} text={`${codeLength} Byte`} />
         </Stack>
     )
