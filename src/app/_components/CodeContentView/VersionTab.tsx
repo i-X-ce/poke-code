@@ -1,10 +1,24 @@
 import { PokeVersions, PokeVersionType } from '@/lib/model/PokeVersion'
 import { GoogleSansCode } from '@/lib/util/fonts';
 import ver2css from '@/lib/util/str2css'
+import { ArrowDropDown } from '@mui/icons-material';
 import { Box, CardActionArea, Typography } from '@mui/material'
 import React from 'react'
+import { ModeType } from '.';
 
-function VersionTab({ version, selected = false, radius, onClick }: { version: PokeVersionType, selected?: boolean, radius?: { L?: boolean, R?: boolean }, onClick?: () => void }) {
+function VersionTab({
+    version,
+    selected = false,
+    radius,
+    onClick,
+    mode = "view",
+}: {
+    version: PokeVersionType,
+    selected?: boolean,
+    radius?: { L?: boolean, R?: boolean },
+    onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
+    mode?: ModeType
+}) {
     radius = selected ? { L: true, R: true } : radius;
 
     return (
@@ -22,11 +36,14 @@ function VersionTab({ version, selected = false, radius, onClick }: { version: P
                         opacity: selected ? 1 : 0.6,
                     }}>
                     <Typography
+                        display={'flex'}
+                        alignItems={'center'}
                         fontSize={"large"}
                         fontFamily={GoogleSansCode.style.fontFamily}
                         color='var(--background)'
                     >
                         {version.toUpperCase()}
+                        {mode === "edit" && selected && <ArrowDropDown />}
                     </Typography>
                 </Box>
             </CardActionArea>

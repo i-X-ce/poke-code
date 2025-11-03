@@ -1,10 +1,11 @@
 "use client"
 import CodeContentView from '@/app/_components/CodeContentView';
+import VersionChip from '@/app/_components/VersionChip';
 import { CodeBlockModel, CodeContentModel, CodeDataModel } from '@/lib/model/CodeDataModel';
 import { PokeVersions, PokeVersionType } from '@/lib/model/PokeVersion';
 import { Delete, InsertEmoticon } from '@mui/icons-material';
-import { Box, Button, Chip, FormControl, IconButton, Popover, Stack, TextField } from '@mui/material';
-import EmojiPicker, { Emoji } from 'emoji-picker-react';
+import { Box, Button, Chip, IconButton, Popover, PopoverProps, Stack, TextField } from '@mui/material';
+import EmojiPicker from 'emoji-picker-react';
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form';
 
@@ -36,8 +37,11 @@ function CreateForm() {
             content: [INIT_CODE_CONTENT(PokeVersions.G1)]
         }
     });
+
     const [emojiPickerAnchorEl, setEmojiPickerAnchorEl] = React.useState<HTMLElement | null>(null);
-    const [selectedVersion, setSelectedVersion] = React.useState<PokeVersionType>("G1");
+    const [versionSelectorAnchorEl, setVersionSelectorAnchorEl] = React.useState<HTMLElement | null>(null);
+    const [selectedVersion, setSelectedVersion] = React.useState<PokeVersionType>(PokeVersions.G1);
+    const [enableSelectorAnchorEl, setEnableSelectorAnchorEl] = React.useState<HTMLElement | null>(null);
 
     const handleEmojiPickerOpen = (event: React.MouseEvent<HTMLElement>) => {
         setEmojiPickerAnchorEl(event.currentTarget);
@@ -45,6 +49,22 @@ function CreateForm() {
 
     const handleEmojiPickerClose = () => {
         setEmojiPickerAnchorEl(null);
+    }
+
+    const handleVersionSelectorOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setVersionSelectorAnchorEl(event.currentTarget);
+    }
+
+    const handleVersionSelectorClose = () => {
+        setVersionSelectorAnchorEl(null);
+    }
+
+    const handleEnableSelectorOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setEnableSelectorAnchorEl(event.currentTarget);
+    }
+
+    const handleEnableSelectorClose = () => {
+        setEnableSelectorAnchorEl(null);
     }
 
     return (
@@ -83,87 +103,131 @@ function CreateForm() {
             <Controller
                 name='content'
                 control={control}
-                render={({ field, fieldState }) => (
-                    <CodeContentView key={selectedVersion} content={field.value} mode="edit">
-                        {
-                            field.value.find(c => c.version === selectedVersion)?.blocks.map((b, bi) => (
-                                <Stack
-                                    key={`${selectedVersion}-${bi}`}
-                                    position={"relative"}
-                                    gap={2}
-                                    p={2}
-                                    borderRadius={1}
-                                    sx={{ border: theme => `1px solid ${theme.palette.divider}` }}
-                                >
-                                    <Stack direction={"row"} gap={2}>
-                                        <TextField
-                                            value={b.title}
-                                            label={CODE_BLOCK_LABELS.title}
-                                            slotProps={{ inputLabel: { shrink: true } }}
-                                            onChange={(e) => {
-                                                const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks];
-                                                newBlocks[bi] = { ...newBlocks[bi], title: e.target.value };
-                                                const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
-                                                field.onChange(newContent);
-                                            }}
-                                        />
-                                        <TextField
-                                            value={b.address}
-                                            label={CODE_BLOCK_LABELS.address}
-                                            slotProps={{ inputLabel: { shrink: true } }}
-                                        />
-                                    </Stack>
-                                    <TextField
-                                        value={b.code}
-                                        label={CODE_BLOCK_LABELS.code}
-                                        slotProps={{ inputLabel: { shrink: true } }}
-                                        fullWidth
-                                        multiline
-                                        minRows={4}
-                                    />
-                                    <Box position={"absolute"} top={0} right={0} p={2}>
-                                        <IconButton
-                                            color='error'
-                                            onClick={() => {
-                                                const newBlocks = field.value.find(c => c.version === selectedVersion)!.blocks.filter((_, i) => i !== bi);
-                                                const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
-                                                field.onChange(newContent);
-                                            }}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    </Box>
-                                </Stack>
-                            ))
-                        }
-                        <Box
-                            display={"flex"}
-                            justifyContent={"center"}
-                            bottom={0}
+                render={({ field }) => (
+                    <>
+                        <CodeContentView
+                            // key={selectedVersion}
+                            content={field.value}
+                            mode="edit"
+                            selectedVersion={selectedVersion}
+                            onAdd={handleEnableSelectorOpen}
+                            onClick={handleVersionSelectorOpen}
+                            onChangeVersion={(_, v) => setSelectedVersion(v)}
                         >
-                            <Chip
-                                label="ブロック追加"
-                                variant='outlined'
-                                clickable
-                                color='primary'
-                                sx={{
-                                    px: 2,
-                                    backgroundColor: theme => theme.palette.background.paper,
-                                }}
-                                onClick={() => {
-                                    const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks, INIT_CODE_BLOCK];
-                                    const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
-                                    field.onChange(newContent);
-                                }}
-                            />
-                        </Box>
-                    </CodeContentView>
+                            {
+                                field.value.find(c => c.version === selectedVersion)?.blocks.map((b, bi) => (
+                                    <Stack
+                                        key={`${selectedVersion}-${bi}`}
+                                        position={"relative"}
+                                        gap={2}
+                                        p={2}
+                                        borderRadius={1}
+                                        sx={{ border: theme => `1px solid ${theme.palette.divider}` }}
+                                    >
+                                        <Stack direction={"row"} gap={2}>
+                                            <TextField
+                                                value={b.title}
+                                                label={CODE_BLOCK_LABELS.title}
+                                                slotProps={{ inputLabel: { shrink: true } }}
+                                                onChange={(e) => {
+                                                    const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks];
+                                                    newBlocks[bi] = { ...newBlocks[bi], title: e.target.value };
+                                                    const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                                    field.onChange(newContent);
+                                                }}
+                                            />
+                                            <TextField
+                                                value={b.address}
+                                                label={CODE_BLOCK_LABELS.address}
+                                                slotProps={{ inputLabel: { shrink: true } }}
+                                            />
+                                        </Stack>
+                                        <TextField
+                                            value={b.code}
+                                            label={CODE_BLOCK_LABELS.code}
+                                            slotProps={{ inputLabel: { shrink: true } }}
+                                            fullWidth
+                                            multiline
+                                            minRows={4}
+                                        />
+                                        <Box position={"absolute"} top={0} right={0} p={2}>
+                                            <IconButton
+                                                color='error'
+                                                onClick={() => {
+                                                    const newBlocks = field.value.find(c => c.version === selectedVersion)!.blocks.filter((_, i) => i !== bi);
+                                                    const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                                    field.onChange(newContent);
+                                                }}
+                                            >
+                                                <Delete />
+                                            </IconButton>
+                                        </Box>
+                                    </Stack>
+                                ))
+                            }
+                            <Box
+                                display={"flex"}
+                                justifyContent={"center"}
+                                bottom={0}
+                            >
+                                <Chip
+                                    label="ブロック追加"
+                                    variant='outlined'
+                                    clickable
+                                    color='primary'
+                                    sx={{
+                                        px: 2,
+                                        backgroundColor: theme => theme.palette.background.paper,
+                                    }}
+                                    onClick={() => {
+                                        const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks, INIT_CODE_BLOCK];
+                                        const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                        field.onChange(newContent);
+                                    }}
+                                />
+                            </Box>
+                        </CodeContentView>
+
+                        {/* バージョン追加用 */}
+                        <VersionsSelectorPopover
+                            enableVersions={field.value.map(c => c.version)}
+                            open={Boolean(enableSelectorAnchorEl)}
+                            anchorEl={enableSelectorAnchorEl}
+                            onClickVersion={(version) => {
+                                if (field.value.some(c => c.version === version)) return;
+                                field.onChange([...field.value, INIT_CODE_CONTENT(version)]);
+                                setSelectedVersion(version);
+                            }}
+                            onClose={handleEnableSelectorClose}
+                        />
+
+                        {/* バージョン入れ替え用 */}
+                        <VersionsSelectorPopover
+                            enableVersions={[field.value.find(c => c.version === selectedVersion)!.version]}
+                            open={Boolean(versionSelectorAnchorEl)}
+                            anchorEl={versionSelectorAnchorEl}
+                            onClose={handleVersionSelectorClose}
+                        />
+                    </>
                 )
                 }
             />
-
-            < Button variant='contained' type='submit' > 作成</Button >
+            < Button variant='contained' type='submit' >作成</Button >
         </Stack >
+    )
+}
+
+const VersionsSelectorPopover = ({ enableVersions, onClickVersion, ...popoverProps }: { enableVersions: PokeVersionType[], onClickVersion?: (version: PokeVersionType) => void } & PopoverProps) => {
+    return (
+        <Popover {...popoverProps}>
+            <Stack direction={"row"} gap={1} p={2} alignItems={"center"}>
+                {
+                    Object.values(PokeVersions).map(version => (
+                        <VersionChip key={version} version={version} disable={!enableVersions.some(v => v === version)} onClick={() => onClickVersion?.(version)} />
+                    ))
+                }
+            </Stack>
+        </Popover>
     )
 }
 

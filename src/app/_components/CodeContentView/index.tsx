@@ -7,12 +7,35 @@ import CodeBlock from './CodeBlock'
 import { PokeVersionType } from '@/lib/model/PokeVersion'
 import { Add } from '@mui/icons-material'
 
-function CodeContentView({ content, mode, children }: { content: CodeContentModel[], mode?: "view" | "edit", children?: React.ReactNode }) {
-    const [selectedVersion, setSelectedVersion] = React.useState<PokeVersionType>(content[0].version);
+export type ModeType = "view" | "edit";
 
-    const handleChangeVersion = (version: PokeVersionType) => {
-        setSelectedVersion(version);
+function CodeContentView({
+    content,
+    selectedVersion,
+    mode,
+    onClick,
+    onChangeVersion,
+    onAdd,
+    children
+}: {
+    content: CodeContentModel[],
+    selectedVersion?: PokeVersionType,
+    mode?: ModeType,
+    onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined,
+    onChangeVersion?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, version: PokeVersionType) => void,
+    onAdd?: React.MouseEventHandler<HTMLButtonElement> | undefined,
+    children?: React.ReactNode
+}) {
+    const [localSelectedVersion, localSetSelectedVersion] = React.useState<PokeVersionType>(content[0].version);
+
+    const handleChangeVersion = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, version: PokeVersionType) => {
+        if (onChangeVersion) onChangeVersion(e, version);
+        else localSetSelectedVersion(version);
     }
+
+    // 見た目に使うためのバージョン変数
+    // selectedVersionが渡されていればそれを優先、なければローカルステートを使う
+    const selectedVersionView = selectedVersion || localSelectedVersion;
 
     return (
         <Stack position={"relative"} marginTop={10} >
@@ -23,12 +46,13 @@ function CodeContentView({ content, mode, children }: { content: CodeContentMode
                         key={c.version}
                         version={c.version}
                         radius={{ L: index === 0, R: index === content.length - 1 }}
-                        selected={c.version === selectedVersion}
-                        onClick={() => handleChangeVersion(c.version)}
+                        selected={c.version === selectedVersionView}
+                        onClick={c.version === selectedVersionView ? onClick : (e) => handleChangeVersion(e, c.version)}
+                        mode={mode}
                     />
                 ))}
                 {mode === "edit" &&
-                    <IconButton>
+                    <IconButton onClick={onAdd}>
                         <Add />
                     </IconButton>
                 }
@@ -45,8 +69,8 @@ function CodeContentView({ content, mode, children }: { content: CodeContentMode
                 }}
             >
                 {mode === "edit" ? children :
-                    content.find(c => c.version === selectedVersion)?.blocks.map((block, index) =>
-                        <CodeBlock key={`${selectedVersion}-${index}`} block={block} />
+                    content.find(c => c.version === selectedVersionView)?.blocks.map((block, index) =>
+                        <CodeBlock key={`${selectedVersionView}-${index}`} block={block} />
                     )}
             </Stack>
         </Stack>
