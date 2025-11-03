@@ -1,11 +1,10 @@
 "use client"
 import { CodeContentModel } from '@/lib/model/CodeDataModel'
-import { IconButton, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import React from 'react'
 import VersionTab from './VersionTab'
 import CodeBlock from './CodeBlock'
 import { PokeVersionType } from '@/lib/model/PokeVersion'
-import { Add } from '@mui/icons-material'
 
 export type ModeType = "view" | "edit";
 
@@ -13,17 +12,13 @@ function CodeContentView({
     content,
     selectedVersion,
     mode,
-    onClick,
     onChangeVersion,
-    onAdd,
     children
 }: {
     content: CodeContentModel[],
     selectedVersion?: PokeVersionType,
     mode?: ModeType,
-    onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     onChangeVersion?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, version: PokeVersionType) => void,
-    onAdd?: React.MouseEventHandler<HTMLButtonElement> | undefined,
     children?: React.ReactNode
 }) {
     const [localSelectedVersion, localSetSelectedVersion] = React.useState<PokeVersionType>(content[0].version);
@@ -47,15 +42,9 @@ function CodeContentView({
                         version={c.version}
                         radius={{ L: index === 0, R: index === content.length - 1 }}
                         selected={c.version === selectedVersionView}
-                        onClick={c.version === selectedVersionView ? onClick : (e) => handleChangeVersion(e, c.version)}
-                        mode={mode}
+                        onClick={c.version === selectedVersionView ? undefined : (e) => handleChangeVersion(e, c.version)}
                     />
                 ))}
-                {mode === "edit" &&
-                    <IconButton onClick={onAdd}>
-                        <Add />
-                    </IconButton>
-                }
             </Stack>
 
             {/* コードブロック部 */}

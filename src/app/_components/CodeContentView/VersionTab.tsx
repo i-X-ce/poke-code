@@ -11,13 +11,11 @@ function VersionTab({
     selected = false,
     radius,
     onClick,
-    mode = "view",
 }: {
     version: PokeVersionType,
     selected?: boolean,
     radius?: { L?: boolean, R?: boolean },
     onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
-    mode?: ModeType
 }) {
     radius = selected ? { L: true, R: true } : radius;
 
@@ -43,7 +41,6 @@ function VersionTab({
                         color='var(--background)'
                     >
                         {version.toUpperCase()}
-                        {mode === "edit" && selected && <ArrowDropDown />}
                     </Typography>
                 </Box>
             </CardActionArea>
