@@ -11,6 +11,7 @@
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.3",
     "@mui/material": "^7.3.3",
     "@mui/material-nextjs": "^7.3.3",
