@@ -117,6 +117,7 @@ function CodeContentEditor({
                 label={fieldItems.title.label}
                 placeholder={fieldItems.title.placeholder}
                 error={!!blockErrors?.title}
+                helperText={blockErrors?.title?.message}
                 slotProps={{ inputLabel: { shrink: true } }}
                 autoComplete="off"
                 onChange={(e) =>
@@ -128,6 +129,7 @@ function CodeContentEditor({
                 label={fieldItems.address.label}
                 placeholder={fieldItems.address.placeholder}
                 error={!!blockErrors?.address}
+                helperText={blockErrors?.address?.message}
                 slotProps={{ inputLabel: { shrink: true } }}
                 autoComplete="off"
                 onChange={(e) =>
@@ -141,6 +143,7 @@ function CodeContentEditor({
               placeholder={fieldItems.code.placeholder}
               autoComplete="off"
               error={!!blockErrors?.code}
+              helperText={blockErrors?.code?.message}
               slotProps={{ inputLabel: { shrink: true } }}
               fullWidth
               multiline

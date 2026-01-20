@@ -3,8 +3,8 @@ import { PokeVersions, PokeVersionType } from "./PokeVersion";
 
 export const CodeBlockSchema = z.object({
   title: z.string(),
-  address: z.string(),
-  code: z.string(),
+  address: z.string().length(4, "開始アドレスは4文字で入力してください"),
+  code: z.string().min(1, "コードは1文字以上入力してください"),
 });
 
 export const CodeContentSchema = z.object({
