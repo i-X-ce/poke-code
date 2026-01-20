@@ -1,5 +1,5 @@
-"use client"
-import { CodeDataModel, createMockCodeData } from "@/lib/model/CodeDataModel";
+"use client";
+import { CodeData, createMockCodeData } from "@/lib/model/CodeDataModel";
 import { Grid, IconButton, Pagination, Stack, TextField } from "@mui/material";
 import CodeCard from "./(view)/_components/CodeCard";
 import { useState } from "react";
@@ -11,19 +11,22 @@ const MAX_CARD_PER_PAGE = 12;
 // モックデータの総数
 const MOCK_DATA_LENGTH = MAX_CARD_PER_PAGE * 3 + 1;
 
-function getCodeData(page: number): CodeDataModel[] {
+function getCodeData(page: number): CodeData[] {
   return Array.from({
-    length: MAX_CARD_PER_PAGE * (page + 1) > MOCK_DATA_LENGTH ? MOCK_DATA_LENGTH % MAX_CARD_PER_PAGE : MAX_CARD_PER_PAGE
-  }).map((_, i) => (createMockCodeData(page * MAX_CARD_PER_PAGE + i)));
+    length:
+      MAX_CARD_PER_PAGE * (page + 1) > MOCK_DATA_LENGTH
+        ? MOCK_DATA_LENGTH % MAX_CARD_PER_PAGE
+        : MAX_CARD_PER_PAGE,
+  }).map((_, i) => createMockCodeData(page * MAX_CARD_PER_PAGE + i));
 }
 
 export default function Home() {
   const [page, setPage] = useState(0);
-  const codeData: CodeDataModel[] = getCodeData(page);
+  const codeData: CodeData[] = getCodeData(page);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage - 1);
-  }
+  };
 
   return (
     <Stack gap={3}>
@@ -33,14 +36,18 @@ export default function Home() {
           label="検索"
           fullWidth
           slotProps={{
-            input:
-            {
-              endAdornment:
-                <IconButton><Search /></IconButton>
-            }
+            input: {
+              endAdornment: (
+                <IconButton>
+                  <Search />
+                </IconButton>
+              ),
+            },
           }}
         />
-        <IconButton><Tune /></IconButton>
+        <IconButton>
+          <Tune />
+        </IconButton>
       </Stack>
       <Grid container spacing={2}>
         {codeData.map((data) => (
@@ -48,12 +55,13 @@ export default function Home() {
             <CodeCard data={data} />
           </Grid>
         ))}
-
       </Grid>
       <Pagination
         page={page + 1}
         count={Math.ceil(MOCK_DATA_LENGTH / MAX_CARD_PER_PAGE)}
-        onChange={(_, v) => { handlePageChange(v); }}
+        onChange={(_, v) => {
+          handlePageChange(v);
+        }}
         shape="rounded"
       />
     </Stack>

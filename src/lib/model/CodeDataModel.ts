@@ -1,46 +1,59 @@
+import z from "zod";
 import { PokeVersions, PokeVersionType } from "./PokeVersion";
 
-export interface CodeDataModel {
-    id: string;
-    icon: string;
-    title: string;
-    date: string | Date;
-    tags: string[];
-    detail: string;
-    description: string;
-    content: CodeContentModel[];
-}
+export const CodeBlockSchema = z.object({
+  title: z.string(),
+  address: z.string(),
+  code: z.string(),
+});
 
-export interface CodeContentModel {
-    version: PokeVersionType;
-    blocks: CodeBlockModel[];
-}
+export const CodeContentSchema = z.object({
+  version: z.enum(PokeVersions),
+  blocks: z.array(CodeBlockSchema),
+});
 
-export interface CodeBlockModel {
-    title: string;
-    address: string;
-    code: string;
-}
+export const CodeDataSchema = z.object({
+  id: z.string(),
+  title: z
+    .string()
+    .min(1, "タイトルは1文字以上入力してください")
+    .max(100, "タイトルは100文字以内で入力してください"),
+  date: z.iso.date(),
+  tags: z.array(z.string()),
+  detail: z
+    .string()
+    .min(1, "詳細は1文字以上入力してください")
+    .max(500, "詳細は5000文字以内で入力してください"),
+  description: z
+    .string()
+    .min(1, "説明は1文字以上入力してください")
+    .max(10000, "説明は10000文字以内で入力してください"),
+  content: z.array(CodeContentSchema),
+});
 
-export function createMockCodeData(num: number): CodeDataModel {
-    // const randomVersion = (): PokeVersionType => {
-    //   const versions: PokeVersionType[] = Object.values(PokeVersions);
-    //   return versions[Math.floor(Math.random() * versions.length)];
-    // };
+export type CodeBlock = z.infer<typeof CodeBlockSchema>;
+export type CodeContent = z.infer<typeof CodeContentSchema>;
+export type CodeData = z.infer<typeof CodeDataSchema>;
 
-    const romVersions = ((num: number): PokeVersionType[] => {
-        const versions: PokeVersionType[] = Object.values(PokeVersions);
-        return versions.filter((_, i) => (num >> i) % 2 === 1);
-    })(Math.floor(Math.random() * ((1 << 10) - 1)) + 1);
+export function createMockCodeData(num: number): CodeData {
+  // const randomVersion = (): PokeVersionType => {
+  //   const versions: PokeVersionType[] = Object.values(PokeVersions);
+  //   return versions[Math.floor(Math.random() * versions.length)];
+  // };
 
-    return {
-        id: `mock-id-${num}`,
-        icon: "🤡",
-        title: `セレクトバグ修正セレクトバグ修正セレクトバグ修正-${num}`,
-        date: new Date(),
-        tags: ["ツール", "ゲーム", "攻略", "バグ", "裏技", "便利"],
-        detail: "HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。",
-        description: `
+  const romVersions = ((num: number): PokeVersionType[] => {
+    const versions: PokeVersionType[] = Object.values(PokeVersions);
+    return versions.filter((_, i) => (num >> i) % 2 === 1);
+  })(Math.floor(Math.random() * ((1 << 10) - 1)) + 1);
+
+  return {
+    id: `mock-id-${num}`,
+    title: `🤡セレクトバグ修正セレクトバグ修正セレクトバグ修正-${num}`,
+    date: new Date().toString(),
+    tags: ["ツール", "ゲーム", "攻略", "バグ", "裏技", "便利"],
+    detail:
+      "HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。HRAMとマップスクリプトを併用して任意コード実行を行い、世界最大のバグであるセレクトバグを修正するコードです。コードによって何とかする頑張るよ。",
+    description: `
 # h1テスト  
 ## h2テスト
 ### h3テスト
@@ -92,33 +105,28 @@ aaa
 <!-- コメントのテスト -->
 
     `,
-        content: [
-            ...Array.from({ length: romVersions.length }).map((_, i) => ({
-                version: romVersions[i],
-                blocks: [
-                    ...Array.from({
-                        length: Math.floor(Math.random() * 3) + 1,
-                    }).map((_, j) => ({
-                        title: `コードブロック${j + 1}`,
-                        address: Math.floor(Math.random() * 0xffff)
-                            .toString(16)
-                            .toUpperCase()
-                            .padStart(4, "0"),
-                        code: Array.from({
-                            length: Math.floor(Math.random() * 20) + 10,
-                        })
-                            .map(() =>
-                                Math.random()
-                                    .toString(16)
-                                    .slice(2, 4)
-                                    .toUpperCase()
-                            )
-                            .join(""),
-                    })),
-                ],
-            })),
+    content: [
+      ...Array.from({ length: romVersions.length }).map((_, i) => ({
+        version: romVersions[i],
+        blocks: [
+          ...Array.from({
+            length: Math.floor(Math.random() * 3) + 1,
+          }).map((_, j) => ({
+            title: `コードブロック${j + 1}`,
+            address: Math.floor(Math.random() * 0xffff)
+              .toString(16)
+              .toUpperCase()
+              .padStart(4, "0"),
+            code: Array.from({
+              length: Math.floor(Math.random() * 20) + 10,
+            })
+              .map(() => Math.random().toString(16).slice(2, 4).toUpperCase())
+              .join(""),
+          })),
         ],
-    };
+      })),
+    ],
+  };
 }
 
 // content: [...Array(Math.floor(Math.random() * 5) + 1)].map((_, i) => ({
