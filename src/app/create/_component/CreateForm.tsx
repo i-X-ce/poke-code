@@ -1,6 +1,4 @@
 "use client";
-import CodeContentView from "@/app/_components/CodeContentView";
-import VersionChip from "@/app/_components/VersionChip";
 import {
   CodeBlock,
   CodeContent,
@@ -9,25 +7,10 @@ import {
 } from "@/lib/model/CodeDataModel";
 import { PokeVersions, PokeVersionType } from "@/lib/model/PokeVersion";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Add, Delete, InsertEmoticon } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Chip,
-  IconButton,
-  Popover,
-  PopoverProps,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import React from "react";
-import {
-  Control,
-  Controller,
-  useFieldArray,
-  useForm,
-  UseFormRegister,
-} from "react-hook-form";
+import { Controller, FieldErrors, useForm } from "react-hook-form";
+import CodeContentEditor from "./CodeContentEditor";
 
 const CODE_DATA_LABELS: { [K in keyof CodeData]: string } = {
   id: "ID",
@@ -37,11 +20,6 @@ const CODE_DATA_LABELS: { [K in keyof CodeData]: string } = {
   detail: "概要",
   description: "説明(Markdown)",
   content: "コード内容",
-} as const;
-const CODE_BLOCK_LABELS: { [K in keyof CodeBlock]: string } = {
-  title: "タイトル",
-  address: "開始アドレス",
-  code: "コード",
 } as const;
 
 const CODE_DATA_PLACEHOLDERS: { [K in keyof CodeData]: string } = {
@@ -58,12 +36,6 @@ const CODE_DATA_PLACEHOLDERS: { [K in keyof CodeData]: string } = {
     `,
   content: "",
 } as const;
-
-const CODE_BLOCK_PLACEHOLDERS: { [K in keyof CodeBlock]: string } = {
-  title: "コードブロックのタイトル",
-  address: "DA00",
-  code: "// ここにコードを記述します。\n00 01 02 03 04 05 06 07\n08 09 0A 0B 0C 0D 0E 0F",
-};
 
 const INIT_SELECTED_VERSION = PokeVersions.G1;
 const INIT_CODE_BLOCK: CodeBlock = {
@@ -160,128 +132,11 @@ function CreateForm() {
         name="content"
         control={control}
         render={({ field }) => (
-          <>
-            <CodeContentView
-              // key={selectedVersion}
-              content={field.value}
-              mode="edit"
-              selectedVersion={selectedVersion}
-              onChangeVersion={(_, v) => setSelectedVersion(v)}>
-              {field.value
-                .find((c) => c.version === selectedVersion)
-                ?.blocks.map((b, bi) => (
-                  <Stack
-                    key={`${selectedVersion}-${bi}`}
-                    position={"relative"}
-                    gap={2}
-                    p={2}
-                    borderRadius={1}
-                    sx={{
-                      border: (theme) => `1px solid ${theme.palette.divider}`,
-                    }}>
-                    <Stack direction={"row"} gap={2}>
-                      <TextField
-                        value={b.title}
-                        label={CODE_BLOCK_LABELS.title}
-                        placeholder={CODE_BLOCK_PLACEHOLDERS.title}
-                        slotProps={{ inputLabel: { shrink: true } }}
-                        onChange={(e) => {
-                          const newBlocks = [
-                            ...field.value.find(
-                              (c) => c.version === selectedVersion,
-                            )!.blocks,
-                          ];
-                          newBlocks[bi] = {
-                            ...newBlocks[bi],
-                            title: e.target.value,
-                          };
-                          const newContent = field.value.map((c) =>
-                            c.version === selectedVersion
-                              ? { ...c, blocks: newBlocks }
-                              : c,
-                          );
-                          field.onChange(newContent);
-                        }}
-                      />
-                      <TextField
-                        value={b.address}
-                        label={CODE_BLOCK_LABELS.address}
-                        placeholder={CODE_BLOCK_PLACEHOLDERS.address}
-                        slotProps={{ inputLabel: { shrink: true } }}
-                        onChange={(e) => {
-                          const newBlocks = [
-                            ...field.value.find(
-                              (c) => c.version === selectedVersion,
-                            )!.blocks,
-                          ];
-                          newBlocks[bi] = {
-                            ...newBlocks[bi],
-                            address: e.target.value,
-                          };
-                          const newContent = field.value.map((c) =>
-                            c.version === selectedVersion
-                              ? { ...c, blocks: newBlocks }
-                              : c,
-                          );
-                          field.onChange(newContent);
-                        }}
-                      />
-                    </Stack>
-                    <TextField
-                      value={b.code}
-                      label={CODE_BLOCK_LABELS.code}
-                      placeholder={CODE_BLOCK_PLACEHOLDERS.code}
-                      slotProps={{ inputLabel: { shrink: true } }}
-                      fullWidth
-                      multiline
-                      minRows={4}
-                    />
-                    <Box position={"absolute"} top={0} right={0} p={2}>
-                      <IconButton
-                        color="error"
-                        onClick={() => {
-                          const newBlocks = field.value
-                            .find((c) => c.version === selectedVersion)!
-                            .blocks.filter((_, i) => i !== bi);
-                          const newContent = field.value.map((c) =>
-                            c.version === selectedVersion
-                              ? { ...c, blocks: newBlocks }
-                              : c,
-                          );
-                          field.onChange(newContent);
-                        }}>
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </Stack>
-                ))}
-              <Box display={"flex"} justifyContent={"center"} bottom={0}>
-                <Chip
-                  label="コードブロックを追加 +"
-                  variant="outlined"
-                  clickable
-                  color="primary"
-                  sx={{
-                    px: 2,
-                    backgroundColor: (theme) => theme.palette.background.paper,
-                  }}
-                  onClick={() => {
-                    const newBlocks = [
-                      ...field.value.find((c) => c.version === selectedVersion)!
-                        .blocks,
-                      INIT_CODE_BLOCK,
-                    ];
-                    const newContent = field.value.map((c) =>
-                      c.version === selectedVersion
-                        ? { ...c, blocks: newBlocks }
-                        : c,
-                    );
-                    field.onChange(newContent);
-                  }}
-                />
-              </Box>
-            </CodeContentView>
-          </>
+          <CodeContentEditor
+            value={field.value}
+            onChange={field.onChange}
+            errors={errors?.content as FieldErrors<CodeContent>[] | undefined}
+          />
         )}
       />
       <Button variant="contained" type="submit">
@@ -290,45 +145,5 @@ function CreateForm() {
     </Stack>
   );
 }
-
-const CodeBlockArrayField = ({
-  index,
-  control,
-  register,
-}: {
-  index: number;
-  control: Control<CodeData, any>;
-  register: UseFormRegister<CodeData>;
-}) => {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `content.${index}.blocks` as const,
-  });
-  return <></>;
-};
-
-const VersionsSelectorPopover = ({
-  enableVersions,
-  onClickVersion,
-  ...popoverProps
-}: {
-  enableVersions: PokeVersionType[];
-  onClickVersion?: (version: PokeVersionType) => void;
-} & PopoverProps) => {
-  return (
-    <Popover {...popoverProps}>
-      <Stack direction={"row"} gap={1} p={2} alignItems={"center"}>
-        {Object.values(PokeVersions).map((version) => (
-          <VersionChip
-            key={version}
-            version={version}
-            disable={!enableVersions.some((v) => v === version)}
-            onClick={() => onClickVersion?.(version)}
-          />
-        ))}
-      </Stack>
-    </Popover>
-  );
-};
 
 export default CreateForm;

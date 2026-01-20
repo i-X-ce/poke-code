@@ -18,20 +18,14 @@ function CodeContentView({
   content: CodeContent[];
   selectedVersion?: PokeVersionType;
   mode?: ModeType;
-  onChangeVersion?: (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    version: PokeVersionType,
-  ) => void;
+  onChangeVersion?: (version: PokeVersionType) => void;
   children?: React.ReactNode;
 }) {
   const [localSelectedVersion, localSetSelectedVersion] =
     React.useState<PokeVersionType>(content[0].version);
 
-  const handleChangeVersion = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    version: PokeVersionType,
-  ) => {
-    if (onChangeVersion) onChangeVersion(e, version);
+  const handleChangeVersion = (version: PokeVersionType) => {
+    if (onChangeVersion) onChangeVersion(version);
     else localSetSelectedVersion(version);
   };
 
@@ -52,7 +46,7 @@ function CodeContentView({
             onClick={
               c.version === selectedVersionView
                 ? undefined
-                : (e) => handleChangeVersion(e, c.version)
+                : () => handleChangeVersion(c.version)
             }
           />
         ))}
@@ -64,6 +58,7 @@ function CodeContentView({
         p={2}
         gap={2}
         sx={{
+          minHeight: 200,
           borderStartStartRadius: 0,
           boxShadow: (theme) =>
             theme.shadows[2]
