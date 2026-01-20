@@ -7,7 +7,7 @@ import { Add, Delete, InsertEmoticon } from '@mui/icons-material';
 import { Box, Button, Chip, IconButton, Popover, PopoverProps, Stack, TextField } from '@mui/material';
 import EmojiPicker from 'emoji-picker-react';
 import React from 'react'
-import { Controller, useForm } from 'react-hook-form';
+import { Control, Controller, useFieldArray, useForm, UseFormRegister } from 'react-hook-form';
 
 const CODE_DATA_LABELS: { [K in keyof CodeDataModel]: string } = {
     id: 'ID',
@@ -145,6 +145,12 @@ function CreateForm() {
                                                 label={CODE_BLOCK_LABELS.address}
                                                 placeholder={CODE_BLOCK_PLACEHOLDERS.address}
                                                 slotProps={{ inputLabel: { shrink: true } }}
+                                                onChange={(e) => {
+                                                    const newBlocks = [...field.value.find(c => c.version === selectedVersion)!.blocks];
+                                                    newBlocks[bi] = { ...newBlocks[bi], address: e.target.value };
+                                                    const newContent = field.value.map(c => c.version === selectedVersion ? { ...c, blocks: newBlocks } : c);
+                                                    field.onChange(newContent);
+                                                }}
                                             />
                                         </Stack>
                                         <TextField
@@ -199,6 +205,20 @@ function CreateForm() {
             />
             < Button variant='contained' type='submit' >作成</Button >
         </Stack >
+    )
+}
+
+const CodeBlockArrayField = ({ index, control, register }: {
+    index: number,
+    control: Control<CodeDataModel, any>,
+    register: UseFormRegister<CodeDataModel>
+}) => {
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: `content.${index}.blocks` as const
+    })
+    return (
+        <></>
     )
 }
 
