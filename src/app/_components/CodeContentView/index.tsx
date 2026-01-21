@@ -1,55 +1,91 @@
 "use client";
 import { CodeContent } from "@/lib/model/CodeDataModel";
-import { Stack } from "@mui/material";
+import { IconButton, Stack, Tooltip } from "@mui/material";
 import React from "react";
 import VersionTab from "./VersionTab";
 import CodeBlock from "./CodeBlock";
-import { PokeVersionType } from "@/lib/model/PokeVersion";
+import { Add } from "@mui/icons-material";
+import { sortVersions } from "@/lib/util/versionType";
 
 export type ModeType = "view" | "edit";
 
 function CodeContentView({
   content,
-  selectedVersion,
+  selectedId,
   mode,
-  onChangeVersion,
+  onChangeId,
+  onAdd,
   children,
 }: {
   content: CodeContent[];
-  selectedVersion?: PokeVersionType;
+  selectedId?: CodeContent["id"];
   mode?: ModeType;
-  onChangeVersion?: (version: PokeVersionType) => void;
+  onChangeId?: (id: CodeContent["id"]) => void;
+  onAdd?: () => void;
   children?: React.ReactNode;
 }) {
-  const [localSelectedVersion, localSetSelectedVersion] =
-    React.useState<PokeVersionType>(content[0].version);
+  const [localSelectedVersion, localSetSelectedVersion] = React.useState(
+    content[0].id,
+  );
 
-  const handleChangeVersion = (version: PokeVersionType) => {
-    if (onChangeVersion) onChangeVersion(version);
-    else localSetSelectedVersion(version);
+  const handleChangeVersion = (id: CodeContent["id"]) => {
+    if (onChangeId) onChangeId(id);
+    else localSetSelectedVersion(id);
   };
 
   // 見た目に使うためのバージョン変数
   // selectedVersionが渡されていればそれを優先、なければローカルステートを使う
-  const selectedVersionView = selectedVersion || localSelectedVersion;
+  const selectedIdView = selectedId || localSelectedVersion;
 
   return (
     <Stack position={"relative"} marginTop={10}>
       {/* バージョンタグ部 */}
-      <Stack direction={"row"} alignItems={"end"}>
-        {content.map((c, index) => (
-          <VersionTab
-            key={c.version}
-            version={c.version}
-            radius={{ L: index === 0, R: index === content.length - 1 }}
-            selected={c.version === selectedVersionView}
-            onClick={
-              c.version === selectedVersionView
-                ? undefined
-                : () => handleChangeVersion(c.version)
-            }
-          />
-        ))}
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <Stack direction={"row"} alignItems={"end"} gap={1}>
+          {content.map(({ id, versions }) => {
+            const isSelected = id === selectedIdView;
+            return (
+              <Stack direction={"row"} alignItems={"end"} key={id}>
+                {versions.length === 0 ? (
+                  <VersionTab
+                    version={"N"}
+                    radius={{ L: true, R: true }}
+                    selected={isSelected}
+                    onClick={
+                      id === selectedIdView
+                        ? undefined
+                        : () => handleChangeVersion(id)
+                    }
+                  />
+                ) : (
+                  sortVersions(versions).map((v, index) => (
+                    <VersionTab
+                      key={v}
+                      version={v}
+                      radius={{
+                        L: index === 0,
+                        R: index === versions.length - 1,
+                      }}
+                      selected={isSelected}
+                      onClick={
+                        v === selectedIdView
+                          ? undefined
+                          : () => handleChangeVersion(id)
+                      }
+                    />
+                  ))
+                )}
+              </Stack>
+            );
+          })}
+        </Stack>
+        {mode === "edit" && (
+          <Tooltip title="コードコンテンツを追加">
+            <IconButton onClick={onAdd}>
+              <Add />
+            </IconButton>
+          </Tooltip>
+        )}
       </Stack>
 
       {/* コードブロック部 */}
@@ -69,12 +105,9 @@ function CodeContentView({
         {mode === "edit"
           ? children
           : content
-              .find((c) => c.version === selectedVersionView)
+              .find((c) => c.id === selectedIdView)
               ?.blocks.map((block, index) => (
-                <CodeBlock
-                  key={`${selectedVersionView}-${index}`}
-                  block={block}
-                />
+                <CodeBlock key={`${selectedIdView}-${index}`} block={block} />
               ))}
       </Stack>
     </Stack>

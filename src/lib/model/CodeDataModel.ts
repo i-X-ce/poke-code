@@ -8,7 +8,8 @@ export const CodeBlockSchema = z.object({
 });
 
 export const CodeContentSchema = z.object({
-  version: z.enum(PokeVersions),
+  id: z.string(),
+  versions: z.enum(PokeVersions).array(),
   blocks: z.array(CodeBlockSchema),
 });
 
@@ -45,6 +46,16 @@ export function createMockCodeData(num: number): CodeData {
     const versions: PokeVersionType[] = Object.values(PokeVersions);
     return versions.filter((_, i) => (num >> i) % 2 === 1);
   })(Math.floor(Math.random() * ((1 << 10) - 1)) + 1);
+
+  const romVersionList = (() => {
+    let list: PokeVersionType[][] = [];
+    for (let i = 0; i < romVersions.length; i++) {
+      const len = Math.random() * (romVersions.length - i) + 1;
+      list = [...list, romVersions.slice(i, i + len)];
+      i += len - 1;
+    }
+    return list;
+  })();
 
   return {
     id: `mock-id-${num}`,
@@ -106,8 +117,9 @@ aaa
 
     `,
     content: [
-      ...Array.from({ length: romVersions.length }).map((_, i) => ({
-        version: romVersions[i],
+      ...romVersionList.map((v, i) => ({
+        id: `mock-content-id-${num}-${i}`,
+        versions: v,
         blocks: [
           ...Array.from({
             length: Math.floor(Math.random() * 3) + 1,

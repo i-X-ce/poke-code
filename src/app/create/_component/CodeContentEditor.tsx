@@ -1,44 +1,28 @@
+"use client";
 import CodeContentView from "@/app/_components/CodeContentView";
+import VersionChip from "@/app/_components/VersionChip";
 import { CodeBlock, CodeContent, CodeData } from "@/lib/model/CodeDataModel";
 import { PokeVersions, PokeVersionType } from "@/lib/model/PokeVersion";
-import { Delete } from "@mui/icons-material";
-import { Box, Chip, IconButton, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { sortVersions } from "@/lib/util/versionType";
+import { Delete, MoreVert } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+  Stack,
+  TextField,
+} from "@mui/material";
+import { MouseEventHandler, useState } from "react";
 import { FieldErrors } from "react-hook-form";
-
-const INIT_SELECTED_VERSION = PokeVersions.G1;
-const INIT_CODE_BLOCK: CodeBlock = {
-  title: "",
-  address: "DA00",
-  code: "",
-} as const;
-
-const INIT_CODE_CONTENT = (version: PokeVersionType): CodeContent =>
-  ({
-    version,
-    blocks: INIT_SELECTED_VERSION === version ? [INIT_CODE_BLOCK] : [],
-  }) as const;
-
-const fieldItems: {
-  [K in keyof CodeBlock]: {
-    label: string;
-    placeholder: string;
-  };
-} = {
-  title: {
-    label: "タイトル",
-    placeholder: "コードブロックのタイトル",
-  },
-  address: {
-    label: "開始アドレス",
-    placeholder: "DA00",
-  },
-  code: {
-    label: "コード",
-    placeholder:
-      "// ここにコードを記述します。\n00 01 02 03 04 05 06 07\n08 09 0A 0B 0C 0D 0E 0F",
-  },
-};
+import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
+import { fieldItems } from "../_util/fieldItems";
 
 interface CodeContentEditorProps {
   value: CodeData["content"];
@@ -51,23 +35,20 @@ function CodeContentEditor({
   onChange,
   errors,
 }: CodeContentEditorProps) {
-  const [selectedVersion, setSelectedVersion] = useState<PokeVersionType>(
-    INIT_SELECTED_VERSION,
-  );
+  const [selectedId, setSelectedVersion] = useState(value[0]?.id || "");
+  const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
 
-  const currentContentIndex = value.findIndex(
-    (c) => c.version === selectedVersion,
-  );
+  const currentContentIndex = value.findIndex((c) => c.id === selectedId);
   const currentContent = value[currentContentIndex];
   const currentBlocks = currentContent?.blocks || [];
 
   const currentErrors = errors?.[currentContentIndex];
 
-  const handleChangeVersion = (version: PokeVersionType) => {
-    setSelectedVersion(version);
+  const handleChangeId = (id: CodeContent["id"]) => {
+    setSelectedVersion(id);
   };
 
-  const updateCurrentVersionBlocks = (newBlocks: CodeBlock[]) => {
+  const updateCurrentContentBlocks = (newBlocks: CodeBlock[]) => {
     const newContent = [...value];
     if (currentContentIndex >= 0) {
       newContent[currentContentIndex] = {
@@ -79,68 +60,147 @@ function CodeContentEditor({
   };
 
   const handleAddBlock = () => {
-    updateCurrentVersionBlocks([...currentBlocks, INIT_CODE_BLOCK]);
+    updateCurrentContentBlocks([...currentBlocks, INIT_CODE_BLOCK]);
   };
 
   const handleRemoveBlock = (index: number) => {
-    updateCurrentVersionBlocks(currentBlocks.filter((_, i) => i !== index));
+    updateCurrentContentBlocks(currentBlocks.filter((_, i) => i !== index));
   };
 
   const handleChangeBlock = (index: number, field: Partial<CodeBlock>) => {
     const newBlocks = currentBlocks.map((b, i) =>
       i === index ? { ...b, ...field } : b,
     );
-    updateCurrentVersionBlocks(newBlocks);
+    updateCurrentContentBlocks(newBlocks);
+  };
+
+  const handleChangeVersion = (version: PokeVersionType) => {
+    const included = currentContent.versions.includes(version);
+
+    if (included) {
+      const newValue = [...value];
+      newValue[currentContentIndex] = {
+        ...currentContent,
+        versions: sortVersions(
+          currentContent.versions.filter((v) => v !== version),
+        ),
+      };
+      onChange(newValue);
+    } else {
+      const newValue = value.map((content, i) => ({
+        ...content,
+        versions:
+          currentContentIndex === i
+            ? [...currentContent.versions, version]
+            : sortVersions(content.versions.filter((v) => v !== version)),
+      }));
+      onChange(newValue);
+    }
+  };
+
+  const handleAddContent = () => {
+    const newContent = INIT_CODE_CONTENT(false);
+    onChange([...value, newContent]);
+    setSelectedVersion(newContent.id);
+  };
+
+  const handleRemoveContent = (id: CodeContent["id"]) => {
+    const newContents = value.filter((c) => c.id !== id);
+    onChange(newContents);
+    if (selectedId === id && newContents.length > 0) {
+      setSelectedVersion(newContents[0].id);
+    }
+  };
+
+  const handleOpenMore: MouseEventHandler = (e) => {
+    setMoreAnchorEl(e.currentTarget as HTMLElement);
+  };
+
+  const handleCloseMore = () => {
+    setMoreAnchorEl(null);
   };
 
   return (
     <CodeContentView
       content={value}
       mode="edit"
-      selectedVersion={selectedVersion}
-      onChangeVersion={handleChangeVersion}>
+      selectedId={selectedId}
+      onChangeId={handleChangeId}
+      onAdd={handleAddContent}>
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <Stack direction={"row"} alignItems={"center"} gap={1}>
+          {Object.values(PokeVersions).map((v) => (
+            <VersionChip
+              key={v}
+              version={v}
+              disabled={!currentContent.versions.includes(v)}
+              onClick={() => handleChangeVersion(v)}
+            />
+          ))}
+        </Stack>
+        <IconButton size="small" onClick={handleOpenMore}>
+          <MoreVert />
+        </IconButton>
+        <Popover
+          id={`${currentContent.id}-more-menu`}
+          anchorEl={moreAnchorEl}
+          open={Boolean(moreAnchorEl)}
+          onClose={handleCloseMore}>
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => handleRemoveContent(currentContent.id)}>
+                <ListItemIcon>
+                  <Delete />
+                </ListItemIcon>
+                <ListItemText primary="削除する" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Popover>
+      </Stack>
+
       {currentBlocks.map(({ title, address, code }, index) => {
         const blockErrors = currentErrors?.blocks?.[index];
         return (
           <Stack
-            key={`${selectedVersion}-${index}`}
+            key={`${selectedId}-${index}`}
             position={"relative"}
             gap={2}
-            p={2}
             borderRadius={1}
-            sx={{
-              border: (theme) => `1px solid ${theme.palette.divider}`,
-            }}>
+            >
             <Stack direction={"row"} gap={2}>
               <TextField
-                value={title}
-                label={fieldItems.title.label}
-                placeholder={fieldItems.title.placeholder}
-                error={!!blockErrors?.title}
-                helperText={blockErrors?.title?.message}
-                slotProps={{ inputLabel: { shrink: true } }}
-                autoComplete="off"
-                onChange={(e) =>
-                  handleChangeBlock(index, { title: e.target.value })
-                }
-              />
-              <TextField
                 value={address}
-                label={fieldItems.address.label}
-                placeholder={fieldItems.address.placeholder}
+                label={fieldItems.block.address.label}
+                placeholder={fieldItems.block.address.placeholder}
                 error={!!blockErrors?.address}
                 helperText={blockErrors?.address?.message}
                 slotProps={{ inputLabel: { shrink: true } }}
+                size="small"
                 autoComplete="off"
                 onChange={(e) =>
                   handleChangeBlock(index, { address: e.target.value })
                 }
               />
+              <TextField
+                value={title}
+                label={fieldItems.block.title.label}
+                placeholder={fieldItems.block.title.placeholder}
+                error={!!blockErrors?.title}
+                helperText={blockErrors?.title?.message}
+                slotProps={{ inputLabel: { shrink: true } }}
+                size="small"
+                autoComplete="off"
+                onChange={(e) =>
+                  handleChangeBlock(index, { title: e.target.value })
+                }
+              />
             </Stack>
             <TextField
               value={code}
-              label={fieldItems.code.label}
-              placeholder={fieldItems.code.placeholder}
+              label={fieldItems.block.code.label}
+              placeholder={fieldItems.block.code.placeholder}
               autoComplete="off"
               error={!!blockErrors?.code}
               helperText={blockErrors?.code?.message}
@@ -162,6 +222,7 @@ function CodeContentEditor({
           </Stack>
         );
       })}
+
       <Box display={"flex"} justifyContent={"center"} bottom={0}>
         <Chip
           label="コードブロックを追加 +"

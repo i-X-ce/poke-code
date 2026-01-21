@@ -5,49 +5,13 @@ import {
   CodeData,
   CodeDataSchema,
 } from "@/lib/model/CodeDataModel";
-import { PokeVersions, PokeVersionType } from "@/lib/model/PokeVersion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Stack, TextField } from "@mui/material";
 import React from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
-
-const CODE_DATA_LABELS: { [K in keyof CodeData]: string } = {
-  id: "ID",
-  title: "タイトル",
-  date: "作成日時",
-  tags: "タグ(カンマ区切り)",
-  detail: "概要",
-  description: "説明(Markdown)",
-  content: "コード内容",
-} as const;
-
-const CODE_DATA_PLACEHOLDERS: { [K in keyof CodeData]: string } = {
-  id: "",
-  title: "バイナリエディタ",
-  date: "",
-  tags: "ツール、便利",
-  detail:
-    "バイナリエディタを起動するコードです。メモリを自由に書き換えることが可能になります。",
-  description: `## 使い方
-1. なかよしバッヂを入手する
-2. そだてやに「てEん」を預け、すぐに引き出す
-3. なかよしバッヂを使用する
-    `,
-  content: "",
-} as const;
-
-const INIT_SELECTED_VERSION = PokeVersions.G1;
-const INIT_CODE_BLOCK: CodeBlock = {
-  title: "",
-  address: "DA00",
-  code: "",
-} as const;
-const INIT_CODE_CONTENT = (version: PokeVersionType): CodeContent =>
-  ({
-    version,
-    blocks: INIT_SELECTED_VERSION === version ? [INIT_CODE_BLOCK] : [],
-  }) as const;
+import { INIT_CODE_CONTENT } from "../_util/initValues";
+import { fieldItems } from "../_util/fieldItems";
 
 const Date2String = (date: Date): string => date.toISOString().split("T")[0];
 
@@ -62,13 +26,9 @@ function CreateForm() {
     mode: "onChange",
     defaultValues: {
       date: Date2String(new Date()),
-      content: Object.values(PokeVersions).map((v) => INIT_CODE_CONTENT(v)),
+      content: [INIT_CODE_CONTENT()],
     },
   });
-
-  const [selectedVersion, setSelectedVersion] = React.useState<PokeVersionType>(
-    INIT_SELECTED_VERSION,
-  );
 
   return (
     <Stack
@@ -79,8 +39,8 @@ function CreateForm() {
         <TextField
           variant="filled"
           fullWidth
-          label={CODE_DATA_LABELS.title}
-          placeholder={CODE_DATA_PLACEHOLDERS.title}
+          label={fieldItems.data.title.label}
+          placeholder={fieldItems.data.title.placeholder}
           slotProps={{ inputLabel: { shrink: true } }}
           {...register("title", { required: "タイトルは必須です" })}
           error={!!errors.title?.message}
@@ -92,7 +52,7 @@ function CreateForm() {
           <TextField
             fullWidth={false}
             type="date"
-            label={CODE_DATA_LABELS.date}
+            label={fieldItems.data.date.label}
             slotProps={{ inputLabel: { shrink: true } }}
             {...register("date", { required: "日時は必須です" })}
             error={!!errors.date?.message}
@@ -100,8 +60,8 @@ function CreateForm() {
           />
           <TextField
             sx={{ flex: 1 }}
-            label={CODE_DATA_LABELS.tags}
-            placeholder={CODE_DATA_PLACEHOLDERS.tags}
+            label={fieldItems.data.tags.label}
+            placeholder={fieldItems.data.tags.placeholder}
             slotProps={{ inputLabel: { shrink: true } }}
             {...register("tags")}
           />
@@ -109,8 +69,8 @@ function CreateForm() {
         <TextField
           multiline
           minRows={3}
-          label={CODE_DATA_LABELS.detail}
-          placeholder={CODE_DATA_PLACEHOLDERS.detail}
+          label={fieldItems.data.detail.label}
+          placeholder={fieldItems.data.detail.placeholder}
           slotProps={{ inputLabel: { shrink: true } }}
           {...register("detail", { required: "概要は必須です" })}
           error={!!errors.detail?.message}
@@ -120,8 +80,8 @@ function CreateForm() {
       <TextField
         multiline
         minRows={10}
-        label={CODE_DATA_LABELS.description}
-        placeholder={CODE_DATA_PLACEHOLDERS.description}
+        label={fieldItems.data.description.label}
+        placeholder={fieldItems.data.description.placeholder}
         slotProps={{ inputLabel: { shrink: true } }}
         {...register("description", { required: "説明は必須です" })}
         error={!!errors.description?.message}

@@ -10,7 +10,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useMemo } from "react";
 import VersionChip from "../../../_components/VersionChip";
 import CodeInfo from "@/app/_components/CodeInfo";
 import styles from "./styles.module.css";
@@ -24,13 +24,17 @@ interface CodeCardProps {
 }
 
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
+  const versions = useMemo(() => {
+    return data.content.map((c) => c.versions).flat();
+  }, [data.content]);
+
   return (
     <Card sx={{ position: "relative" }}>
       <CardActionArea LinkComponent={Link} href={PATH.DETAIL(data.id)}>
         <CardContent>
           <Typography variant="h6" gutterBottom className={styles.title}>
             {/* <Typography component={"span"} fontSize={"1.8rem"}>{data.icon}</Typography> */}
-            {data.icon} {data.title}
+            {data.title}
           </Typography>
           <Stack gap={1}>
             <CodeInfo data={data} />
@@ -43,7 +47,7 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
                 <VersionChip
                   key={version}
                   version={version}
-                  disable={!data.content.some((c) => c.version === version)}
+                  disabled={!versions.some((v) => v === version)}
                 />
               ))}
             </Stack>
