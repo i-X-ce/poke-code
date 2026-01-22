@@ -20,7 +20,28 @@ export const CodeDataSchema = z.object({
     .min(1, "タイトルは1文字以上入力してください")
     .max(100, "タイトルは100文字以内で入力してください"),
   date: z.iso.date(),
-  tags: z.array(z.string()),
+  tags: z
+    .preprocess(
+      (value) => {
+        if (typeof value === "string") {
+          const splitter = ",";
+          return value
+            .replaceAll(/[，、]/g, splitter)
+            .split(splitter)
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+        }
+        return value;
+      },
+      z.array(z.string()).max(10, "タグは最大10個までです"),
+    )
+    .refine((tags) => {
+      const uniqueTags = new Set(tags);
+      return uniqueTags.size === tags.length;
+    }, "タグは重複できません")
+    .refine((tags) => {
+      return tags.every((tag) => tag.length <= 20);
+    }, "各タグは20文字以内で入力してください"),
   detail: z
     .string()
     .min(1, "詳細は1文字以上入力してください")

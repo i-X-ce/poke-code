@@ -12,6 +12,10 @@ import { Controller, FieldErrors, useForm } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
 import { INIT_CODE_CONTENT } from "../_util/initValues";
 import { fieldItems } from "../_util/fieldItems";
+import z from "zod";
+
+type CodeDataInput = z.input<typeof CodeDataSchema>;
+type CodeDataOutput = z.output<typeof CodeDataSchema>;
 
 const Date2String = (date: Date): string => date.toISOString().split("T")[0];
 
@@ -21,7 +25,7 @@ function CreateForm() {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<CodeData, unknown>({
+  } = useForm<CodeDataInput>({
     resolver: zodResolver(CodeDataSchema),
     mode: "onChange",
     defaultValues: {
@@ -42,7 +46,7 @@ function CreateForm() {
           label={fieldItems.data.title.label}
           placeholder={fieldItems.data.title.placeholder}
           slotProps={{ inputLabel: { shrink: true } }}
-          {...register("title", { required: "タイトルは必須です" })}
+          {...register("title")}
           error={!!errors.title?.message}
           helperText={errors.title?.message}
         />
@@ -54,7 +58,7 @@ function CreateForm() {
             type="date"
             label={fieldItems.data.date.label}
             slotProps={{ inputLabel: { shrink: true } }}
-            {...register("date", { required: "日時は必須です" })}
+            {...register("date")}
             error={!!errors.date?.message}
             helperText={errors.date?.message}
           />
@@ -63,6 +67,8 @@ function CreateForm() {
             label={fieldItems.data.tags.label}
             placeholder={fieldItems.data.tags.placeholder}
             slotProps={{ inputLabel: { shrink: true } }}
+            error={!!errors.tags?.message}
+            helperText={errors.tags?.message}
             {...register("tags")}
           />
         </Stack>
