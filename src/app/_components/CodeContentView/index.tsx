@@ -9,21 +9,25 @@ import { sortVersions } from "@/lib/util/versionType";
 
 export type ModeType = "view" | "edit";
 
+interface CodeContentViewProps {
+  content: CodeContent[];
+  selectedId?: CodeContent["id"];
+  mode?: ModeType;
+  onChangeId?: (id: CodeContent["id"]) => void;
+  onAdd?: () => void;
+  addDisabled?: boolean;
+  children?: React.ReactNode;
+}
+
 function CodeContentView({
   content,
   selectedId,
   mode,
   onChangeId,
   onAdd,
+  addDisabled,
   children,
-}: {
-  content: CodeContent[];
-  selectedId?: CodeContent["id"];
-  mode?: ModeType;
-  onChangeId?: (id: CodeContent["id"]) => void;
-  onAdd?: () => void;
-  children?: React.ReactNode;
-}) {
+}: CodeContentViewProps) {
   const [localSelectedVersion, localSetSelectedVersion] = React.useState(
     content[0].id,
   );
@@ -81,7 +85,7 @@ function CodeContentView({
         </Stack>
         {mode === "edit" && (
           <Tooltip title="コードコンテンツを追加">
-            <IconButton onClick={onAdd}>
+            <IconButton onClick={onAdd} disabled={addDisabled}>
               <Add />
             </IconButton>
           </Tooltip>

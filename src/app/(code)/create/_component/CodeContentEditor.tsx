@@ -46,6 +46,7 @@ function CodeContentEditor({
   const currentBlocks = currentContent?.blocks || [];
 
   const currentErrors = errors?.[currentContentIndex];
+  const isMaxedContent = value.length >= MAX_CONTENT_COUNT;
 
   const handleChangeId = (id: CodeContent["id"]) => {
     setSelectedVersion(id);
@@ -102,7 +103,7 @@ function CodeContentEditor({
   };
 
   const handleAddContent = () => {
-    if (value.length >= MAX_CONTENT_COUNT) {
+    if (isMaxedContent) {
       enqueueSnackbar("これ以上コードコンテンツを追加できません", {
         variant: "error",
       });
@@ -144,7 +145,8 @@ function CodeContentEditor({
       mode="edit"
       selectedId={selectedId}
       onChangeId={handleChangeId}
-      onAdd={handleAddContent}>
+      onAdd={handleAddContent}
+      addDisabled={isMaxedContent}>
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Stack direction={"row"} alignItems={"center"} gap={1}>
           {Object.values(PokeVersions).map((v) => (
