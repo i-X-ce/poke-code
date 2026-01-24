@@ -50,7 +50,10 @@ export const CodeDataSchema = z.object({
     .string()
     .min(1, "説明は1文字以上入力してください")
     .max(10000, "説明は10000文字以内で入力してください"),
-  content: z.array(CodeContentSchema),
+  content: z
+    .array(CodeContentSchema)
+    .min(1, "コンテンツは一つ以上必要です")
+    .max(Object.keys(PokeVersions).length, "コンテンツの数が多すぎます"),
 });
 
 export type CodeBlock = z.infer<typeof CodeBlockSchema>;

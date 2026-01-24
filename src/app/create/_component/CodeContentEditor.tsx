@@ -7,7 +7,6 @@ import { sortVersions } from "@/lib/util/versionType";
 import { Delete, MoreVert } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Chip,
   IconButton,
   List,
@@ -23,6 +22,9 @@ import { MouseEventHandler, useState } from "react";
 import { FieldErrors } from "react-hook-form";
 import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
 import { fieldItems } from "../_util/fieldItems";
+import { useSnackbar } from "notistack";
+
+const MAX_CONTENT_COUNT = Object.keys(PokeVersions).length;
 
 interface CodeContentEditorProps {
   value: CodeData["content"];
@@ -37,6 +39,7 @@ function CodeContentEditor({
 }: CodeContentEditorProps) {
   const [selectedId, setSelectedVersion] = useState(value[0]?.id || "");
   const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const currentContentIndex = value.findIndex((c) => c.id === selectedId);
   const currentContent = value[currentContentIndex];
@@ -99,17 +102,32 @@ function CodeContentEditor({
   };
 
   const handleAddContent = () => {
+    if (value.length >= MAX_CONTENT_COUNT) {
+      enqueueSnackbar("これ以上コードコンテンツを追加できません", {
+        variant: "error",
+      });
+      return;
+    }
+
     const newContent = INIT_CODE_CONTENT(false);
     onChange([...value, newContent]);
     setSelectedVersion(newContent.id);
   };
 
   const handleRemoveContent = (id: CodeContent["id"]) => {
+    if (value.length <= 1) {
+      enqueueSnackbar("コードコンテンツは最低一つ必要です", {
+        variant: "error",
+      });
+      return;
+    }
+
     const newContents = value.filter((c) => c.id !== id);
     onChange(newContents);
     if (selectedId === id && newContents.length > 0) {
       setSelectedVersion(newContents[0].id);
     }
+    handleCloseMore();
   };
 
   const handleOpenMore: MouseEventHandler = (e) => {
@@ -167,8 +185,7 @@ function CodeContentEditor({
             key={`${selectedId}-${index}`}
             position={"relative"}
             gap={2}
-            borderRadius={1}
-            >
+            borderRadius={1}>
             <Stack direction={"row"} gap={2}>
               <TextField
                 value={address}
