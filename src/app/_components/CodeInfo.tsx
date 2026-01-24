@@ -4,19 +4,18 @@ import IconAndText from "./IconAndText";
 import { CalendarMonth, Straighten } from "@mui/icons-material";
 import { displayDate } from "@/lib/util/date";
 
-function CodeInfo({
-  data,
-  size = "medium",
-}: {
-  data: CodeData;
+interface CodeInfoProps {
+  date: CodeData["date"];
+  content: CodeData["content"];
   size?: "small" | "medium";
-}) {
+}
+
+function CodeInfo({ date, content, size = "medium" }: CodeInfoProps) {
   const codeLength = Math.max(
-    ...data.content.map((c) =>
+    ...content.map((c) =>
       c.blocks.reduce((acc, b) => acc + b.code.length / 2, 0),
     ),
   );
-  const { date } = data;
 
   return (
     <Stack direction={"row"} gap={2}>

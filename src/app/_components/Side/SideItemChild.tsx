@@ -1,11 +1,5 @@
 import { CodeData } from "@/lib/model/CodeDataModel";
-import {
-  Box,
-  CardActionArea,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { CardActionArea, IconButton, Stack, Typography } from "@mui/material";
 import CodeInfo from "../CodeInfo";
 import styles from "./styles.module.css";
 import { FavoriteBorder } from "@mui/icons-material";
@@ -13,6 +7,8 @@ import { PATH } from "@/lib/constant/paths";
 import Link from "next/link";
 
 function SideItemChild({ data }: { data: CodeData }) {
+  const { date, content } = data;
+
   return (
     <div className={styles.itemChild}>
       <CardActionArea LinkComponent={Link} href={PATH.DETAIL(data.id)}>
@@ -25,7 +21,7 @@ function SideItemChild({ data }: { data: CodeData }) {
             <Typography color="textPrimary" className={styles.itemChildTitle}>
               {data.title}
             </Typography>
-            <CodeInfo data={data} size="small" />
+            <CodeInfo date={date} content={content} size="small" />
           </Stack>
         </Stack>
       </CardActionArea>

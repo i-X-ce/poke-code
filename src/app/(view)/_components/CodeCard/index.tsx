@@ -27,6 +27,7 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
   const versions = useMemo(() => {
     return data.content.map((c) => c.versions).flat();
   }, [data.content]);
+  const { title, tags, date, detail, content } = data;
 
   return (
     <Card sx={{ position: "relative" }}>
@@ -34,13 +35,13 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
         <CardContent>
           <Typography variant="h6" gutterBottom className={styles.title}>
             {/* <Typography component={"span"} fontSize={"1.8rem"}>{data.icon}</Typography> */}
-            {data.title}
+            {title}
           </Typography>
           <Stack gap={1}>
-            <CodeInfo data={data} />
-            <CodeTags data={data} />
+            <CodeInfo date={date} content={content} />
+            <CodeTags tags={tags} />
             <Typography color="textSecondary" className={styles.detail}>
-              {data.detail}
+              {detail}
             </Typography>
             <Stack direction={"row"} spacing={1}>
               {Object.entries(PokeVersions).map(([_, version]) => (
