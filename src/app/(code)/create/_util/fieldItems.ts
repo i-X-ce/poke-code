@@ -14,6 +14,10 @@ export const fieldItems: {
       label: "ID",
       placeholder: "",
     },
+    isPublic: {
+      label: "公開設定",
+      placeholder: "",
+    },
     title: {
       label: "タイトル",
       placeholder: "バイナリエディタ",

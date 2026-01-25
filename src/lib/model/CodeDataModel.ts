@@ -15,6 +15,7 @@ export const CodeContentSchema = z.object({
 
 export const CodeDataSchema = z.object({
   id: z.string(),
+  isPublic: z.boolean(),
   title: z
     .string()
     .min(1, "タイトルは1文字以上入力してください")
@@ -86,6 +87,7 @@ export function createMockCodeData(num: number): CodeData {
 
   return {
     id: `mock-id-${num}`,
+    isPublic: Math.random() < 0.5,
     title: `🤡セレクトバグ修正セレクトバグ修正セレクトバグ修正-${num}`,
     date: new Date().toString(),
     tags: ["ツール", "ゲーム", "攻略", "バグ", "裏技", "便利"],

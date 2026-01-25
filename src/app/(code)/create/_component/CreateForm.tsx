@@ -4,7 +4,16 @@ import {
   CodeDataInput,
   CodeDataSchema,
 } from "@/lib/model/CodeDataModel";
-import { Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Chip,
+  FormControl,
+  FormControlLabel,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
@@ -27,52 +36,64 @@ function CreateForm({ formProps }: CreateFormProps) {
     <Stack
       component={"form"}
       id={CREATE_FORM_ID}
-      gap={4}
+      gap={2}
       onSubmit={handleSubmit((data) => console.log(data))}>
-      <Stack direction={"row"} alignItems={"center"} gap={2}>
-        <TextField
-          variant="filled"
-          fullWidth
-          label={fieldItems.data.title.label}
-          placeholder={fieldItems.data.title.placeholder}
-          slotProps={{ inputLabel: { shrink: true } }}
-          {...register("title")}
-          error={!!errors.title?.message}
-          helperText={errors.title?.message}
+      <Box sx={{ userSelect: "none" }}>
+        <Controller
+          control={control}
+          name="isPublic"
+          render={({ field }) => (
+            <FormControlLabel
+              label={
+                <Chip
+                  label={field.value ? "公開中" : "非公開"}
+                  color={field.value ? "primary" : "default"}
+                />
+              }
+              control={<Switch {...field} />}
+            />
+          )}
         />
-      </Stack>
-      <Stack gap={2}>
-        <Stack direction={"row"} gap={2} flexWrap={"wrap"}>
-          <TextField
-            fullWidth={false}
-            type="date"
-            label={fieldItems.data.date.label}
-            slotProps={{ inputLabel: { shrink: true } }}
-            {...register("date")}
-            error={!!errors.date?.message}
-            helperText={errors.date?.message}
-          />
-          <TextField
-            sx={{ flex: 1 }}
-            label={fieldItems.data.tags.label}
-            placeholder={fieldItems.data.tags.placeholder}
-            slotProps={{ inputLabel: { shrink: true } }}
-            error={!!errors.tags?.message}
-            helperText={errors.tags?.message}
-            {...register("tags")}
-          />
-        </Stack>
-        <TextField
-          multiline
-          minRows={3}
-          label={fieldItems.data.detail.label}
-          placeholder={fieldItems.data.detail.placeholder}
-          slotProps={{ inputLabel: { shrink: true } }}
-          {...register("detail", { required: "概要は必須です" })}
-          error={!!errors.detail?.message}
-          helperText={errors.detail?.message}
-        />
-      </Stack>
+      </Box>
+
+      <TextField
+        variant="filled"
+        fullWidth
+        label={fieldItems.data.title.label}
+        placeholder={fieldItems.data.title.placeholder}
+        slotProps={{ inputLabel: { shrink: true } }}
+        {...register("title")}
+        error={!!errors.title?.message}
+        helperText={errors.title?.message}
+      />
+
+      <TextField
+        type="date"
+        label={fieldItems.data.date.label}
+        slotProps={{ inputLabel: { shrink: true } }}
+        {...register("date")}
+        error={!!errors.date?.message}
+        helperText={errors.date?.message}
+      />
+      <TextField
+        label={fieldItems.data.tags.label}
+        placeholder={fieldItems.data.tags.placeholder}
+        slotProps={{ inputLabel: { shrink: true } }}
+        error={!!errors.tags?.message}
+        helperText={errors.tags?.message}
+        {...register("tags")}
+      />
+      <TextField
+        multiline
+        minRows={3}
+        label={fieldItems.data.detail.label}
+        placeholder={fieldItems.data.detail.placeholder}
+        slotProps={{ inputLabel: { shrink: true } }}
+        {...register("detail", { required: "概要は必須です" })}
+        error={!!errors.detail?.message}
+        helperText={errors.detail?.message}
+      />
+
       <TextField
         multiline
         minRows={10}

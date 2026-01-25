@@ -17,6 +17,7 @@ const Date2String = (date: Date): string => date.toISOString().split("T")[0];
 
 export const INIT_CODE_DATA: CodeData = {
   id: "init-id",
+  isPublic: true,
   title: "",
   date: Date2String(new Date()),
   tags: [] as string[],
