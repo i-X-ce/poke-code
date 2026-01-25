@@ -1,8 +1,5 @@
 "use client";
-import {
-  CodeContent,
-  CodeDataInput,
-} from "@/lib/model/CodeDataModel";
+import { CodeContent, CodeDataInput } from "@/lib/model/CodeDataModel";
 import {
   Box,
   Chip,
@@ -12,11 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
-import {
-  Controller,
-  FieldErrors,
-  UseFormReturn,
-} from "react-hook-form";
+import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
 import { fieldItems } from "../_util/fieldItems";
 import { CREATE_FORM_ID } from "../_consts/formId";
@@ -32,7 +25,6 @@ function CreateForm({ formProps }: CreateFormProps) {
     control,
   } = formProps;
 
-
   return (
     <Stack component={"form"} id={CREATE_FORM_ID} gap={2}>
       <Box sx={{ userSelect: "none" }}>
@@ -47,7 +39,7 @@ function CreateForm({ formProps }: CreateFormProps) {
                   color={field.value ? "primary" : "default"}
                 />
               }
-              control={<Switch {...field} />}
+              control={<Switch checked={field.value} {...field} />}
             />
           )}
         />
