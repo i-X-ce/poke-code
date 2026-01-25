@@ -8,6 +8,7 @@ import CommonSection from "./_components/CommonSection";
 import styles from "./layout.module.css";
 import CommonFooter from "./_components/CommonFooter";
 import SnackbarProviderWrapper from "./_components/SnackbarProviderWrapper";
+import DialogController from "./_components/DialogController";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -33,6 +34,7 @@ export default function RootLayout({
                 </div>
               </CommonSection>
               <CommonFooter />
+              <DialogController />
             </SnackbarProviderWrapper>
           </CustomThemeProvider>
         </AppRouterCacheProvider>

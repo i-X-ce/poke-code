@@ -60,6 +60,9 @@ export type CodeBlock = z.infer<typeof CodeBlockSchema>;
 export type CodeContent = z.infer<typeof CodeContentSchema>;
 export type CodeData = z.infer<typeof CodeDataSchema>;
 
+export type CodeDataInput = z.input<typeof CodeDataSchema>;
+export type CodeDataOutput = z.output<typeof CodeDataSchema>;
+
 export function createMockCodeData(num: number): CodeData {
   // const randomVersion = (): PokeVersionType => {
   //   const versions: PokeVersionType[] = Object.values(PokeVersions);

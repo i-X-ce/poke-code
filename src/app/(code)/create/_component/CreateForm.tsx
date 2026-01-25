@@ -1,42 +1,32 @@
 "use client";
 import {
-  CodeBlock,
   CodeContent,
-  CodeData,
+  CodeDataInput,
   CodeDataSchema,
 } from "@/lib/model/CodeDataModel";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Stack, TextField } from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import React from "react";
-import { Controller, FieldErrors, useForm } from "react-hook-form";
+import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
-import { INIT_CODE_CONTENT } from "../_util/initValues";
 import { fieldItems } from "../_util/fieldItems";
-import z from "zod";
+import { CREATE_FORM_ID } from "../_consts/formId";
 
-type CodeDataInput = z.input<typeof CodeDataSchema>;
-type CodeDataOutput = z.output<typeof CodeDataSchema>;
+interface CreateFormProps {
+  formProps: UseFormReturn<CodeDataInput>;
+}
 
-const Date2String = (date: Date): string => date.toISOString().split("T")[0];
-
-function CreateForm() {
+function CreateForm({ formProps }: CreateFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<CodeDataInput>({
-    resolver: zodResolver(CodeDataSchema),
-    mode: "onChange",
-    defaultValues: {
-      date: Date2String(new Date()),
-      content: [INIT_CODE_CONTENT()],
-    },
-  });
+  } = formProps;
 
   return (
     <Stack
       component={"form"}
+      id={CREATE_FORM_ID}
       gap={4}
       onSubmit={handleSubmit((data) => console.log(data))}>
       <Stack direction={"row"} alignItems={"center"} gap={2}>
@@ -105,9 +95,6 @@ function CreateForm() {
           />
         )}
       />
-      <Button variant="contained" type="submit">
-        作成
-      </Button>
     </Stack>
   );
 }
