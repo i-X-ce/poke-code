@@ -1,7 +1,11 @@
 "use client";
 import CodeContentView from "@/app/_components/CodeContentView";
 import VersionChip from "@/app/_components/VersionChip";
-import { CodeBlock, CodeContent, CodeData } from "@/lib/model/CodeDataModel";
+import {
+  CodeBlock,
+  CodeContent,
+  CodeDataInput,
+} from "@/lib/model/CodeDataModel";
 import { PokeVersions, PokeVersionType } from "@/lib/model/PokeVersion";
 import { sortVersions } from "@/lib/util/versionType";
 import { Delete, MoreVert } from "@mui/icons-material";
@@ -19,7 +23,10 @@ import {
   TextField,
 } from "@mui/material";
 import { MouseEventHandler, useState } from "react";
-import { FieldErrors } from "react-hook-form";
+import {
+  ControllerRenderProps,
+  FieldErrors,
+} from "react-hook-form";
 import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
 import { fieldItems } from "../_util/fieldItems";
 import { useSnackbar } from "notistack";
@@ -27,14 +34,12 @@ import { useSnackbar } from "notistack";
 const MAX_CONTENT_COUNT = Object.keys(PokeVersions).length;
 
 interface CodeContentEditorProps {
-  value: CodeData["content"];
-  onChange: (newValue: CodeData["content"]) => void;
+  fieldProps: ControllerRenderProps<CodeDataInput, "content">;
   errors?: FieldErrors<CodeContent>[];
 }
 
 function CodeContentEditor({
-  value,
-  onChange,
+  fieldProps: { value, onChange },
   errors,
 }: CodeContentEditorProps) {
   const [selectedId, setSelectedVersion] = useState(value[0]?.id || "");

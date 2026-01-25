@@ -2,20 +2,21 @@
 import {
   CodeContent,
   CodeDataInput,
-  CodeDataSchema,
 } from "@/lib/model/CodeDataModel";
 import {
   Box,
   Chip,
-  FormControl,
   FormControlLabel,
   Stack,
   Switch,
   TextField,
-  Typography,
 } from "@mui/material";
 import React from "react";
-import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
+import {
+  Controller,
+  FieldErrors,
+  UseFormReturn,
+} from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
 import { fieldItems } from "../_util/fieldItems";
 import { CREATE_FORM_ID } from "../_consts/formId";
@@ -27,17 +28,13 @@ interface CreateFormProps {
 function CreateForm({ formProps }: CreateFormProps) {
   const {
     register,
-    handleSubmit,
     formState: { errors },
     control,
   } = formProps;
 
+
   return (
-    <Stack
-      component={"form"}
-      id={CREATE_FORM_ID}
-      gap={2}
-      onSubmit={handleSubmit((data) => console.log(data))}>
+    <Stack component={"form"} id={CREATE_FORM_ID} gap={2}>
       <Box sx={{ userSelect: "none" }}>
         <Controller
           control={control}
@@ -115,8 +112,7 @@ function CreateForm({ formProps }: CreateFormProps) {
         control={control}
         render={({ field }) => (
           <CodeContentEditor
-            value={field.value}
-            onChange={field.onChange}
+            fieldProps={field}
             errors={errors?.content as FieldErrors<CodeContent>[] | undefined}
           />
         )}
