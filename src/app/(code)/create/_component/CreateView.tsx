@@ -91,12 +91,13 @@ function CreateView() {
   // ショートカットキーの登録
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         // Ctrl+S or Cmd+S で保存
+        e.preventDefault();
         onSave();
       } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
         // Ctrl+Q or Cmd+Q で表示切替
+        e.preventDefault();
         onToggleViewMode();
       }
     };
