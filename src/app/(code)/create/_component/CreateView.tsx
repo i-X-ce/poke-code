@@ -61,7 +61,7 @@ function CreateView() {
         bottom={16}
         display={"flex"}
         justifyContent={"end"}>
-        <ButtonGroup size="large" sx={{ backgroundColor: "Background" }}>
+        <ButtonGroup size="large" sx={{ backgroundColor: "background.paper" }}>
           <Button
             onClick={onToggleViewMode}
             startIcon={
@@ -79,7 +79,7 @@ function CreateView() {
             type="submit"
             startIcon={<Public />}
             variant="contained">
-            公開する
+            投稿する
           </Button>
         </ButtonGroup>
       </Box>

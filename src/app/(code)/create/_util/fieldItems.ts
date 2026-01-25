@@ -36,7 +36,7 @@ export const fieldItems: {
         "バイナリエディタを起動するコードです。メモリを自由に書き換えることが可能になります。",
     },
     description: {
-      label: "説明(Markdown)",
+      label: "説明・使い方 (Markdown)",
       placeholder: `## 使い方
 1. なかよしバッヂを入手する
 2. そだてやに「てEん」を預け、すぐに引き出す
