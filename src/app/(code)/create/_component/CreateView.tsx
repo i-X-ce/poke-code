@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, ButtonGroup, Stack } from "@mui/material";
+import { Box, Button, ButtonGroup } from "@mui/material";
 import CreateForm from "./CreateForm";
 import { Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
 import {
@@ -15,6 +15,8 @@ import { CREATE_FORM_ID } from "../_consts/formId";
 import { useMemo } from "react";
 import { useDialog } from "@/app/_hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
+import { createCode, saveCodeData } from "../../actions";
+import { useSnackbar } from "notistack";
 
 function CreateView() {
   const formProps = useForm<CodeDataInput>({
@@ -24,25 +26,60 @@ function CreateView() {
   });
   const { viewMode, toggleViewMode } = useCreateViewMode();
   const { openDialog } = useDialog();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const { watch, handleSubmit } = formProps;
+  const {
+    watch,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formProps;
   const values = watch();
   const parsed = useMemo(() => CodeDataSchema.safeParse(values), [values]);
   const parsedData = parsed.success ? parsed.data : null;
 
-  const onSubmit = (data: CodeDataInput) => {
-    console.log("Submitted Data:", data);
+  const checkSubmitErrors = (data = values) => {
+    const parsed = CodeDataSchema.safeParse(data);
+    if (parsed.success) return;
+
+    const { issues } = parsed.error;
+    const errorMessages = issues.map((issue) => issue.message);
+    openDialog(<ErrorDialogContent errors={errorMessages} />);
+    throw new Error("データに不備があります");
+  };
+
+  const onSubmit = async (data: CodeDataInput) => {
+    try {
+      checkSubmitErrors(data);
+
+      const id = await createCode(data);
+      enqueueSnackbar(`コードデータを投稿しました: ${id}`, {
+        variant: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar((error as Error).message, { variant: "error" });
+      throw error;
+    }
+  };
+
+  const onSave = async () => {
+    try {
+      const data = watch();
+      await saveCodeData(data);
+
+      enqueueSnackbar("コードデータを一時保存しました", { variant: "success" });
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar((error as Error).message, { variant: "error" });
+      throw error;
+    }
   };
 
   const onToggleViewMode = () => {
-    if (!parsed.success) {
-      const { issues } = parsed.error;
-      const errorMessages = issues.map((issue) => issue.message);
-      openDialog(<ErrorDialogContent errors={errorMessages} />);
-      return;
-    }
-
-    toggleViewMode();
+    try {
+      checkSubmitErrors();
+      toggleViewMode();
+    } catch {}
   };
 
   return (
@@ -70,15 +107,20 @@ function CreateView() {
             variant="outlined">
             {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
           </Button>
-          <Button startIcon={<Save />} variant="outlined">
+          <Button
+            onClick={onSave}
+            startIcon={<Save />}
+            variant="outlined"
+            loading={isSubmitting}>
             一時保存
           </Button>
           <Button
             form={CREATE_FORM_ID}
-            onSubmit={handleSubmit(onSubmit)}
             type="submit"
             startIcon={<Public />}
-            variant="contained">
+            variant="contained"
+            onClick={handleSubmit(onSubmit)}
+            loading={isSubmitting}>
             投稿する
           </Button>
         </ButtonGroup>
