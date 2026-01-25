@@ -12,11 +12,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { CREATE_FORM_ID } from "../_consts/formId";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useDialog } from "@/app/_hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { createCode, saveCodeData } from "../../actions";
 import { useSnackbar } from "notistack";
+import { useLoading } from "@/lib/hooks/useLoading";
 
 function CreateView() {
   const formProps = useForm<CodeDataInput>({
@@ -27,6 +28,7 @@ function CreateView() {
   const { viewMode, toggleViewMode } = useCreateViewMode();
   const { openDialog } = useDialog();
   const { enqueueSnackbar } = useSnackbar();
+  const { isLoading: isSaving, startLoading: startSaving } = useLoading();
 
   const {
     watch,
@@ -63,16 +65,20 @@ function CreateView() {
   };
 
   const onSave = async () => {
-    try {
-      const data = watch();
-      await saveCodeData(data);
+    startSaving(async () => {
+      try {
+        const data = watch();
+        await saveCodeData(data);
 
-      enqueueSnackbar("コードデータを一時保存しました", { variant: "success" });
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar((error as Error).message, { variant: "error" });
-      throw error;
-    }
+        enqueueSnackbar("コードデータを一時保存しました", {
+          variant: "success",
+        });
+      } catch (error) {
+        console.error(error);
+        enqueueSnackbar((error as Error).message, { variant: "error" });
+        throw error;
+      }
+    });
   };
 
   const onToggleViewMode = () => {
@@ -81,6 +87,22 @@ function CreateView() {
       toggleViewMode();
     } catch {}
   };
+
+  // ショートカットキーの登録
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        // Ctrl+S or Cmd+S で保存
+        onSave();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
+        // Ctrl+Q or Cmd+Q で表示切替
+        onToggleViewMode();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onSave, onToggleViewMode]);
 
   return (
     <Box flex={1}>
@@ -111,7 +133,7 @@ function CreateView() {
             onClick={onSave}
             startIcon={<Save />}
             variant="outlined"
-            loading={isSubmitting}>
+            loading={isSaving}>
             一時保存
           </Button>
           <Button
