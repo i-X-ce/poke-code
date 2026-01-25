@@ -6,7 +6,7 @@ import { CodeData } from "@/lib/model/CodeDataModel";
 import { Typography, Stack, Divider } from "@mui/material";
 
 interface CodeViewProps {
-  data: CodeData;
+  data: Partial<CodeData>;
 }
 
 function CodeView({ data }: CodeViewProps) {

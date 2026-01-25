@@ -10,7 +10,7 @@ import { sortVersions } from "@/lib/util/versionType";
 export type ModeType = "view" | "edit";
 
 interface CodeContentViewProps {
-  content: CodeContent[];
+  content?: CodeContent[];
   selectedId?: CodeContent["id"];
   mode?: ModeType;
   onChangeId?: (id: CodeContent["id"]) => void;
@@ -29,7 +29,7 @@ function CodeContentView({
   children,
 }: CodeContentViewProps) {
   const [localSelectedVersion, localSetSelectedVersion] = React.useState(
-    content[0].id,
+    content && content[0].id,
   );
 
   const handleChangeVersion = (id: CodeContent["id"]) => {
@@ -46,42 +46,43 @@ function CodeContentView({
       {/* バージョンタグ部 */}
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Stack direction={"row"} alignItems={"end"} gap={1}>
-          {content.map(({ id, versions }) => {
-            const isSelected = id === selectedIdView;
-            return (
-              <Stack direction={"row"} alignItems={"end"} key={id}>
-                {versions.length === 0 ? (
-                  <VersionTab
-                    version={"N"}
-                    radius={{ L: true, R: true }}
-                    selected={isSelected}
-                    onClick={
-                      id === selectedIdView
-                        ? undefined
-                        : () => handleChangeVersion(id)
-                    }
-                  />
-                ) : (
-                  sortVersions(versions).map((v, index) => (
+          {content &&
+            content.map(({ id, versions }) => {
+              const isSelected = id === selectedIdView;
+              return (
+                <Stack direction={"row"} alignItems={"end"} key={id}>
+                  {versions.length === 0 ? (
                     <VersionTab
-                      key={v}
-                      version={v}
-                      radius={{
-                        L: index === 0,
-                        R: index === versions.length - 1,
-                      }}
+                      version={"N"}
+                      radius={{ L: true, R: true }}
                       selected={isSelected}
                       onClick={
-                        v === selectedIdView
+                        id === selectedIdView
                           ? undefined
                           : () => handleChangeVersion(id)
                       }
                     />
-                  ))
-                )}
-              </Stack>
-            );
-          })}
+                  ) : (
+                    sortVersions(versions).map((v, index) => (
+                      <VersionTab
+                        key={v}
+                        version={v}
+                        radius={{
+                          L: index === 0,
+                          R: index === versions.length - 1,
+                        }}
+                        selected={isSelected}
+                        onClick={
+                          v === selectedIdView
+                            ? undefined
+                            : () => handleChangeVersion(id)
+                        }
+                      />
+                    ))
+                  )}
+                </Stack>
+              );
+            })}
         </Stack>
         {mode === "edit" && (
           <Tooltip title="コードコンテンツを追加">
@@ -108,7 +109,8 @@ function CodeContentView({
         }}>
         {mode === "edit"
           ? children
-          : content
+          : content &&
+            content
               .find((c) => c.id === selectedIdView)
               ?.blocks.map((block, index) => (
                 <CodeBlock key={`${selectedIdView}-${index}`} block={block} />
