@@ -119,7 +119,12 @@ function CreateView() {
             type="submit"
             startIcon={<Public />}
             variant="contained"
-            onClick={handleSubmit(onSubmit)}
+            onClick={(e) => {
+              // CodeContentEditorの方のエラーが見えない場合があるので、ここで明示的にエラー内容を出力する
+              // handleSubmitだと入力内容に問題があってもonSubmitが呼ばれないため、ここでチェックする
+              handleSubmit(onSubmit)(e);
+              checkSubmitErrors();
+            }}
             loading={isSubmitting}>
             投稿する
           </Button>
