@@ -6,6 +6,7 @@ import fs from "fs/promises";
 import { PATH } from "@/lib/constant/paths";
 import { FILE_NAME } from "@/lib/constant/fileName";
 import { ActionResult } from "@/lib/model/ActionResult";
+import { updateHeadersFile } from "@/lib/actions/headers";
 
 export async function createCode(
   data: CodeDataInput,
@@ -16,9 +17,11 @@ export async function createCode(
     const { description, ...dataWithoutDescription } = parsed;
     const dataToSave = { ...dataWithoutDescription, id };
 
+    // ディレクトリ作成
     const dirPath = path.join(process.cwd(), PATH.server.CODE_DATA(id));
     await fs.mkdir(dirPath, { recursive: true });
 
+    // ファイル保存
     const codeDataFilePath = path.join(dirPath, FILE_NAME.CODE_DATA);
     await fs.writeFile(
       codeDataFilePath,
@@ -26,8 +29,11 @@ export async function createCode(
       "utf-8",
     );
 
+    // 説明文保存(Markdown)
     const descriptionFilePath = path.join(dirPath, FILE_NAME.DESCRIPTION_MD);
     await fs.writeFile(descriptionFilePath, description, "utf-8");
+
+    await updateHeadersFile();
 
     return {
       ok: true,
@@ -91,7 +97,7 @@ export async function loadTemporaryCodeData(): Promise<
     const dataJson = await fs.readFile(tempFilePath, "utf-8");
     const description = await fs.readFile(descriptionFilePath, "utf-8");
     const data = JSON.parse(dataJson);
-    const codeData = { ...data, description } as CodeDataInput;
+    const codeData = CodeDataSchema.parse({ ...data, description });
 
     return {
       ok: true,

@@ -49,6 +49,10 @@ export const CodeDataHeaderSchema = z.object({
     .max(500, "概要は5000文字以内で入力してください"),
 });
 
+export const CodeDataHeaderJsonSchema = CodeDataHeaderSchema.extend({
+  versions: z.enum(PokeVersions).array(),
+});
+
 export const CodeDataSchema = z.object({
   ...CodeDataHeaderSchema.shape,
   description: z
@@ -66,7 +70,7 @@ export type CodeContent = z.infer<typeof CodeContentSchema>;
 export type CodeDataHeader = z.infer<typeof CodeDataHeaderSchema>;
 export type CodeData = z.infer<typeof CodeDataSchema>;
 
-export type CodeDataHeaderJson = CodeDataHeader & { tags: PokeVersionType[] }; // jsonに保存するメタデータ バージョングループを保持せず、タグ一覧のみ保持する
+export type CodeDataHeaderJson = z.infer<typeof CodeDataHeaderJsonSchema>; // jsonに保存するメタデータ バージョングループを保持せず、タグ一覧のみ保持する
 
 export type CodeDataInput = z.input<typeof CodeDataSchema>;
 export type CodeDataOutput = z.output<typeof CodeDataSchema>;

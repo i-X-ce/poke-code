@@ -5,7 +5,8 @@ export const PATH = {
   EDIT: (id: string | number) => `/edit/${id}`,
 
   server: {
-    CODE_DATA: (id: string) => `/public/data/codes/${id}`,
+    CODE_DATA: (id: string = "") => `/public/data/codes/${id}`,
     TEMPORARY_CODE_DATA: `/public/data/temporary/`,
+    HEADERS: `/public/data/headers.json`, // コードデータのヘッダー一覧ファイルパス
   },
-};
+} as const;
