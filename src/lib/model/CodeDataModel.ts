@@ -13,7 +13,7 @@ export const CodeContentSchema = z.object({
   blocks: z.array(CodeBlockSchema),
 });
 
-export const CodeDataSchema = z.object({
+export const CodeDataHeaderSchema = z.object({
   id: z.string(),
   isPublic: z.boolean(),
   title: z
@@ -47,6 +47,10 @@ export const CodeDataSchema = z.object({
     .string()
     .min(1, "概要は1文字以上入力してください")
     .max(500, "概要は5000文字以内で入力してください"),
+});
+
+export const CodeDataSchema = z.object({
+  ...CodeDataHeaderSchema.shape,
   description: z
     .string()
     .min(1, "説明は1文字以上入力してください")
@@ -59,7 +63,10 @@ export const CodeDataSchema = z.object({
 
 export type CodeBlock = z.infer<typeof CodeBlockSchema>;
 export type CodeContent = z.infer<typeof CodeContentSchema>;
+export type CodeDataHeader = z.infer<typeof CodeDataHeaderSchema>;
 export type CodeData = z.infer<typeof CodeDataSchema>;
+
+export type CodeDataHeaderJson = CodeDataHeader & { tags: PokeVersionType[] }; // jsonに保存するメタデータ バージョングループを保持せず、タグ一覧のみ保持する
 
 export type CodeDataInput = z.input<typeof CodeDataSchema>;
 export type CodeDataOutput = z.output<typeof CodeDataSchema>;
