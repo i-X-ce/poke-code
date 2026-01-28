@@ -7,7 +7,9 @@ import { PATH } from "@/lib/constant/paths";
 import { FILE_NAME } from "@/lib/constant/fileName";
 import { ActionResult } from "@/lib/model/ActionResult";
 
-export async function createCode(data: CodeDataInput) {
+export async function createCode(
+  data: CodeDataInput,
+): Promise<ActionResult<string>> {
   try {
     const parsed = CodeDataSchema.parse(data);
     const id = crypto.randomUUID();
@@ -30,16 +32,16 @@ export async function createCode(data: CodeDataInput) {
     return {
       ok: true,
       data: id,
-    } satisfies ActionResult<string>;
+    };
   } catch (error) {
     return {
       ok: false,
       message: "コードデータの作成に失敗しました",
-    } satisfies ActionResult;
+    };
   }
 }
 
-export async function saveCodeData(data: CodeDataInput) {
+export async function saveCodeData(data: CodeDataInput): Promise<ActionResult> {
   try {
     const { description, ...dataWithoutDescription } = data;
     const dataToSave = { ...dataWithoutDescription };
@@ -62,16 +64,18 @@ export async function saveCodeData(data: CodeDataInput) {
       FILE_NAME.DESCRIPTION_MD,
     );
     await fs.writeFile(descriptionFilePath, description, "utf-8");
-    return { ok: true } satisfies ActionResult;
+    return { ok: true };
   } catch (error) {
     return {
       ok: false,
       message: "一時データの保存に失敗しました",
-    } satisfies ActionResult;
+    };
   }
 }
 
-export async function loadTemporaryCodeData() {
+export async function loadTemporaryCodeData(): Promise<
+  ActionResult<CodeDataInput>
+> {
   try {
     const tempDirPath = path.join(
       process.cwd(),
@@ -92,11 +96,11 @@ export async function loadTemporaryCodeData() {
     return {
       ok: true,
       data: codeData,
-    } satisfies ActionResult<CodeDataInput>;
+    };
   } catch (error) {
     return {
       ok: false,
       message: "一時データの読み込みに失敗しました",
-    } satisfies ActionResult;
+    };
   }
 }
