@@ -5,6 +5,7 @@ import path from "path";
 import fs from "fs/promises";
 import { PATH } from "@/lib/constant/paths";
 import { FILE_NAME } from "@/lib/constant/fileName";
+import { ActionResult } from "@/lib/model/ActionResult";
 
 export async function createCode(data: CodeDataInput) {
   try {
@@ -26,9 +27,15 @@ export async function createCode(data: CodeDataInput) {
     const descriptionFilePath = path.join(dirPath, FILE_NAME.DESCRIPTION_MD);
     await fs.writeFile(descriptionFilePath, description, "utf-8");
 
-    return id;
+    return {
+      ok: true,
+      data: id,
+    } satisfies ActionResult<string>;
   } catch (error) {
-    throw new Error("データの保存に失敗しました");
+    return {
+      ok: false,
+      message: "コードデータの作成に失敗しました",
+    } satisfies ActionResult;
   }
 }
 
@@ -55,8 +62,41 @@ export async function saveCodeData(data: CodeDataInput) {
       FILE_NAME.DESCRIPTION_MD,
     );
     await fs.writeFile(descriptionFilePath, description, "utf-8");
-    return;
+    return { ok: true } satisfies ActionResult;
   } catch (error) {
-    throw new Error("一時データの保存に失敗しました");
+    return {
+      ok: false,
+      message: "一時データの保存に失敗しました",
+    } satisfies ActionResult;
+  }
+}
+
+export async function loadTemporaryCodeData() {
+  try {
+    const tempDirPath = path.join(
+      process.cwd(),
+      PATH.server.TEMPORARY_CODE_DATA,
+    );
+
+    const tempFilePath = path.join(tempDirPath, FILE_NAME.CODE_DATA);
+    const descriptionFilePath = path.join(
+      tempDirPath,
+      FILE_NAME.DESCRIPTION_MD,
+    );
+
+    const dataJson = await fs.readFile(tempFilePath, "utf-8");
+    const description = await fs.readFile(descriptionFilePath, "utf-8");
+    const data = JSON.parse(dataJson);
+    const codeData = { ...data, description } as CodeDataInput;
+
+    return {
+      ok: true,
+      data: codeData,
+    } satisfies ActionResult<CodeDataInput>;
+  } catch (error) {
+    return {
+      ok: false,
+      message: "一時データの読み込みに失敗しました",
+    } satisfies ActionResult;
   }
 }

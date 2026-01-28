@@ -19,11 +19,16 @@ import { createCode, saveCodeData } from "../../actions";
 import { useSnackbar } from "notistack";
 import { useLoading } from "@/lib/hooks/useLoading";
 
-function CreateView() {
+interface CreateViewProps {
+  initData?: Partial<CodeDataInput>;
+  errorMessage?: string;
+}
+
+function CreateView({ initData, errorMessage }: CreateViewProps) {
   const formProps = useForm<CodeDataInput>({
     resolver: zodResolver(CodeDataSchema),
     mode: "onChange",
-    defaultValues: INIT_CODE_DATA,
+    defaultValues: initData || INIT_CODE_DATA,
   });
   const { viewMode, toggleViewMode } = useCreateViewMode();
   const { openDialog } = useDialog();
@@ -53,7 +58,10 @@ function CreateView() {
     try {
       checkSubmitErrors(data);
 
-      const id = await createCode(data);
+      const { ok, data: id, message } = await createCode(data);
+      if (!ok) {
+        throw new Error(message || "コードデータの投稿に失敗しました");
+      }
       enqueueSnackbar(`コードデータを投稿しました: ${id}`, {
         variant: "success",
       });
@@ -68,7 +76,11 @@ function CreateView() {
     startSaving(async () => {
       try {
         const data = watch();
-        await saveCodeData(data);
+        const { ok, message } = await saveCodeData(data);
+
+        if (!ok) {
+          throw new Error(message || "コードデータの一時保存に失敗しました");
+        }
 
         enqueueSnackbar("コードデータを一時保存しました", {
           variant: "success",
@@ -104,6 +116,11 @@ function CreateView() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onSave, onToggleViewMode]);
+
+  useEffect(() => {
+    if (!errorMessage) return;
+    enqueueSnackbar(errorMessage, { variant: "error" });
+  }, []);
 
   return (
     <Box flex={1}>
