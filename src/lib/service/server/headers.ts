@@ -2,19 +2,17 @@
 
 import fs from "fs/promises";
 import path from "path";
-import { PATH } from "../constant/paths";
+import { PATH } from "../../constant/paths";
 import {
   CodeDataHeaderJson,
   CodeDataHeaderJsonSchema,
   CodeDataSchema,
-} from "../model/CodeDataModel";
-import { FILE_NAME } from "../constant/fileName";
-import { ActionResult } from "../model/ActionResult";
-
-interface HeaderJson {
-  tags: string[];
-  headers: CodeDataHeaderJson[];
-}
+  HeaderJson,
+  HeaderJsonSchema,
+} from "../../model/CodeDataModel";
+import { FILE_NAME } from "../../constant/fileName";
+import { ActionResult } from "../../model/ActionResult";
+import { codeSize } from "../../util/codeDataFormat";
 
 /**
  * ヘッダーファイルのアップデート
@@ -28,26 +26,28 @@ export const updateHeadersFile = async (): Promise<ActionResult> => {
 
     const headers: CodeDataHeaderJson[] = (
       await Promise.all(
-        folderNames.map(async (folderName) => {
+        folderNames.map(async (id) => {
           const codeDataDir = path.join(
             process.cwd(),
-            PATH.server.CODE_DATA(folderName),
+            PATH.server.CODE_DATA(id),
           );
           const codeDataFilePath = path.join(codeDataDir, FILE_NAME.CODE_DATA);
           const dataJson = JSON.parse(
             await fs.readFile(codeDataFilePath, "utf-8"),
           );
-          const data = CodeDataSchema.omit({ description: true }).safeParse(
-            dataJson,
-          );
+          const { data, success } = CodeDataSchema.omit({
+            description: true,
+          }).safeParse(dataJson);
 
-          if (!data.success) {
+          if (!success) {
             return null;
           }
 
           const parsedData = CodeDataHeaderJsonSchema.safeParse({
-            ...data.data,
-            versions: data.data.content.flatMap((c) => c.versions),
+            ...data,
+            id,
+            versions: data.content.flatMap((c) => c.versions),
+            codeSize: codeSize(data.content),
           });
 
           if (!parsedData.success) {
@@ -80,6 +80,28 @@ export const updateHeadersFile = async (): Promise<ActionResult> => {
     return {
       ok: false,
       message: "ヘッダーファイルの更新に失敗しました",
+    };
+  }
+};
+
+export const loadHeaderFile = async (
+  page: number,
+  pageSize: number = 12,
+): Promise<ActionResult<HeaderJson>> => {
+  try {
+    const headersFilePath = path.join(process.cwd(), PATH.server.HEADERS);
+    const dataJson = await fs.readFile(headersFilePath, "utf-8");
+    const data: HeaderJson = JSON.parse(dataJson);
+    const parsedData = HeaderJsonSchema.parse(data);
+
+    return {
+      ok: true,
+      data: parsedData,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: "ヘッダーファイルの読み込みに失敗しました",
     };
   }
 };

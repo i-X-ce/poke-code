@@ -1,16 +1,15 @@
-import { CodeData } from "@/lib/model/CodeDataModel";
+import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
 import { PokeVersions } from "@/lib/model/PokeVersion";
 import { FavoriteBorder, MoreVert } from "@mui/icons-material";
 import {
   Card,
   CardActionArea,
   CardContent,
-  Chip,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useMemo } from "react";
+import React from "react";
 import VersionChip from "../../../_components/VersionChip";
 import CodeInfo from "@/app/_components/CodeInfo";
 import styles from "./styles.module.css";
@@ -20,14 +19,12 @@ import CodeTags from "@/app/_components/CodeTags";
 import Link from "next/link";
 
 interface CodeCardProps {
-  data: CodeData;
+  data: CodeDataHeaderJson;
 }
 
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
-  const versions = useMemo(() => {
-    return data.content.map((c) => c.versions).flat();
-  }, [data.content]);
-  const { title, tags, date, detail, content } = data;
+  const { versions } = data;
+  const { title, tags, date, detail, codeSize } = data;
 
   return (
     <Card sx={{ position: "relative" }}>
@@ -38,7 +35,7 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
             {title}
           </Typography>
           <Stack gap={1}>
-            <CodeInfo date={date} content={content} />
+            <CodeInfo date={date} codeSize={codeSize} />
             <CodeTags tags={tags} />
             <Typography color="textSecondary" className={styles.detail}>
               {detail}

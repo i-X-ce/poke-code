@@ -3,6 +3,7 @@ export const PATH = {
   DETAIL: (id: string | number) => `/${id}`,
   CREATE: "/create",
   EDIT: (id: string | number) => `/edit/${id}`,
+  HEADERS: "/data/headers.json",
 
   server: {
     CODE_DATA: (id: string = "") => `/public/data/codes/${id}`,

@@ -6,7 +6,7 @@ import fs from "fs/promises";
 import { PATH } from "@/lib/constant/paths";
 import { FILE_NAME } from "@/lib/constant/fileName";
 import { ActionResult } from "@/lib/model/ActionResult";
-import { updateHeadersFile } from "@/lib/actions/headers";
+import { updateHeadersFile } from "@/lib/service/server/headers";
 
 export async function createCode(
   data: CodeDataInput,

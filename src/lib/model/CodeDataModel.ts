@@ -51,6 +51,7 @@ export const CodeDataHeaderSchema = z.object({
 
 export const CodeDataHeaderJsonSchema = CodeDataHeaderSchema.extend({
   versions: z.enum(PokeVersions).array(),
+  codeSize: z.number(),
 });
 
 export const CodeDataSchema = z.object({
@@ -65,12 +66,18 @@ export const CodeDataSchema = z.object({
     .max(Object.keys(PokeVersions).length, "コンテンツの数が多すぎます"),
 });
 
+export const HeaderJsonSchema = z.object({
+  tags: z.array(z.string()),
+  headers: z.array(CodeDataHeaderJsonSchema),
+});
+
 export type CodeBlock = z.infer<typeof CodeBlockSchema>;
 export type CodeContent = z.infer<typeof CodeContentSchema>;
 export type CodeDataHeader = z.infer<typeof CodeDataHeaderSchema>;
 export type CodeData = z.infer<typeof CodeDataSchema>;
 
 export type CodeDataHeaderJson = z.infer<typeof CodeDataHeaderJsonSchema>; // jsonに保存するメタデータ バージョングループを保持せず、タグ一覧のみ保持する
+export type HeaderJson = z.infer<typeof HeaderJsonSchema>; // ヘッダーファイル全体の型
 
 export type CodeDataInput = z.input<typeof CodeDataSchema>;
 export type CodeDataOutput = z.output<typeof CodeDataSchema>;
