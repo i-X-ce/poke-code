@@ -15,11 +15,13 @@ import { Search, Tune } from "@mui/icons-material";
 import { useLoading } from "@/lib/hooks/useLoading";
 import { useSnackbar } from "notistack";
 import { getHeaders } from "@/lib/service/client/headers";
+import { useSearchParams } from "next/navigation";
 
 // 1ページあたりのカード表示数
 const MAX_CARD_PER_PAGE = 12;
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [page, setPage] = useState(0);
   const [codeData, setCodeData] = useState<CodeDataHeaderJson[]>([]);
   const [pageCount, setPageCount] = useState(0);
@@ -29,7 +31,9 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const params = Object.fromEntries(searchParams.entries());
         const { ok, data } = await getHeaders({
+          ...params,
           page,
           limit: MAX_CARD_PER_PAGE,
         });
