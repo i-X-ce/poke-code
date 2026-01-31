@@ -1,6 +1,11 @@
+"use client";
 import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
 import { PokeVersions } from "@/lib/model/PokeVersion";
-import { FavoriteBorder, MoreVert } from "@mui/icons-material";
+import {
+  Bookmark,
+  BookmarkBorder,
+  MoreVert,
+} from "@mui/icons-material";
 import {
   Card,
   CardActionArea,
@@ -17,6 +22,7 @@ import DevelopmentComponent from "@/app/_components/DevelopmentComponent";
 import { PATH } from "@/lib/constant/paths";
 import CodeTags from "@/app/_components/CodeTags";
 import Link from "next/link";
+import { useBookmark } from "@/app/_hooks/useBookmark";
 
 interface CodeCardProps {
   data: CodeDataHeaderJson;
@@ -25,6 +31,7 @@ interface CodeCardProps {
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
   const { versions } = data;
   const { title, tags, date, detail, codeSize } = data;
+  const { isBookmarked, toggleBookmark } = useBookmark(data.id);
 
   return (
     <Card sx={{ position: "relative" }}>
@@ -53,8 +60,10 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
         </CardContent>
       </CardActionArea>
       <Stack direction={"row"} position={"absolute"} p={1} top={0} right={0}>
-        <IconButton>
-          <FavoriteBorder />
+        <IconButton
+          onClick={toggleBookmark}
+          color={isBookmarked ? "primary" : "default"}>
+          {isBookmarked ? <Bookmark /> : <BookmarkBorder />}
         </IconButton>
         <DevelopmentComponent>
           <IconButton>

@@ -4,7 +4,7 @@ import React from "react";
 import { createMockCodeData } from "@/lib/model/CodeDataModel";
 import CodeView from "../_components/CodeView";
 import { PATH } from "@/lib/constant/paths";
-import { readCode } from "@/lib/service/server/headers";
+import { readCode } from "@/lib/service/server/codes";
 
 interface CodePageProps {
   params: Promise<{ id: string }>;

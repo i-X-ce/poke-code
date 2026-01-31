@@ -1,6 +1,6 @@
 import React from "react";
 import CreateView from "./_component/CreateView";
-import { loadTemporaryCodeData } from "@/lib/service/server/headers";
+import { loadTemporaryCodeData } from "@/lib/service/server/codes";
 
 interface CreatePageProps {}
 

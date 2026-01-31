@@ -6,6 +6,7 @@ import {
   HeaderJsonSchema,
 } from "@/lib/model/CodeDataModel";
 import { PokeVersionType } from "@/lib/model/PokeVersion";
+import { getBookmarkedCodes } from "@/lib/util/localStorage";
 
 interface GetHeadersOptions {
   page?: number;
@@ -81,15 +82,12 @@ export const getHeaders = async ({
       );
     }
 
-    // TODO: ブックマークの実装
     // ブックマーク済みのみ
     if (onlyBookmarked) {
-      //   const bookmarkedIds = JSON.parse(
-      //     localStorage.getItem("bookmarkedHeaders") || "[]",
-      //   ) as string[];
-      //   filteredHeaders = filteredHeaders.filter((header) =>
-      //     bookmarkedIds.includes(header.id),
-      //   );
+      const bookmarkedIds = getBookmarkedCodes();
+      filteredHeaders = filteredHeaders.filter((header) =>
+        bookmarkedIds.includes(header.id),
+      );
     }
 
     // ソート
