@@ -1,5 +1,5 @@
 "use client";
-import { useDialog } from "../_hooks/useDialog";
+import { useDialog } from "../hooks/useDialog";
 import { Dialog } from "@mui/material";
 
 const DialogController = () => {

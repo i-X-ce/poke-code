@@ -12,7 +12,7 @@ import {
 import CodeCard from "./(view)/_components/CodeCard";
 import { useEffect, useState } from "react";
 import { Search, Tune } from "@mui/icons-material";
-import { useLoading } from "@/lib/hooks/useLoading";
+import { useLoading } from "@/hooks/useLoading";
 import { useSnackbar } from "notistack";
 import { getHeaders } from "@/lib/service/client/headers";
 import { useSearchParams } from "next/navigation";

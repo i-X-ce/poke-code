@@ -1,5 +1,5 @@
 "use client";
-import useCopyClipboard from "@/lib/hooks/useCopyClipboard";
+import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { type CodeBlock } from "@/lib/model/CodeDataModel";
 import {
   Box,

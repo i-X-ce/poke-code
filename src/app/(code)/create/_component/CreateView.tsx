@@ -13,10 +13,10 @@ import { useForm } from "react-hook-form";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { CREATE_FORM_ID } from "../_consts/formId";
 import { useEffect, useMemo } from "react";
-import { useDialog } from "@/app/_hooks/useDialog";
+import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
-import { useLoading } from "@/lib/hooks/useLoading";
+import { useLoading } from "@/hooks/useLoading";
 import { createCode, saveCodeData } from "@/lib/service/server/codes";
 
 interface CreateViewProps {

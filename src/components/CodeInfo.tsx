@@ -1,8 +1,8 @@
 import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
 import { Stack } from "@mui/material";
-import IconAndText from "./IconAndText";
 import { CalendarMonth, Straighten } from "@mui/icons-material";
 import { displayDate } from "@/lib/util/date";
+import IconAndText from "./IconAndText";
 
 interface CodeInfoProps {
   date?: CodeDataHeaderJson["date"];

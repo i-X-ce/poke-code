@@ -1,6 +1,6 @@
 "use client";
-import CodeContentView from "@/app/_components/CodeContentView";
-import VersionChip from "@/app/_components/VersionChip";
+import CodeContentView from "@/components/CodeContentView";
+import VersionChip from "@/components/VersionChip";
 import {
   CodeBlock,
   CodeContent,
@@ -23,10 +23,7 @@ import {
   TextField,
 } from "@mui/material";
 import { MouseEventHandler, useState } from "react";
-import {
-  ControllerRenderProps,
-  FieldErrors,
-} from "react-hook-form";
+import { ControllerRenderProps, FieldErrors } from "react-hook-form";
 import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
 import { fieldItems } from "../_util/fieldItems";
 import { useSnackbar } from "notistack";

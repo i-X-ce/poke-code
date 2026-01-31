@@ -1,5 +1,5 @@
 "use client";
-import { useDialog } from "@/app/_hooks/useDialog";
+import { useDialog } from "@/hooks/useDialog";
 import {
   Box,
   Button,

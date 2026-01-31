@@ -1,5 +1,5 @@
 "use client";
-import useCopyClipboard from "@/lib/hooks/useCopyClipboard";
+import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { Box } from "@mui/material";
 import React from "react";
 import CopyButton from "../CopyButton";

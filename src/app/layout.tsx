@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Side from "./_components/Side";
+import Side from "../components/Side";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import CustomThemeProvider from "./_components/CustomThemeProvider";
-import AppTitle from "./_components/AppTitle";
-import CommonSection from "./_components/CommonSection";
+import CustomThemeProvider from "../components/CustomThemeProvider";
+import AppTitle from "../components/AppTitle";
+import CommonSection from "../components/CommonSection";
 import styles from "./layout.module.css";
-import CommonFooter from "./_components/CommonFooter";
-import SnackbarProviderWrapper from "./_components/SnackbarProviderWrapper";
-import DialogController from "./_components/DialogController";
+import CommonFooter from "../components/CommonFooter";
+import SnackbarProviderWrapper from "../components/SnackbarProviderWrapper";
+import DialogController from "../components/DialogController";
 import { Box } from "@mui/material";
 
 export const metadata: Metadata = {

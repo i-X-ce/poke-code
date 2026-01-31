@@ -1,11 +1,7 @@
 "use client";
 import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
 import { PokeVersions } from "@/lib/model/PokeVersion";
-import {
-  Bookmark,
-  BookmarkBorder,
-  MoreVert,
-} from "@mui/icons-material";
+import { Bookmark, BookmarkBorder, MoreVert } from "@mui/icons-material";
 import {
   Card,
   CardActionArea,
@@ -15,14 +11,14 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import VersionChip from "../../../_components/VersionChip";
-import CodeInfo from "@/app/_components/CodeInfo";
+import VersionChip from "../../../../components/VersionChip";
+import CodeInfo from "@/components/CodeInfo";
 import styles from "./styles.module.css";
-import DevelopmentComponent from "@/app/_components/DevelopmentComponent";
+import DevelopmentComponent from "@/components/DevelopmentComponent";
 import { PATH } from "@/lib/constant/paths";
-import CodeTags from "@/app/_components/CodeTags";
+import CodeTags from "@/components/CodeTags";
 import Link from "next/link";
-import { useBookmark } from "@/app/_hooks/useBookmark";
+import { useBookmark } from "@/hooks/useBookmark";
 
 interface CodeCardProps {
   data: CodeDataHeaderJson;
