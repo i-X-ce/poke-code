@@ -3,6 +3,8 @@ import fs from "fs/promises";
 import React from "react";
 import { createMockCodeData } from "@/lib/model/CodeDataModel";
 import CodeView from "../_components/CodeView";
+import { PATH } from "@/lib/constant/paths";
+import { readCode } from "@/lib/service/server/headers";
 
 interface CodePageProps {
   params: Promise<{ id: string }>;
@@ -20,7 +22,7 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
 };
 
 export async function generateStaticParams() {
-  const codesDirectory = path.join(process.cwd(), "src/data/codes");
+  const codesDirectory = path.join(process.cwd(), PATH.server.CODE_DATA());
   const filenames = await fs.readdir(codesDirectory);
 
   const ids = filenames.map((filename) => ({
@@ -30,7 +32,16 @@ export async function generateStaticParams() {
 }
 
 async function getCodeData(id: string) {
-  return createMockCodeData(1);
+  try {
+    const result = await readCode(id);
+    if (result.ok) {
+      return result.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  }
 }
 
 export default CodePage;

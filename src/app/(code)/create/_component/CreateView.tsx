@@ -15,9 +15,9 @@ import { CREATE_FORM_ID } from "../_consts/formId";
 import { useEffect, useMemo } from "react";
 import { useDialog } from "@/app/_hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
-import { createCode, saveCodeData } from "../../actions";
 import { useSnackbar } from "notistack";
 import { useLoading } from "@/lib/hooks/useLoading";
+import { createCode, saveCodeData } from "@/lib/service/server/headers";
 
 interface CreateViewProps {
   initData?: Partial<CodeDataInput>;
@@ -123,7 +123,7 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
   }, []);
 
   return (
-    <Box flex={1}>
+    <>
       {viewMode === CreateViewModes.EDIT && (
         <CreateForm formProps={formProps} />
       )}
@@ -170,7 +170,7 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
           </Button>
         </ButtonGroup>
       </Box>
-    </Box>
+    </>
   );
 }
 

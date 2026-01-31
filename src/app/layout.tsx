@@ -9,6 +9,7 @@ import styles from "./layout.module.css";
 import CommonFooter from "./_components/CommonFooter";
 import SnackbarProviderWrapper from "./_components/SnackbarProviderWrapper";
 import DialogController from "./_components/DialogController";
+import { Box } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,7 +31,7 @@ export default function RootLayout({
               <CommonSection>
                 <div className={styles.rootDiv}>
                   <Side />
-                  {children}
+                  <Box flex={1}>{children}</Box>
                 </div>
               </CommonSection>
               <CommonFooter />
