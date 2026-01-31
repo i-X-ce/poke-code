@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { Search, Tune } from "@mui/icons-material";
 import { useLoading } from "@/hooks/useLoading";
 import { useSnackbar } from "notistack";
-import { getHeaders } from "@/lib/service/client/headers";
+import { getHeaders } from "@/service/client/headers";
 import { useSearchParams } from "next/navigation";
 
 // 1ページあたりのカード表示数

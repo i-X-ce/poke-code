@@ -17,7 +17,7 @@ import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
 import { useLoading } from "@/hooks/useLoading";
-import { createCode, saveCodeData } from "@/lib/service/server/codes";
+import { createCode, saveCodeData } from "@/service/server/codes";
 
 interface CreateViewProps {
   initData?: Partial<CodeDataInput>;

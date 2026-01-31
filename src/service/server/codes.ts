@@ -1,7 +1,7 @@
 "use server";
 import fs from "fs/promises";
 import path from "path";
-import { PATH } from "../../constant/paths";
+import { PATH } from "../../lib/constant/paths";
 import {
   CodeData,
   CodeDataHeaderJson,
@@ -9,10 +9,10 @@ import {
   CodeDataInput,
   CodeDataSchema,
   HeaderJson,
-} from "../../model/CodeDataModel";
-import { FILE_NAME } from "../../constant/fileName";
-import { ActionResult } from "../../model/ActionResult";
-import { codeSize } from "../../util/codeDataFormat";
+} from "../../lib/model/CodeDataModel";
+import { FILE_NAME } from "../../lib/constant/fileName";
+import { ActionResult } from "../../lib/model/ActionResult";
+import { codeSize } from "../../lib/util/codeDataFormat";
 
 /**
  * コードデータの読み取り（ID指定）
