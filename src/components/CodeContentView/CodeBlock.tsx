@@ -1,6 +1,6 @@
 "use client";
 import useCopyClipboard from "@/hooks/useCopyClipboard";
-import { type CodeBlock } from "@/lib/model/CodeDataModel";
+import { type CodeBlock } from "@/lib/types/CodeDataModel";
 import {
   Box,
   Grid,
@@ -14,7 +14,7 @@ import React from "react";
 import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import CodeGrid from "./CodeGrid";
-import { PosType } from "@/lib/model/PosType";
+import { PosType } from "@/lib/types/PosType";
 
 const num2Hex = (num: number, pad: number, fillString: string = "0") => {
   return num.toString(16).toUpperCase().padStart(pad, fillString);

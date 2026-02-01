@@ -1,5 +1,5 @@
 "use client";
-import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
+import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
 import {
   Box,
   CircularProgress,

@@ -9,9 +9,9 @@ import {
   CodeDataInput,
   CodeDataSchema,
   HeaderJson,
-} from "../../lib/model/CodeDataModel";
+} from "../../lib/types/CodeDataModel";
 import { FILE_NAME } from "../../lib/constant/fileName";
-import { ActionResult } from "../../lib/model/ActionResult";
+import { ActionResult } from "../../lib/types/ActionResult";
 import { codeSize } from "../../lib/util/codeDataFormat";
 
 /**

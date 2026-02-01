@@ -1,5 +1,5 @@
 "use client";
-import { CodeContent } from "@/lib/model/CodeDataModel";
+import { CodeContent } from "@/lib/types/CodeDataModel";
 import { IconButton, Stack, Tooltip } from "@mui/material";
 import React from "react";
 import VersionTab from "./VersionTab";

@@ -1,4 +1,4 @@
-import { CodeBlock, CodeData } from "@/lib/model/CodeDataModel";
+import { CodeBlock, CodeData } from "@/lib/types/CodeDataModel";
 
 interface FieldItem {
   label: string;

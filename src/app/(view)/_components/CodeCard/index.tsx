@@ -1,6 +1,6 @@
 "use client";
-import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
-import { PokeVersions } from "@/lib/model/PokeVersion";
+import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
+import { PokeVersions } from "@/lib/types/PokeVersion";
 import {
   Box,
   Card,

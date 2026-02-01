@@ -1,4 +1,4 @@
-import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
+import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
 import { CardActionArea, IconButton, Stack, Typography } from "@mui/material";
 import CodeInfo from "../CodeInfo";
 import styles from "./styles.module.css";

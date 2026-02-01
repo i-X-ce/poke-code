@@ -5,8 +5,8 @@ import {
   CodeBlock,
   CodeContent,
   CodeDataInput,
-} from "@/lib/model/CodeDataModel";
-import { PokeVersions, PokeVersionType } from "@/lib/model/PokeVersion";
+} from "@/lib/types/CodeDataModel";
+import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import { sortVersions } from "@/lib/util/versionType";
 import { Delete, MoreVert } from "@mui/icons-material";
 import {

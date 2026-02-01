@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./style.module.css";
-import { PokeVersionType } from "@/lib/model/PokeVersion";
+import { PokeVersionType } from "@/lib/types/PokeVersion";
 import ver2css, { str2css } from "@/lib/util/str2css";
 import { Box, CardActionArea, useTheme } from "@mui/material";
 

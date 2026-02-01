@@ -1,6 +1,6 @@
 "use client";
 import { useDialog } from "@/hooks/useDialog";
-import { CodeData } from "@/lib/model/CodeDataModel";
+import { CodeData } from "@/lib/types/CodeDataModel";
 import isDevelopment from "@/lib/util/isDevelopment";
 import { deleteCode } from "@/service/server/codes";
 import {

@@ -1,5 +1,5 @@
-import { CodeBlock, CodeContent, CodeData } from "@/lib/model/CodeDataModel";
-import { PokeVersions } from "@/lib/model/PokeVersion";
+import { CodeBlock, CodeContent, CodeData } from "@/lib/types/CodeDataModel";
+import { PokeVersions } from "@/lib/types/PokeVersion";
 
 export const INIT_CODE_BLOCK: CodeBlock = {
   title: "",

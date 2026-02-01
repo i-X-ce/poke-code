@@ -2,7 +2,7 @@ import CodeContentView from "@/components/CodeContentView";
 import CodeInfo from "@/components/CodeInfo";
 import CodeTags from "@/components/CodeTags";
 import CustomMarkdown from "@/components/CustomMarkdown";
-import { CodeData } from "@/lib/model/CodeDataModel";
+import { CodeData } from "@/lib/types/CodeDataModel";
 import { codeSize } from "@/lib/util/codeDataFormat";
 import { Typography, Stack, Divider } from "@mui/material";
 

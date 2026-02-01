@@ -1,4 +1,4 @@
-import { PokeVersions, PokeVersionType } from "../model/PokeVersion";
+import { PokeVersions, PokeVersionType } from "../types/PokeVersion";
 
 export const sortVersions = (
   versions: PokeVersionType[],

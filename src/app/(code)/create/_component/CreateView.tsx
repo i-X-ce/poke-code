@@ -7,7 +7,7 @@ import {
   useCreateViewMode,
 } from "../_hooks/useCreateViewMode";
 import CodeView from "../../_components/CodeView";
-import { CodeDataInput, CodeDataSchema } from "@/lib/model/CodeDataModel";
+import { CodeDataInput, CodeDataSchema } from "@/lib/types/CodeDataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { INIT_CODE_DATA } from "../_util/initValues";

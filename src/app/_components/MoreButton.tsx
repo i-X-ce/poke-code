@@ -1,7 +1,7 @@
 "use client";
 import { useDialog } from "@/hooks/useDialog";
 import { PATH } from "@/lib/constant/paths";
-import { CodeData } from "@/lib/model/CodeDataModel";
+import { CodeData } from "@/lib/types/CodeDataModel";
 import {
   Bookmark,
   BookmarkBorder,

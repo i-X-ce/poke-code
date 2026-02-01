@@ -1,5 +1,5 @@
 "use client";
-import { CodeContent, CodeDataInput } from "@/lib/model/CodeDataModel";
+import { CodeContent, CodeDataInput } from "@/lib/types/CodeDataModel";
 import {
   Box,
   Chip,

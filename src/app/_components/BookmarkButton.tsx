@@ -1,6 +1,6 @@
 "use client";
 import { useBookmark } from "@/hooks/useBookmark";
-import { CodeData } from "@/lib/model/CodeDataModel";
+import { CodeData } from "@/lib/types/CodeDataModel";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import React from "react";

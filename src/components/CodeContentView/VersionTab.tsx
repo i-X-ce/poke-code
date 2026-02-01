@@ -1,4 +1,4 @@
-import { PokeVersionType } from "@/lib/model/PokeVersion";
+import { PokeVersionType } from "@/lib/types/PokeVersion";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import ver2css, { str2css } from "@/lib/util/str2css";
 import { Box, CardActionArea, Typography } from "@mui/material";

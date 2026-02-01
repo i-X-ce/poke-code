@@ -1,4 +1,4 @@
-import { CodeData } from "../model/CodeDataModel";
+import { CodeData } from "../types/CodeDataModel";
 
 const STORAGE_KEYS = {
   BOOKMARKED_CODES: "bookmarkedCodes",

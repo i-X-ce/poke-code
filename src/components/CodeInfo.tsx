@@ -1,4 +1,4 @@
-import { CodeDataHeaderJson } from "@/lib/model/CodeDataModel";
+import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
 import { Stack } from "@mui/material";
 import { CalendarMonth, Straighten } from "@mui/icons-material";
 import { displayDate } from "@/lib/util/date";

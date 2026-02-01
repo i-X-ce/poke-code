@@ -1,11 +1,11 @@
 "use client";
 import { PATH } from "@/lib/constant/paths";
-import { ActionResult } from "@/lib/model/ActionResult";
+import { ActionResult } from "@/lib/types/ActionResult";
 import {
   CodeDataHeaderJson,
   HeaderJsonSchema,
-} from "@/lib/model/CodeDataModel";
-import { PokeVersionType } from "@/lib/model/PokeVersion";
+} from "@/lib/types/CodeDataModel";
+import { PokeVersionType } from "@/lib/types/PokeVersion";
 import { getBookmarkedCodes } from "@/lib/util/localStorage";
 
 interface GetHeadersOptions {
