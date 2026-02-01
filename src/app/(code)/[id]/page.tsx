@@ -1,10 +1,12 @@
 import path from "path";
 import fs from "fs/promises";
 import React from "react";
-import { createMockCodeData } from "@/lib/model/CodeDataModel";
 import CodeView from "../_components/CodeView";
 import { PATH } from "@/lib/constant/paths";
 import { readCode } from "@/service/server/codes";
+import MoreButton from "@/app/_components/MoreButton";
+import { Box, Stack } from "@mui/material";
+import BookmarkButton from "@/app/_components/BookmarkButton";
 
 interface CodePageProps {
   params: Promise<{ id: string }>;
@@ -18,15 +20,23 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
     return <div>Code not found</div>;
   }
 
-  return <CodeView data={data} />;
+  return (
+    <>
+      <CodeView data={data} />
+      <Stack direction={"row"} position={"absolute"} p={1} top={0} right={0}>
+        <BookmarkButton id={data.id} />
+        <MoreButton id={data.id} />
+      </Stack>
+    </>
+  );
 };
 
 export async function generateStaticParams() {
   const codesDirectory = path.join(process.cwd(), PATH.server.CODE_DATA());
-  const filenames = await fs.readdir(codesDirectory);
+  const folderNames = await fs.readdir(codesDirectory);
 
-  const ids = filenames.map((filename) => ({
-    id: filename.replace(/\.json$/, ""),
+  const ids = folderNames.map((folderName) => ({
+    id: folderName,
   }));
   return ids;
 }

@@ -6,7 +6,7 @@ const DialogController = () => {
   const { open, content, closeDialog } = useDialog();
 
   return (
-    <Dialog open={open} onClose={closeDialog}>
+    <Dialog open={open} onClose={closeDialog} maxWidth="sm" fullWidth>
       {content}
     </Dialog>
   );

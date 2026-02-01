@@ -18,6 +18,7 @@ function CodeView({ data }: CodeViewProps) {
       <Typography
         variant="h4"
         fontWeight={"500"}
+        paddingRight={12}
         gutterBottom
         color="textPrimary">
         {title}
