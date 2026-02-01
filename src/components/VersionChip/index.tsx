@@ -27,7 +27,13 @@ function VersionChip({
   );
 
   if (onClick) {
-    return <CardActionArea onClick={onClick}>{content}</CardActionArea>;
+    return (
+      <CardActionArea
+        onClick={onClick}
+        sx={{ borderRadius: 1, width: "fit-content" }}>
+        {content}
+      </CardActionArea>
+    );
   } else {
     return content;
   }
