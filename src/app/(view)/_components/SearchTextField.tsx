@@ -5,8 +5,8 @@ import { Box, IconButton, TextField } from "@mui/material";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
 
 function SearchTextField() {
-  const { queryParams, updateQuery } = useURLQuery();
-  const [q, setQ] = useState(queryParams.get("q") || "");
+  const { parsedParams, updateQuery } = useURLQuery();
+  const [q, setQ] = useState(parsedParams.q || "");
 
   const onSubmit: FormEventHandler<HTMLElement> = (e) => {
     e.preventDefault();

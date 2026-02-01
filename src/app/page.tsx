@@ -25,15 +25,14 @@ export default function Home() {
   const [pageCount, setPageCount] = useState(0);
   const { isLoading, startLoading } = useLoading();
   const { enqueueSnackbar } = useSnackbar();
-  const { queryParams, updateQuery } = useURLQuery();
-  const page = Number(queryParams.get("page") || "0");
+  const { parsedParams, searchParams, updateQuery } = useURLQuery();
+  const page = parsedParams.page || 0;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const params = Object.fromEntries(queryParams.entries());
         const { ok, data } = await getHeaders({
-          ...params,
+          ...parsedParams,
           limit: MAX_CARD_PER_PAGE,
         });
         if (!ok) throw new Error();
@@ -47,7 +46,7 @@ export default function Home() {
       }
     };
     startLoading(fetchData);
-  }, []);
+  }, [searchParams.toString()]);
 
   const handlePageChange = (newPage: number) => {
     updateQuery({ page: newPage - 1 });
