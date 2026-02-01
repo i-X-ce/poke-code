@@ -8,7 +8,7 @@ const CreatePage: React.FC<CreatePageProps> = async () => {
   const tempDataResult = await loadTemporaryCodeData();
   const { data, message } = tempDataResult;
 
-  return <CreateView initData={data} errorMessage={message} />;
+  return <CreateView mode="create" initData={data} errorMessage={message} />;
 };
 
 export default CreatePage;

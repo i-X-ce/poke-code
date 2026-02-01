@@ -17,14 +17,15 @@ import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
 import { useLoading } from "@/hooks/useLoading";
-import { createCode, saveCodeData } from "@/service/server/codes";
+import { createCode, saveCodeData, updateCode } from "@/service/server/codes";
 
 interface CreateViewProps {
+  mode: "create" | "edit";
   initData?: Partial<CodeDataInput>;
   errorMessage?: string;
 }
 
-function CreateView({ initData, errorMessage }: CreateViewProps) {
+function CreateView({ mode, initData, errorMessage }: CreateViewProps) {
   const formProps = useForm<CodeDataInput>({
     resolver: zodResolver(CodeDataSchema),
     mode: "onChange",
@@ -44,6 +45,11 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
   const parsed = useMemo(() => CodeDataSchema.safeParse(values), [values]);
   const parsedData = parsed.success ? parsed.data : null;
 
+  const actionName = useMemo(
+    () => (mode === "create" ? "投稿" : "更新"),
+    [mode],
+  );
+
   const checkSubmitErrors = (data = values) => {
     const parsed = CodeDataSchema.safeParse(data);
     if (parsed.success) return;
@@ -58,11 +64,25 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
     try {
       checkSubmitErrors(data);
 
-      const { ok, data: id, message } = await createCode(data);
+      const {
+        ok,
+        data: id,
+        message,
+      } = await (async () => {
+        switch (mode) {
+          case "edit":
+            return updateCode(initData?.id || "", data);
+          case "create":
+            return createCode(data);
+          default:
+            return createCode(data);
+        }
+      })();
+
       if (!ok) {
-        throw new Error(message || "コードデータの投稿に失敗しました");
+        throw new Error(message || `コードデータの${actionName}に失敗しました`);
       }
-      enqueueSnackbar(`コードデータを投稿しました: ${id}`, {
+      enqueueSnackbar(`コードデータを${actionName}しました: ${id}`, {
         variant: "success",
       });
     } catch (error) {
@@ -72,26 +92,31 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
     }
   };
 
-  const onSave = async () => {
-    startSaving(async () => {
-      try {
-        const data = watch();
-        const { ok, message } = await saveCodeData(data);
+  const onSave =
+    mode === "create"
+      ? async () => {
+          startSaving(async () => {
+            try {
+              const data = watch();
+              const { ok, message } = await saveCodeData(data);
 
-        if (!ok) {
-          throw new Error(message || "コードデータの一時保存に失敗しました");
+              if (!ok) {
+                throw new Error(
+                  message || "コードデータの一時保存に失敗しました",
+                );
+              }
+
+              enqueueSnackbar("コードデータを一時保存しました", {
+                variant: "success",
+              });
+            } catch (error) {
+              console.error(error);
+              enqueueSnackbar((error as Error).message, { variant: "error" });
+              throw error;
+            }
+          });
         }
-
-        enqueueSnackbar("コードデータを一時保存しました", {
-          variant: "success",
-        });
-      } catch (error) {
-        console.error(error);
-        enqueueSnackbar((error as Error).message, { variant: "error" });
-        throw error;
-      }
-    });
-  };
+      : () => {};
 
   const onToggleViewMode = () => {
     try {
@@ -106,7 +131,12 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         // Ctrl+S or Cmd+S で保存
         e.preventDefault();
-        onSave();
+        if (mode === "create") {
+          onSave();
+        } else if (mode === "edit") {
+          checkSubmitErrors();
+          handleSubmit(onSubmit)();
+        }
       } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
         // Ctrl+Q or Cmd+Q で表示切替
         e.preventDefault();
@@ -147,13 +177,15 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
             variant="outlined">
             {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
           </Button>
-          <Button
-            onClick={onSave}
-            startIcon={<Save />}
-            variant="outlined"
-            loading={isSaving}>
-            一時保存
-          </Button>
+          {mode === "create" && (
+            <Button
+              onClick={onSave}
+              startIcon={<Save />}
+              variant="outlined"
+              loading={isSaving}>
+              一時保存
+            </Button>
+          )}
           <Button
             form={CREATE_FORM_ID}
             type="submit"
@@ -166,7 +198,7 @@ function CreateView({ initData, errorMessage }: CreateViewProps) {
               checkSubmitErrors();
             }}
             loading={isSubmitting}>
-            投稿する
+            {actionName}する
           </Button>
         </ButtonGroup>
       </Box>

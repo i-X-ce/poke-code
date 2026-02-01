@@ -92,6 +92,68 @@ export async function createCode(
   }
 }
 
+export const updateCode = async (
+  id: CodeData["id"],
+  data: CodeDataInput,
+): Promise<ActionResult<string>> => {
+  try {
+    const parsed = CodeDataSchema.parse(data);
+    const { description, ...dataWithoutDescription } = parsed;
+    const dataToSave = { ...dataWithoutDescription, id };
+
+    const codeDataDir = path.join(process.cwd(), PATH.server.CODE_DATA(id));
+
+    // ファイル保存
+    const codeDataFilePath = path.join(codeDataDir, FILE_NAME.CODE_DATA);
+    await fs.writeFile(
+      codeDataFilePath,
+      JSON.stringify(dataToSave, null, 2),
+      "utf-8",
+    );
+
+    // 説明文保存(Markdown)
+    const descriptionFilePath = path.join(
+      codeDataDir,
+      FILE_NAME.DESCRIPTION_MD,
+    );
+    await fs.writeFile(descriptionFilePath, description, "utf-8");
+
+    await updateHeadersFile();
+
+    return {
+      ok: true,
+      data: id,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: "コードデータの更新に失敗しました",
+    };
+  }
+};
+
+/**
+ * コードデータの削除（ID指定）
+ *
+ * @param id
+ * @returns
+ */
+export const deleteCode = async (id: CodeData["id"]): Promise<ActionResult> => {
+  try {
+    const codeDataDir = path.join(process.cwd(), PATH.server.CODE_DATA(id));
+    await fs.rm(codeDataDir, { recursive: true, force: true });
+
+    await updateHeadersFile();
+
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: "コードデータの削除に失敗しました",
+    };
+  }
+};
+
 /**
  * コードデータの一時保存
  *
