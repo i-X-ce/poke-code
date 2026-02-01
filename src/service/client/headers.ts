@@ -5,22 +5,8 @@ import {
   CodeDataHeaderJson,
   HeaderJsonSchema,
 } from "@/lib/types/CodeDataModel";
-import { PokeVersionType } from "@/lib/types/PokeVersion";
+import { SearchOptions } from "@/lib/types/SearchOptions";
 import { getBookmarkedCodes } from "@/lib/util/localStorage";
-
-interface GetHeadersOptions {
-  page?: number;
-  limit?: number;
-
-  q?: string;
-  tags?: string[];
-  versions?: PokeVersionType[];
-  sizeMin?: number;
-  sizeMax?: number;
-  orderBy?: "date" | "title";
-  orderDirection?: "asc" | "desc";
-  onlyBookmarked?: boolean;
-}
 
 interface GetHeadersResult {
   headers: CodeDataHeaderJson[];
@@ -39,7 +25,7 @@ export const getHeaders = async ({
   orderBy = "date",
   orderDirection = "desc",
   onlyBookmarked = false,
-}: GetHeadersOptions): Promise<ActionResult<GetHeadersResult>> => {
+}: SearchOptions): Promise<ActionResult<GetHeadersResult>> => {
   try {
     const res = await fetch(PATH.HEADERS);
     const data = await res.json();

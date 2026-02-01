@@ -7,34 +7,33 @@ import {
   IconButton,
   Pagination,
   Stack,
-  TextField,
 } from "@mui/material";
 import CodeCard from "./(view)/_components/CodeCard";
 import { useEffect, useState } from "react";
-import { Search, Tune } from "@mui/icons-material";
+import { Tune } from "@mui/icons-material";
 import { useLoading } from "@/hooks/useLoading";
 import { useSnackbar } from "notistack";
 import { getHeaders } from "@/service/client/headers";
-import { useSearchParams } from "next/navigation";
+import { useURLQuery } from "@/hooks/useURLQuery";
+import SearchTextField from "./(view)/_components/SearchTextField";
 
 // 1ページあたりのカード表示数
 const MAX_CARD_PER_PAGE = 12;
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const [page, setPage] = useState(0);
   const [codeData, setCodeData] = useState<CodeDataHeaderJson[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const { isLoading, startLoading } = useLoading();
   const { enqueueSnackbar } = useSnackbar();
+  const { queryParams, updateQuery } = useURLQuery();
+  const page = Number(queryParams.get("page") || "0");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const params = Object.fromEntries(searchParams.entries());
+        const params = Object.fromEntries(queryParams.entries());
         const { ok, data } = await getHeaders({
           ...params,
-          page,
           limit: MAX_CARD_PER_PAGE,
         });
         if (!ok) throw new Error();
@@ -48,29 +47,16 @@ export default function Home() {
       }
     };
     startLoading(fetchData);
-  }, [page]);
+  }, []);
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage - 1);
+    updateQuery({ page: newPage - 1 });
   };
 
   return (
     <Stack flex={1} gap={3}>
       <Stack direction={"row"} gap={1} alignItems={"end"}>
-        <TextField
-          variant="standard"
-          label="検索"
-          fullWidth
-          slotProps={{
-            input: {
-              endAdornment: (
-                <IconButton>
-                  <Search />
-                </IconButton>
-              ),
-            },
-          }}
-        />
+        <SearchTextField />
         <IconButton>
           <Tune />
         </IconButton>
