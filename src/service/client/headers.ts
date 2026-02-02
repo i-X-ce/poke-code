@@ -13,6 +13,12 @@ interface GetHeadersResult {
   totalCount: number;
 }
 
+/**
+ * コードデータヘッダーの取得
+ *
+ * @param param0
+ * @returns
+ */
 export const getHeaders = async ({
   page = 0,
   limit = 12,
@@ -107,6 +113,33 @@ export const getHeaders = async ({
     return {
       ok: false,
       message: "ヘッダーファイルの取得に失敗しました",
+    };
+  }
+};
+
+interface TagListResult {
+  tags: string[];
+}
+
+/**
+ * タグ一覧の取得
+ */
+export const getTagList = async (): Promise<ActionResult<TagListResult>> => {
+  try {
+    const res = await fetch(PATH.HEADERS);
+    const data = await res.json();
+    const { tags } = HeaderJsonSchema.parse(data);
+    const uniqueTags = Array.from(new Set(tags));
+    return {
+      ok: true,
+      data: {
+        tags: uniqueTags,
+      },
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: "タグ一覧の取得に失敗しました",
     };
   }
 };

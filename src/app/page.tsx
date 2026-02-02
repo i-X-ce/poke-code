@@ -16,6 +16,8 @@ import { useSnackbar } from "notistack";
 import { getHeaders } from "@/service/client/headers";
 import { useURLQuery } from "@/hooks/useURLQuery";
 import SearchTextField from "./(view)/_components/SearchTextField";
+import { useDialog } from "@/hooks/useDialog";
+import FilterDialog from "./(view)/_components/FilterForm/FilterDialog";
 
 // 1ページあたりのカード表示数
 const MAX_CARD_PER_PAGE = 12;
@@ -26,6 +28,7 @@ export default function Home() {
   const { isLoading, startLoading } = useLoading();
   const { enqueueSnackbar } = useSnackbar();
   const { parsedParams, searchParams, updateQuery } = useURLQuery();
+  const { openDialog } = useDialog();
   const page = parsedParams.page || 0;
 
   useEffect(() => {
@@ -52,14 +55,19 @@ export default function Home() {
     updateQuery({ page: newPage - 1 });
   };
 
+  const handleOpenFilterDialog = () => {
+    openDialog(<FilterDialog />);
+  };
+
   return (
     <Stack flex={1} gap={3}>
       <Stack direction={"row"} gap={1} alignItems={"end"}>
         <SearchTextField />
-        <IconButton>
+        <IconButton onClick={handleOpenFilterDialog}>
           <Tune />
         </IconButton>
       </Stack>
+
       {isLoading ? (
         <Box
           flex={1}
@@ -77,6 +85,7 @@ export default function Home() {
           ))}
         </Grid>
       )}
+
       {pageCount > 1 && (
         <Pagination
           page={page + 1}
