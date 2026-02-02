@@ -51,7 +51,7 @@ function CodeContentView({
               const isSelected = id === selectedIdView;
               return (
                 <Stack direction={"row"} alignItems={"end"} key={id}>
-                  {versions.length === 0 ? (
+                  {versions.length === 0 && mode === "edit" ? (
                     <VersionTab
                       version={"N"}
                       radius={{ L: true, R: true }}
@@ -98,15 +98,11 @@ function CodeContentView({
         borderRadius={1}
         p={2}
         gap={2}
-        sx={{
+        sx={(theme) => ({
           minHeight: 200,
           borderStartStartRadius: 0,
-          boxShadow: (theme) =>
-            theme.shadows[2]
-              .split("),")
-              .map((s) => `inset ${s.trim()}`)
-              .join("),"),
-        }}>
+          border: `1px solid ${theme.palette.divider}`,
+        })}>
         {mode === "edit"
           ? children
           : content &&
