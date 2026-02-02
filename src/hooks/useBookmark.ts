@@ -1,29 +1,13 @@
+import { isBookmarkedAtom, toggleBookmarkAtom } from "@/atoms/bookmark";
 import { CodeData } from "@/lib/types/CodeDataModel";
-import {
-  getBookmarkedCodes,
-  setBookmarkedCodes,
-} from "@/lib/util/localStorage";
-import { useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 
 export const useBookmark = (id: CodeData["id"]) => {
-  const [isBookmarked, setIsBookmarked] = useState(
-    getBookmarkedCodes().includes(id) || false,
-  );
+  const isBookmarked = useAtomValue(isBookmarkedAtom)(id);
+  const _toggleBookmark = useSetAtom(toggleBookmarkAtom);
 
   const toggleBookmark = () => {
-    const bookmarkedIds = getBookmarkedCodes();
-
-    if (isBookmarked) {
-      const updatedIds = bookmarkedIds.filter(
-        (bookmarkedId) => bookmarkedId !== id,
-      );
-      setBookmarkedCodes(updatedIds);
-      setIsBookmarked(false);
-    } else {
-      bookmarkedIds.push(id);
-      setBookmarkedCodes(bookmarkedIds);
-      setIsBookmarked(true);
-    }
+    _toggleBookmark(id);
   };
 
   return { isBookmarked, toggleBookmark };

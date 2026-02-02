@@ -1,4 +1,5 @@
 "use client";
+import { bookmarkBaseAtom } from "@/atoms/base";
 import { PATH } from "@/lib/constant/paths";
 import { ActionResult } from "@/lib/types/ActionResult";
 import {
@@ -6,7 +7,7 @@ import {
   HeaderJsonSchema,
 } from "@/lib/types/CodeDataModel";
 import { SearchOptions } from "@/lib/types/SearchOptions";
-import { getBookmarkedCodes } from "@/lib/util/localStorage";
+import { useAtomValue } from "jotai";
 
 interface GetHeadersResult {
   headers: CodeDataHeaderJson[];
@@ -76,7 +77,7 @@ export const getHeaders = async ({
 
     // ブックマーク済みのみ
     if (onlyBookmarked) {
-      const bookmarkedIds = getBookmarkedCodes();
+      const bookmarkedIds = useAtomValue(bookmarkBaseAtom);
       filteredHeaders = filteredHeaders.filter((header) =>
         bookmarkedIds.includes(header.id),
       );
