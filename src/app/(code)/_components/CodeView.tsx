@@ -4,7 +4,7 @@ import CodeTags from "@/components/CodeTags";
 import CustomMarkdown from "@/components/CustomMarkdown";
 import { CodeData } from "@/lib/types/CodeDataModel";
 import { codeSize } from "@/lib/util/codeDataFormat";
-import { Typography, Stack, Divider } from "@mui/material";
+import { Typography, Stack, Divider, Box } from "@mui/material";
 
 interface CodeViewProps {
   data: Partial<CodeData>;
@@ -14,7 +14,7 @@ function CodeView({ data }: CodeViewProps) {
   const { title, tags, date, detail, description, content } = data;
 
   return (
-    <div>
+    <Box>
       <Typography
         variant="h4"
         fontWeight={"500"}
@@ -23,7 +23,7 @@ function CodeView({ data }: CodeViewProps) {
         color="textPrimary">
         {title}
       </Typography>
-      <Stack gap={2}>
+      <Stack gap={2} mb={4}>
         <CodeTags tags={tags} />
         <CodeInfo date={date} codeSize={codeSize(content)} />
         <Typography color="textSecondary">{detail}</Typography>
@@ -31,7 +31,7 @@ function CodeView({ data }: CodeViewProps) {
       </Stack>
       <CustomMarkdown>{description}</CustomMarkdown>
       <CodeContentView content={content} />
-    </div>
+    </Box>
   );
 }
 
