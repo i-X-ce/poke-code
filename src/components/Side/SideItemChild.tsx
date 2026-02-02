@@ -1,36 +1,44 @@
 import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
-import { CardActionArea, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CardActionArea,
+  Stack,
+  Typography,
+} from "@mui/material";
 import CodeInfo from "../CodeInfo";
-import styles from "./styles.module.css";
-import { FavoriteBorder } from "@mui/icons-material";
 import { PATH } from "@/lib/constant/paths";
 import Link from "next/link";
+import MoreButton from "@/app/_components/MoreButton";
 
 function SideItemChild({ data }: { data: CodeDataHeaderJson }) {
-  const { date, codeSize } = data;
+  const { id, date, codeSize } = data;
 
   return (
-    <div className={styles.itemChild}>
+    <Box
+      position={"relative"}
+      display={"flex"}
+      alignItems={"center"}
+      ml={2}
+      sx={(theme) => ({
+        bgcolor: theme.palette.background.paper,
+        borderTop: `1px solid ${theme.palette.divider}`,
+      })}>
       <CardActionArea LinkComponent={Link} href={PATH.DETAIL(data.id)}>
         <Stack
           direction={"row"}
           p={1}
           alignItems={"center"}
           justifyContent={"space-between"}>
-          <Stack gap={0.5} className={styles.itemChildInfoContainer}>
-            <Typography color="textPrimary" className={styles.itemChildTitle}>
-              {data.title}
-            </Typography>
+          <Stack gap={0.5} minWidth={0} pr={4}>
+            <Typography noWrap>{data.title}</Typography>
             <CodeInfo date={date} codeSize={codeSize} size="small" />
           </Stack>
         </Stack>
       </CardActionArea>
-      <div className={styles.itemChildIconWrapper}>
-        <IconButton>
-          <FavoriteBorder />
-        </IconButton>
-      </div>
-    </div>
+      <Box position={"absolute"} right={0} p={1}>
+        <MoreButton id={id} />
+      </Box>
+    </Box>
   );
 }
 

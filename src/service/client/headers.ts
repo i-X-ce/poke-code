@@ -6,8 +6,8 @@ import {
   CodeDataHeaderJson,
   HeaderJsonSchema,
 } from "@/lib/types/CodeDataModel";
-import { SearchOptions } from "@/lib/types/SearchOptions";
-import { useAtomValue } from "jotai";
+import { type SearchOptions } from "@/lib/types/SearchOptions";
+import { getDefaultStore, useAtomValue } from "jotai";
 
 interface GetHeadersResult {
   headers: CodeDataHeaderJson[];
@@ -22,7 +22,7 @@ interface GetHeadersResult {
  */
 export const getHeaders = async ({
   page = 0,
-  limit = 12,
+  limit,
 
   q,
   tags,
@@ -77,7 +77,8 @@ export const getHeaders = async ({
 
     // ブックマーク済みのみ
     if (onlyBookmarked) {
-      const bookmarkedIds = useAtomValue(bookmarkBaseAtom);
+      const store = getDefaultStore();
+      const bookmarkedIds = store.get(bookmarkBaseAtom);
       filteredHeaders = filteredHeaders.filter((header) =>
         bookmarkedIds.includes(header.id),
       );
@@ -98,10 +99,9 @@ export const getHeaders = async ({
     const totalCount = filteredHeaders.length;
 
     // ページネーション
-    const paginatedHeaders = filteredHeaders.slice(
-      page * limit,
-      (page + 1) * limit,
-    );
+    const paginatedHeaders = limit
+      ? filteredHeaders.slice(page * limit, (page + 1) * limit)
+      : filteredHeaders;
 
     return {
       ok: true,

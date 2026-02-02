@@ -1,9 +1,15 @@
 import { PokeVersionType } from "./PokeVersion";
 
-export interface SearchOptions {
-  page?: number;
-  limit?: number;
-
+export type SearchOptions = (
+  | {
+      page?: number;
+      limit?: number;
+    }
+  | {
+      page?: never;
+      limit?: never;
+    }
+) & {
   q?: string;
   tags?: string[];
   versions?: PokeVersionType[];
@@ -12,4 +18,4 @@ export interface SearchOptions {
   orderBy?: "date" | "title";
   orderDirection?: "asc" | "desc";
   onlyBookmarked?: boolean;
-}
+};
