@@ -1,15 +1,7 @@
 "use client";
 import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { type CodeBlock } from "@/lib/types/CodeDataModel";
-import {
-  Box,
-  Grid,
-  GridProps,
-  Stack,
-  SxProps,
-  Theme,
-  Typography,
-} from "@mui/material";
+import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
 import React from "react";
 import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
@@ -38,22 +30,20 @@ function CodeBlock({ block }: { block: CodeBlock }) {
     setMousePos({ x: -1, y: -1 });
   };
 
+  const { title } = block;
+
   return (
     <Stack position={"relative"} gap={1}>
-      <Box
-        borderRadius={1}
-        py={0.5}
-        px={2}
-        sx={{
-          // borderEndStartRadius: 0,
-          // borderEndEndRadius: 0,
-          backgroundColor: (theme) => theme.palette.text.disabled,
-          alignSelf: "start",
-        }}>
-        <Typography color="var(--background)" fontSize={"small"}>
-          {block.title}
-        </Typography>
-      </Box>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}>
+        {title && <Chip label={title} />}
+        <Box ml={"auto"}>
+          <CopyButton copied={copied} onClick={handleCopy} />
+        </Box>
+      </Stack>
+
       <Box
         sx={{
           border: (theme) => `1px ${theme.palette.divider} solid`,
@@ -113,11 +103,6 @@ function CodeBlock({ block }: { block: CodeBlock }) {
           )}
         </Grid>
         {/* {block.code} */}
-      </Box>
-
-      {/* コピーボタン */}
-      <Box position={"absolute"} top={0} right={0}>
-        <CopyButton copied={copied} onClick={handleCopy} />
       </Box>
     </Stack>
   );
