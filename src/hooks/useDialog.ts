@@ -1,7 +1,6 @@
-import { atom, useAtom } from "jotai";
+import { modalAtom } from "@/atoms/ui/dialog";
+import { useAtom } from "jotai";
 import { ReactNode } from "react";
-
-export const modalAtom = atom<ReactNode | null>(null);
 
 export const useDialog = () => {
   const [content, setContent] = useAtom(modalAtom);
