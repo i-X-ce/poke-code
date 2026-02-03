@@ -2,10 +2,9 @@
 import { CodeContent } from "@/lib/types/CodeDataModel";
 import { IconButton, Stack, Tooltip } from "@mui/material";
 import React from "react";
-import VersionTab from "./VersionTab";
 import CodeBlock from "./CodeBlock";
 import { Add } from "@mui/icons-material";
-import { sortVersions } from "@/lib/util/versionType";
+import VersionTabGroup from "./VersionTabGroup";
 
 export type ModeType = "view" | "edit";
 
@@ -47,42 +46,17 @@ function CodeContentView({
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Stack direction={"row"} alignItems={"end"} gap={1}>
           {content &&
-            content.map(({ id, versions }) => {
-              const isSelected = id === selectedIdView;
-              return (
-                <Stack direction={"row"} alignItems={"end"} key={id}>
-                  {versions.length === 0 && mode === "edit" ? (
-                    <VersionTab
-                      version={"N"}
-                      radius={{ L: true, R: true }}
-                      selected={isSelected}
-                      onClick={
-                        id === selectedIdView
-                          ? undefined
-                          : () => handleChangeVersion(id)
-                      }
-                    />
-                  ) : (
-                    sortVersions(versions).map((v, index) => (
-                      <VersionTab
-                        key={v}
-                        version={v}
-                        radius={{
-                          L: index === 0,
-                          R: index === versions.length - 1,
-                        }}
-                        selected={isSelected}
-                        onClick={
-                          v === selectedIdView
-                            ? undefined
-                            : () => handleChangeVersion(id)
-                        }
-                      />
-                    ))
-                  )}
-                </Stack>
-              );
-            })}
+            content.map(
+              ({ id, versions }) =>
+                (versions.length > 0 || mode === "edit") && (
+                  <VersionTabGroup
+                    key={id}
+                    versions={versions}
+                    selected={id === selectedIdView}
+                    onClick={() => handleChangeVersion(id)}
+                  />
+                ),
+            )}
         </Stack>
         {mode === "edit" && (
           <Tooltip title="コードコンテンツを追加">
