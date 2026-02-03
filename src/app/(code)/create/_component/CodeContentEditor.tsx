@@ -8,16 +8,7 @@ import {
 } from "@/lib/types/CodeDataModel";
 import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import { sortVersions } from "@/lib/util/versionType";
-import {
-  ArrowBack,
-  ArrowDownward,
-  ArrowForward,
-  ArrowLeft,
-  ArrowUpward,
-  Delete,
-  KeyboardArrowLeft,
-  MoreVert,
-} from "@mui/icons-material";
+import { ArrowBack, ArrowForward, Delete, MoreVert } from "@mui/icons-material";
 import {
   Box,
   Chip,
@@ -27,16 +18,14 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Paper,
   Popover,
   Stack,
-  TextField,
 } from "@mui/material";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import { Control, useController } from "react-hook-form";
 import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
-import { fieldItems } from "../_util/fieldItems";
 import { useSnackbar } from "notistack";
+import CodeBlockEditor from "./CodeBlockEditor";
 
 const MAX_CONTENT_COUNT = Object.keys(PokeVersions).length;
 
@@ -60,71 +49,92 @@ function CodeContentEditor({ control }: CodeContentEditorProps) {
   const currentErrors = errors?.content?.[currentContentIndex];
   const isMaxedContent = value.length >= MAX_CONTENT_COUNT;
 
-  const handleChangeId = (id: CodeContent["id"]) => {
+  const handleChangeId = useCallback((id: CodeContent["id"]) => {
     setSelectedVersion(id);
-  };
+  }, []);
 
-  const updateCurrentContentBlocks = (newBlocks: CodeBlock[]) => {
-    const newContent = [...value];
-    if (currentContentIndex >= 0) {
-      newContent[currentContentIndex] = {
-        ...currentContent,
-        blocks: newBlocks,
-      };
-    }
-    onChange(newContent);
-  };
+  const updateCurrentContentBlocks = useCallback(
+    (newBlocks: CodeBlock[]) => {
+      const newContent = [...value];
+      const index = value.findIndex((c) => c.id === selectedId);
+      if (index >= 0) {
+        const current = value[index];
+        newContent[index] = {
+          ...current,
+          blocks: newBlocks,
+        };
+      }
+      onChange(newContent);
+    },
+    [value, selectedId, onChange],
+  );
 
-  const handleAddBlock = () => {
+  const handleAddBlock = useCallback(() => {
     updateCurrentContentBlocks([...currentBlocks, INIT_CODE_BLOCK]);
-  };
+  }, [currentBlocks, updateCurrentContentBlocks]);
 
-  const handleMoveBlock = (fromIndex = 0, step: number = 0) => {
-    const toIndex = fromIndex + step;
-    if (toIndex < 0 || toIndex >= currentBlocks.length) return;
+  const handleMoveBlock = useCallback(
+    (fromIndex = 0, step: number = 0) => {
+      const toIndex = fromIndex + step;
+      if (toIndex < 0 || toIndex >= currentBlocks.length) return;
 
-    const newBlocks = [...currentBlocks];
-    const [movedBlock] = newBlocks.splice(fromIndex, 1);
-    newBlocks.splice(toIndex, 0, movedBlock);
-    updateCurrentContentBlocks(newBlocks);
-  };
+      const newBlocks = [...currentBlocks];
+      const [movedBlock] = newBlocks.splice(fromIndex, 1);
+      newBlocks.splice(toIndex, 0, movedBlock);
+      updateCurrentContentBlocks(newBlocks);
+    },
+    [currentBlocks, updateCurrentContentBlocks],
+  );
 
-  const handleRemoveBlock = (index: number) => {
-    updateCurrentContentBlocks(currentBlocks.filter((_, i) => i !== index));
-  };
+  const handleRemoveBlock = useCallback(
+    (index: number) => {
+      updateCurrentContentBlocks(currentBlocks.filter((_, i) => i !== index));
+    },
+    [currentBlocks, updateCurrentContentBlocks],
+  );
 
-  const handleChangeBlock = (index: number, field: Partial<CodeBlock>) => {
-    const newBlocks = currentBlocks.map((b, i) =>
-      i === index ? { ...b, ...field } : b,
-    );
-    updateCurrentContentBlocks(newBlocks);
-  };
+  const handleChangeBlock = useCallback(
+    (index: number, field: Partial<CodeBlock>) => {
+      const newBlocks = currentBlocks.map((b, i) =>
+        i === index ? { ...b, ...field } : b,
+      );
+      updateCurrentContentBlocks(newBlocks);
+    },
+    [currentBlocks, updateCurrentContentBlocks],
+  );
 
-  const handleChangeVersion = (version: PokeVersionType) => {
-    const included = currentContent.versions.includes(version);
+  const handleChangeVersion = useCallback(
+    (version: PokeVersionType) => {
+      const currentContentIndex = value.findIndex((c) => c.id === selectedId);
+      if (currentContentIndex < 0) return;
 
-    if (included) {
-      const newValue = [...value];
-      newValue[currentContentIndex] = {
-        ...currentContent,
-        versions: sortVersions(
-          currentContent.versions.filter((v) => v !== version),
-        ),
-      };
-      onChange(newValue);
-    } else {
-      const newValue = value.map((content, i) => ({
-        ...content,
-        versions:
-          currentContentIndex === i
-            ? [...currentContent.versions, version]
-            : sortVersions(content.versions.filter((v) => v !== version)),
-      }));
-      onChange(newValue);
-    }
-  };
+      const currentContent = value[currentContentIndex];
+      const included = currentContent.versions.includes(version);
 
-  const handleAddContent = () => {
+      if (included) {
+        const newValue = [...value];
+        newValue[currentContentIndex] = {
+          ...currentContent,
+          versions: sortVersions(
+            currentContent.versions.filter((v) => v !== version),
+          ),
+        };
+        onChange(newValue);
+      } else {
+        const newValue = value.map((content, i) => ({
+          ...content,
+          versions:
+            currentContentIndex === i
+              ? [...currentContent.versions, version]
+              : sortVersions(content.versions.filter((v) => v !== version)),
+        }));
+        onChange(newValue);
+      }
+    },
+    [value, selectedId, onChange],
+  );
+
+  const handleAddContent = useCallback(() => {
     if (isMaxedContent) {
       enqueueSnackbar("これ以上コードコンテンツを追加できません", {
         variant: "error",
@@ -135,37 +145,43 @@ function CodeContentEditor({ control }: CodeContentEditorProps) {
     const newContent = INIT_CODE_CONTENT(false);
     onChange([...value, newContent]);
     setSelectedVersion(newContent.id);
-  };
+  }, [isMaxedContent, value, onChange, enqueueSnackbar]);
 
-  const handleMoveContent = (fromIndex: number, step: number) => {
-    const toIndex = fromIndex + step;
-    if (toIndex < 0 || toIndex >= value.length) return;
+  const handleMoveContent = useCallback(
+    (fromIndex: number, step: number) => {
+      const toIndex = fromIndex + step;
+      if (toIndex < 0 || toIndex >= value.length) return;
 
-    const newContents = [...value];
-    const [movedContent] = newContents.splice(fromIndex, 1);
-    newContents.splice(toIndex, 0, movedContent);
-    onChange(newContents);
-  };
+      const newContents = [...value];
+      const [movedContent] = newContents.splice(fromIndex, 1);
+      newContents.splice(toIndex, 0, movedContent);
+      onChange(newContents);
+    },
+    [value, onChange],
+  );
 
-  const handleRemoveContent = (id: CodeContent["id"]) => {
-    if (value.length <= 1) {
-      enqueueSnackbar("コードコンテンツは最低一つ必要です", {
-        variant: "error",
-      });
-      return;
-    }
+  const handleRemoveContent = useCallback(
+    (id: CodeContent["id"]) => {
+      if (value.length <= 1) {
+        enqueueSnackbar("コードコンテンツは最低一つ必要です", {
+          variant: "error",
+        });
+        return;
+      }
 
-    const newContents = value.filter((c) => c.id !== id);
-    onChange(newContents);
-    if (selectedId === id && newContents.length > 0) {
-      setSelectedVersion(newContents[0].id);
-    }
-    handleCloseMore();
-  };
+      const newContents = value.filter((c) => c.id !== id);
+      onChange(newContents);
+      if (selectedId === id && newContents.length > 0) {
+        setSelectedVersion(newContents[0].id);
+      }
+      handleCloseMore();
+    },
+    [value, selectedId, onChange, enqueueSnackbar],
+  );
 
-  const handleOpenMore: MouseEventHandler = (e) => {
+  const handleOpenMore: MouseEventHandler = useCallback((e) => {
     setMoreAnchorEl(e.currentTarget as HTMLElement);
-  };
+  }, []);
 
   const handleCloseMore = () => {
     setMoreAnchorEl(null);
@@ -235,79 +251,16 @@ function CodeContentEditor({ control }: CodeContentEditorProps) {
       {currentBlocks.map(({ title, address, code }, index) => {
         const blockErrors = currentErrors?.blocks?.[index];
         return (
-          <Stack
+          <CodeBlockEditor
             key={`${selectedId}-${index}`}
-            position={"relative"}
-            gap={2}
-            borderRadius={1}>
-            <Stack direction={"row"} gap={2}>
-              <TextField
-                value={address}
-                label={fieldItems.block.address.label}
-                placeholder={fieldItems.block.address.placeholder}
-                error={!!blockErrors?.address}
-                helperText={blockErrors?.address?.message}
-                slotProps={{ inputLabel: { shrink: true } }}
-                size="small"
-                autoComplete="off"
-                onChange={(e) =>
-                  handleChangeBlock(index, { address: e.target.value })
-                }
-              />
-              <TextField
-                value={title}
-                label={fieldItems.block.title.label}
-                placeholder={fieldItems.block.title.placeholder}
-                error={!!blockErrors?.title}
-                helperText={blockErrors?.title?.message}
-                slotProps={{ inputLabel: { shrink: true } }}
-                size="small"
-                autoComplete="off"
-                onChange={(e) =>
-                  handleChangeBlock(index, { title: e.target.value })
-                }
-              />
-            </Stack>
-            <Box position={"relative"}>
-              <TextField
-                value={code}
-                label={fieldItems.block.code.label}
-                placeholder={fieldItems.block.code.placeholder}
-                autoComplete="off"
-                error={!!blockErrors?.code}
-                helperText={blockErrors?.code?.message}
-                slotProps={{ inputLabel: { shrink: true } }}
-                fullWidth
-                multiline
-                minRows={4}
-                onChange={(e) =>
-                  handleChangeBlock(index, { code: e.target.value })
-                }
-              />
-
-              <Box position={"absolute"} top={-30} right={10}>
-                <Paper elevation={1}>
-                  <Stack direction={"row"} p={0.5}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleMoveBlock(index, -1)}>
-                      <ArrowUpward />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleMoveBlock(index, 1)}>
-                      <ArrowDownward />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleRemoveBlock(index)}
-                      size="small">
-                      <Delete />
-                    </IconButton>
-                  </Stack>
-                </Paper>
-              </Box>
-            </Box>
-          </Stack>
+            block={{ title, address, code }}
+            index={index}
+            selectedId={selectedId}
+            blockErrors={blockErrors}
+            onChangeBlock={handleChangeBlock}
+            onMoveBlock={handleMoveBlock}
+            onRemoveBlock={handleRemoveBlock}
+          />
         );
       })}
 
