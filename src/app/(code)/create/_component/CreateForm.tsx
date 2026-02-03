@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
-import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
 import { fieldItems } from "../_util/fieldItems";
 import { CREATE_FORM_ID } from "../_consts/formId";
@@ -99,16 +99,7 @@ function CreateForm({ formProps }: CreateFormProps) {
         autoComplete="off"
       />
 
-      <Controller
-        name="content"
-        control={control}
-        render={({ field }) => (
-          <CodeContentEditor
-            fieldProps={field}
-            errors={errors?.content as FieldErrors<CodeContent>[] | undefined}
-          />
-        )}
-      />
+      <CodeContentEditor control={control} />
     </Stack>
   );
 }

@@ -8,7 +8,16 @@ import {
 } from "@/lib/types/CodeDataModel";
 import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import { sortVersions } from "@/lib/util/versionType";
-import { Delete, MoreVert } from "@mui/icons-material";
+import {
+  ArrowBack,
+  ArrowDownward,
+  ArrowForward,
+  ArrowLeft,
+  ArrowUpward,
+  Delete,
+  KeyboardArrowLeft,
+  MoreVert,
+} from "@mui/icons-material";
 import {
   Box,
   Chip,
@@ -18,12 +27,13 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Paper,
   Popover,
   Stack,
   TextField,
 } from "@mui/material";
 import { MouseEventHandler, useState } from "react";
-import { ControllerRenderProps, FieldErrors } from "react-hook-form";
+import { Control, useController } from "react-hook-form";
 import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
 import { fieldItems } from "../_util/fieldItems";
 import { useSnackbar } from "notistack";
@@ -31,14 +41,14 @@ import { useSnackbar } from "notistack";
 const MAX_CONTENT_COUNT = Object.keys(PokeVersions).length;
 
 interface CodeContentEditorProps {
-  fieldProps: ControllerRenderProps<CodeDataInput, "content">;
-  errors?: FieldErrors<CodeContent>[];
+  control: Control<CodeDataInput>;
 }
 
-function CodeContentEditor({
-  fieldProps: { value, onChange },
-  errors,
-}: CodeContentEditorProps) {
+function CodeContentEditor({ control }: CodeContentEditorProps) {
+  const {
+    field: { value, onChange },
+    formState: { errors },
+  } = useController({ control, name: "content" });
   const [selectedId, setSelectedVersion] = useState(value[0]?.id || "");
   const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
   const { enqueueSnackbar } = useSnackbar();
@@ -47,7 +57,7 @@ function CodeContentEditor({
   const currentContent = value[currentContentIndex];
   const currentBlocks = currentContent?.blocks || [];
 
-  const currentErrors = errors?.[currentContentIndex];
+  const currentErrors = errors?.content?.[currentContentIndex];
   const isMaxedContent = value.length >= MAX_CONTENT_COUNT;
 
   const handleChangeId = (id: CodeContent["id"]) => {
@@ -67,6 +77,16 @@ function CodeContentEditor({
 
   const handleAddBlock = () => {
     updateCurrentContentBlocks([...currentBlocks, INIT_CODE_BLOCK]);
+  };
+
+  const handleMoveBlock = (fromIndex = 0, step: number = 0) => {
+    const toIndex = fromIndex + step;
+    if (toIndex < 0 || toIndex >= currentBlocks.length) return;
+
+    const newBlocks = [...currentBlocks];
+    const [movedBlock] = newBlocks.splice(fromIndex, 1);
+    newBlocks.splice(toIndex, 0, movedBlock);
+    updateCurrentContentBlocks(newBlocks);
   };
 
   const handleRemoveBlock = (index: number) => {
@@ -117,6 +137,16 @@ function CodeContentEditor({
     setSelectedVersion(newContent.id);
   };
 
+  const handleMoveContent = (fromIndex: number, step: number) => {
+    const toIndex = fromIndex + step;
+    if (toIndex < 0 || toIndex >= value.length) return;
+
+    const newContents = [...value];
+    const [movedContent] = newContents.splice(fromIndex, 1);
+    newContents.splice(toIndex, 0, movedContent);
+    onChange(newContents);
+  };
+
   const handleRemoveContent = (id: CodeContent["id"]) => {
     if (value.length <= 1) {
       enqueueSnackbar("コードコンテンツは最低一つ必要です", {
@@ -160,15 +190,35 @@ function CodeContentEditor({
             />
           ))}
         </Stack>
+
         <IconButton size="small" onClick={handleOpenMore}>
           <MoreVert />
         </IconButton>
+
         <Popover
           id={`${currentContent.id}-more-menu`}
           anchorEl={moreAnchorEl}
           open={Boolean(moreAnchorEl)}
           onClose={handleCloseMore}>
           <List>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => handleMoveContent(currentContentIndex, -1)}>
+                <ListItemIcon>
+                  <ArrowBack />
+                </ListItemIcon>
+                <ListItemText primary="前に移動" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => handleMoveContent(currentContentIndex, 1)}>
+                <ListItemIcon>
+                  <ArrowForward />
+                </ListItemIcon>
+                <ListItemText primary="後ろに移動" />
+              </ListItemButton>
+            </ListItem>
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => handleRemoveContent(currentContent.id)}>
@@ -218,27 +268,44 @@ function CodeContentEditor({
                 }
               />
             </Stack>
-            <TextField
-              value={code}
-              label={fieldItems.block.code.label}
-              placeholder={fieldItems.block.code.placeholder}
-              autoComplete="off"
-              error={!!blockErrors?.code}
-              helperText={blockErrors?.code?.message}
-              slotProps={{ inputLabel: { shrink: true } }}
-              fullWidth
-              multiline
-              minRows={4}
-              onChange={(e) =>
-                handleChangeBlock(index, { code: e.target.value })
-              }
-            />
-            <Box position={"absolute"} top={0} right={0} p={2}>
-              <IconButton
-                color="error"
-                onClick={() => handleRemoveBlock(index)}>
-                <Delete />
-              </IconButton>
+            <Box position={"relative"}>
+              <TextField
+                value={code}
+                label={fieldItems.block.code.label}
+                placeholder={fieldItems.block.code.placeholder}
+                autoComplete="off"
+                error={!!blockErrors?.code}
+                helperText={blockErrors?.code?.message}
+                slotProps={{ inputLabel: { shrink: true } }}
+                fullWidth
+                multiline
+                minRows={4}
+                onChange={(e) =>
+                  handleChangeBlock(index, { code: e.target.value })
+                }
+              />
+
+              <Box position={"absolute"} top={-30} right={10}>
+                <Paper elevation={1}>
+                  <Stack direction={"row"} p={0.5}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleMoveBlock(index, -1)}>
+                      <ArrowUpward />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleMoveBlock(index, 1)}>
+                      <ArrowDownward />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleRemoveBlock(index)}
+                      size="small">
+                      <Delete />
+                    </IconButton>
+                  </Stack>
+                </Paper>
+              </Box>
             </Box>
           </Stack>
         );
