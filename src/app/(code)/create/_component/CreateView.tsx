@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { CREATE_FORM_ID } from "../_consts/formId";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
@@ -25,7 +25,7 @@ interface CreateViewProps {
   errorMessage?: string;
 }
 
-function CreateView({ mode, initData, errorMessage }: CreateViewProps) {
+const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const formProps = useForm<CodeDataInput>({
     resolver: zodResolver(CodeDataSchema),
     mode: "onChange",
@@ -204,6 +204,6 @@ function CreateView({ mode, initData, errorMessage }: CreateViewProps) {
       </Box>
     </>
   );
-}
+});
 
 export default CreateView;

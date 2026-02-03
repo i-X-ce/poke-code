@@ -21,7 +21,7 @@ import {
   Popover,
   Stack,
 } from "@mui/material";
-import { MouseEventHandler, useCallback, useState } from "react";
+import { MouseEventHandler, memo, useCallback, useState } from "react";
 import { Control, useController } from "react-hook-form";
 import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
 import { useSnackbar } from "notistack";
@@ -33,7 +33,9 @@ interface CodeContentEditorProps {
   control: Control<CodeDataInput>;
 }
 
-function CodeContentEditor({ control }: CodeContentEditorProps) {
+const CodeContentEditor = memo(function CodeContentEditor({
+  control,
+}: CodeContentEditorProps) {
   const {
     field: { value, onChange },
     formState: { errors },
@@ -280,6 +282,6 @@ function CodeContentEditor({ control }: CodeContentEditorProps) {
       </Box>
     </CodeContentView>
   );
-}
+});
 
 export default CodeContentEditor;
