@@ -6,7 +6,7 @@ import { PATH } from "@/lib/constant/paths";
 import MoreButton from "@/app/_components/MoreButton";
 import { Stack } from "@mui/material";
 import BookmarkButton from "@/app/_components/BookmarkButton";
-import { createMockCodeData } from "@/lib/types/CodeDataModel";
+import { readCode } from "@/service/server/codes";
 
 interface CodePageProps {
   params: Promise<{ id: string }>;
@@ -14,8 +14,7 @@ interface CodePageProps {
 
 const CodePage: React.FC<CodePageProps> = async ({ params }) => {
   const { id } = await params;
-  // const { data } = await readCode(id);
-  const data = createMockCodeData(0);
+  const { data } = await readCode(id);
 
   if (!data) {
     return <div>Code not found</div>;
