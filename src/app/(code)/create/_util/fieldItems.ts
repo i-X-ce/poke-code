@@ -47,8 +47,20 @@ export const fieldItems: {
       label: "コード内容",
       placeholder: "",
     },
+    blocks: {
+      label: "コードブロック",
+      placeholder: "",
+    },
   },
   block: {
+    id: {
+      label: "コードブロックID",
+      placeholder: "",
+    },
+    contentId: {
+      label: "コンテンツID",
+      placeholder: "",
+    },
     title: {
       label: "タイトル",
       placeholder: "コードブロックのタイトル",
