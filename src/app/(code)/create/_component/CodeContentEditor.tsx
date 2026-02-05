@@ -144,6 +144,9 @@ const CodeContentEditor = memo(() => {
         return;
       }
       removeContent(currentContentIndex);
+      setSelectedVersion(
+        contentValue[Math.max(0, currentContentIndex - 1)]?.id || "",
+      );
       handleCloseMore();
     };
 
