@@ -17,6 +17,8 @@ import {
   UseFieldArrayRemove,
   useFormContext,
 } from "react-hook-form";
+import { useDialog } from "@/hooks/useDialog";
+import DeleteCheckDialogContent from "./DeleteCheckDialogContent";
 
 interface CodeBlockEditorProps {
   index: number;
@@ -27,6 +29,7 @@ interface CodeBlockEditorProps {
 
 const CodeBlockEditor = memo(
   ({ index, fields, move, remove }: CodeBlockEditorProps) => {
+    const { openDialog } = useDialog();
     const thisBlock = fields[index];
 
     const handleMoveUp = () => {
@@ -51,7 +54,16 @@ const CodeBlockEditor = memo(
     };
 
     const handleRemove = () => {
-      remove(index);
+      const onDelete = () => {
+        remove(index);
+      };
+
+      openDialog(
+        <DeleteCheckDialogContent
+          fieldName="コードブロック"
+          onDelete={onDelete}
+        />,
+      );
     };
 
     return (

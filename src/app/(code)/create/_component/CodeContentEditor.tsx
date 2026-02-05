@@ -26,6 +26,8 @@ import { useController, useFieldArray, useFormContext } from "react-hook-form";
 import { createInitCodeBlock, INIT_CODE_CONTENT } from "../_util/initValues";
 import { useSnackbar } from "notistack";
 import CodeBlockEditor from "./CodeBlockEditor";
+import { useDialog } from "@/hooks/useDialog";
+import DeleteCheckDialogContent from "./DeleteCheckDialogContent";
 
 const MAX_CONTENT_COUNT = Object.keys(PokeVersions).length;
 
@@ -58,6 +60,7 @@ const CodeContentEditor = memo(() => {
   );
   const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const { openDialog } = useDialog();
 
   const currentContentIndex =
     contentValue?.findIndex((c) => c.id === selectedId) || 0;
@@ -133,14 +136,23 @@ const CodeContentEditor = memo(() => {
   };
 
   const handleRemoveContent = () => {
-    if (contentValue.length <= 1) {
-      enqueueSnackbar("コードコンテンツは最低一つ必要です", {
-        variant: "error",
-      });
-      return;
-    }
-    removeContent(currentContentIndex);
-    handleCloseMore();
+    const onDelete = () => {
+      if (contentValue.length <= 1) {
+        enqueueSnackbar("コードコンテンツは最低一つ必要です", {
+          variant: "error",
+        });
+        return;
+      }
+      removeContent(currentContentIndex);
+      handleCloseMore();
+    };
+
+    openDialog(
+      <DeleteCheckDialogContent
+        fieldName="コードコンテンツ"
+        onDelete={onDelete}
+      />,
+    );
   };
 
   const handleOpenMore: MouseEventHandler = (e) => {
