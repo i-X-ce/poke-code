@@ -261,7 +261,7 @@ const updateHeadersFile = async (): Promise<ActionResult> => {
             ...data,
             id,
             versions: data.content.flatMap((c) => c.versions),
-            codeSize: codeSize(data.content),
+            codeSize: codeSize(data.blocks),
           });
 
           if (!parsedData.success) {
