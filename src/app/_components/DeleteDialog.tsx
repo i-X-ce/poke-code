@@ -1,8 +1,8 @@
 "use client";
+import { useDeleteCode } from "@/hooks/codes/useDeleteCode";
 import { useDialog } from "@/hooks/useDialog";
 import { CodeData } from "@/lib/types/CodeDataModel";
 import isDevelopment from "@/lib/util/isDevelopment";
-import { deleteCode } from "@/service/server/codes";
 import {
   Button,
   DialogActions,
@@ -20,11 +20,13 @@ type DeleteDialogProps = {
 function DeleteDialogContent({ id }: DeleteDialogProps) {
   const { closeDialog } = useDialog();
   const { enqueueSnackbar } = useSnackbar();
+  const { isLoading: isDeleting, deleteCodeFetcher } = useDeleteCode();
 
   const handleDelete = async () => {
-    const { ok, message } = await deleteCode(id);
+    const { ok, message } = await deleteCodeFetcher(id);
 
     if (ok) {
+      enqueueSnackbar("コードを削除しました", { variant: "success" });
       window.location.reload();
     } else {
       enqueueSnackbar(message);
@@ -48,10 +50,14 @@ function DeleteDialogContent({ id }: DeleteDialogProps) {
         <DialogContentText>この操作は元に戻せません。</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeDialog} variant="outlined" color="error">
+        <Button onClick={closeDialog} color="error">
           キャンセル
         </Button>
-        <Button onClick={handleDelete} variant="contained" color="error">
+        <Button
+          onClick={handleDelete}
+          variant="contained"
+          color="error"
+          loading={isDeleting}>
           削除する
         </Button>
       </DialogActions>

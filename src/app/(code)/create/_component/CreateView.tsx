@@ -16,8 +16,9 @@ import { memo, useEffect, useMemo } from "react";
 import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
-import { useLoading } from "@/hooks/useLoading";
-import { createCode, saveCodeData, updateCode } from "@/service/server/codes";
+import { useUpdateCode } from "@/hooks/codes/useUpdateCode";
+import { useCreateCode } from "@/hooks/codes/useCreateCode";
+import { useSaveCode } from "@/hooks/codes/useSaveCode";
 
 interface CreateViewProps {
   mode: "create" | "edit";
@@ -34,7 +35,9 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const { viewMode, toggleViewMode } = useCreateViewMode();
   const { openDialog } = useDialog();
   const { enqueueSnackbar } = useSnackbar();
-  const { isLoading: isSaving, startLoading: startSaving } = useLoading();
+  const { createCodeFetcher } = useCreateCode();
+  const { isSaving, saveCodeFetcher } = useSaveCode();
+  const { updateCodeFetcher } = useUpdateCode();
 
   const {
     watch,
@@ -71,17 +74,18 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
       } = await (async () => {
         switch (mode) {
           case "edit":
-            return updateCode(initData?.id || "", data);
+            return updateCodeFetcher(data.id, data);
           case "create":
-            return createCode(data);
+            return createCodeFetcher(data);
           default:
-            return createCode(data);
+            return createCodeFetcher(data);
         }
       })();
 
       if (!ok) {
         throw new Error(message || `コードデータの${actionName}に失敗しました`);
       }
+
       enqueueSnackbar(`コードデータを${actionName}しました: ${id}`, {
         variant: "success",
       });
@@ -95,26 +99,24 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const onSave =
     mode === "create"
       ? async () => {
-          startSaving(async () => {
-            try {
-              const data = watch();
-              const { ok, message } = await saveCodeData(data);
+          try {
+            const data = watch();
+            const { ok, message } = await saveCodeFetcher(data);
 
-              if (!ok) {
-                throw new Error(
-                  message || "コードデータの一時保存に失敗しました",
-                );
-              }
-
-              enqueueSnackbar("コードデータを一時保存しました", {
-                variant: "success",
-              });
-            } catch (error) {
-              console.error(error);
-              enqueueSnackbar((error as Error).message, { variant: "error" });
-              throw error;
+            if (!ok) {
+              throw new Error(
+                message || "コードデータの一時保存に失敗しました",
+              );
             }
-          });
+
+            enqueueSnackbar("コードデータを一時保存しました", {
+              variant: "success",
+            });
+          } catch (error) {
+            console.error(error);
+            enqueueSnackbar((error as Error).message, { variant: "error" });
+            throw error;
+          }
         }
       : () => {};
 

@@ -1,4 +1,3 @@
-"use server";
 import fs from "fs/promises";
 import path from "path";
 import { PATH } from "../../lib/constant/paths";
@@ -233,7 +232,7 @@ export async function loadTemporaryCodeData(): Promise<
  * ヘッダーファイルのアップデート
  *
  */
-export const updateHeadersFile = async (): Promise<ActionResult> => {
+const updateHeadersFile = async (): Promise<ActionResult> => {
   try {
     const folderNames = await fs.readdir(
       path.join(process.cwd(), PATH.server.CODE_DATA()),
