@@ -5,7 +5,7 @@ import CodeView from "../_components/CodeView";
 import { PATH } from "@/lib/constant/paths";
 import { readCode } from "@/service/server/codes";
 import MoreButton from "@/app/_components/MoreButton";
-import { Box, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import BookmarkButton from "@/app/_components/BookmarkButton";
 
 interface CodePageProps {
@@ -14,7 +14,7 @@ interface CodePageProps {
 
 const CodePage: React.FC<CodePageProps> = async ({ params }) => {
   const { id } = await params;
-  const data = await getCodeData(id);
+  const { data } = await readCode(id);
 
   if (!data) {
     return <div>Code not found</div>;
@@ -39,19 +39,6 @@ export async function generateStaticParams() {
     id: folderName,
   }));
   return ids;
-}
-
-async function getCodeData(id: string) {
-  try {
-    const result = await readCode(id);
-    if (result.ok) {
-      return result.data;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    return null;
-  }
 }
 
 export default CodePage;
