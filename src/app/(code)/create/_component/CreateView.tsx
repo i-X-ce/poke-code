@@ -19,6 +19,7 @@ import { useSnackbar } from "notistack";
 import { useUpdateCode } from "@/hooks/codes/useUpdateCode";
 import { useCreateCode } from "@/hooks/codes/useCreateCode";
 import { useSaveCode } from "@/hooks/codes/useSaveCode";
+import CodeViewWrapper from "./CodeViewWrapper";
 
 interface CreateViewProps {
   mode: "create" | "edit";
@@ -40,20 +41,17 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const { updateCodeFetcher } = useUpdateCode();
 
   const {
-    watch,
+    getValues,
     handleSubmit,
     formState: { isSubmitting },
   } = formProps;
-  const values = watch();
-  const parsed = useMemo(() => CodeDataSchema.safeParse(values), [values]);
-  const parsedData = parsed.success ? parsed.data : null;
 
   const actionName = useMemo(
     () => (mode === "create" ? "投稿" : "更新"),
     [mode],
   );
 
-  const checkSubmitErrors = (data = values) => {
+  const checkSubmitErrors = (data = getValues()) => {
     const parsed = CodeDataSchema.safeParse(data);
     if (parsed.success) return;
 
@@ -100,7 +98,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
     mode === "create"
       ? async () => {
           try {
-            const data = watch();
+            const data = getValues();
             const { ok, message } = await saveCodeFetcher(data);
 
             if (!ok) {
@@ -159,8 +157,8 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
       {viewMode === CreateViewModes.EDIT && (
         <CreateForm formProps={formProps} />
       )}
-      {viewMode === CreateViewModes.PREVIEW && parsedData && (
-        <CodeView data={parsedData} />
+      {viewMode === CreateViewModes.PREVIEW && (
+        <CodeViewWrapper formProps={formProps} />
       )}
 
       {/* アクション */}

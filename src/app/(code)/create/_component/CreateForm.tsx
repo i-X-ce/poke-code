@@ -2,15 +2,11 @@
 import { CodeDataInput } from "@/lib/types/CodeDataModel";
 import { Stack } from "@mui/material";
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { FormProvider, UseFormReturn } from "react-hook-form";
 import CodeContentEditor from "./CodeContentEditor";
 import { CREATE_FORM_ID } from "../_consts/formId";
 import IsPublicField from "./IsPublicField";
-import TitleField from "./TitleField";
-import DateField from "./DateField";
-import TagsField from "./TagsField";
-import DetailField from "./DetailField";
-import DescriptionField from "./DescriptionField";
+import CreateFormTextField from "./CreateFormTextField";
 
 interface CreateFormProps {
   formProps: UseFormReturn<CodeDataInput>;
@@ -18,15 +14,17 @@ interface CreateFormProps {
 
 function CreateForm({ formProps }: CreateFormProps) {
   return (
-    <Stack component={"form"} id={CREATE_FORM_ID} gap={2}>
-      <IsPublicField formProps={formProps} />
-      <TitleField formProps={formProps} />
-      <DateField formProps={formProps} />
-      <TagsField formProps={formProps} />
-      <DetailField formProps={formProps} />
-      <DescriptionField formProps={formProps} />
-      <CodeContentEditor control={formProps.control} />
-    </Stack>
+    <FormProvider {...formProps}>
+      <Stack component={"form"} id={CREATE_FORM_ID} gap={2}>
+        <IsPublicField />
+        <CreateFormTextField fieldName="title" variant="filled" />
+        <CreateFormTextField fieldName="date" />
+        <CreateFormTextField fieldName="tags" />
+        <CreateFormTextField fieldName="detail" />
+        <CreateFormTextField fieldName="description" minRows={10} multiline />
+        <CodeContentEditor />
+      </Stack>
+    </FormProvider>
   );
 }
 

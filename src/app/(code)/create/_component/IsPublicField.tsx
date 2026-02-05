@@ -1,17 +1,11 @@
 "use client";
 import { Box, Chip, FormControlLabel, Switch } from "@mui/material";
 import { memo } from "react";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { Controller, useFormContext, UseFormReturn } from "react-hook-form";
 import { CodeDataInput } from "@/lib/types/CodeDataModel";
 
-interface IsPublicFieldProps {
-  formProps: UseFormReturn<CodeDataInput>;
-}
-
-const IsPublicField = memo(function IsPublicField({
-  formProps,
-}: IsPublicFieldProps) {
-  const { control } = formProps;
+const IsPublicField = memo(function IsPublicField() {
+  const { control } = useFormContext<CodeDataInput>();
 
   return (
     <Box sx={{ userSelect: "none" }}>

@@ -1,16 +1,17 @@
 import z from "zod";
 import { PokeVersions, PokeVersionType } from "./PokeVersion";
 
-export const CodeBlockSchema = z.object({
-  title: z.string(),
-  address: z.string().length(4, "開始アドレスは4文字で入力してください"),
-  code: z.string(),
-});
-
 export const CodeContentSchema = z.object({
   id: z.string(),
   versions: z.enum(PokeVersions).array(),
-  blocks: z.array(CodeBlockSchema),
+});
+
+export const CodeBlockSchema = z.object({
+  id: z.string(),
+  contentId: CodeContentSchema.shape.id,
+  title: z.string(),
+  address: z.string().length(4, "開始アドレスは4文字で入力してください"),
+  code: z.string(),
 });
 
 export const CodeDataHeaderSchema = z.object({
@@ -64,6 +65,7 @@ export const CodeDataSchema = z.object({
     .array(CodeContentSchema)
     .min(1, "コンテンツは一つ以上必要です")
     .max(Object.keys(PokeVersions).length, "コンテンツの数が多すぎます"),
+  blocks: z.array(CodeBlockSchema).min(1, "コードブロックは一つ以上必要です"),
 });
 
 export const HeaderJsonSchema = z.object({
@@ -167,22 +169,25 @@ aaa
       ...romVersionList.map((v, i) => ({
         id: `mock-content-id-${num}-${i}`,
         versions: v,
-        blocks: [
-          ...Array.from({
-            length: Math.floor(Math.random() * 3) + 1,
-          }).map((_, j) => ({
-            title: `コードブロック${j + 1}`,
-            address: Math.floor(Math.random() * 0xffff)
-              .toString(16)
-              .toUpperCase()
-              .padStart(4, "0"),
-            code: Array.from({
-              length: Math.floor(Math.random() * 20) + 10,
-            })
-              .map(() => Math.random().toString(16).slice(2, 4).toUpperCase())
-              .join(""),
-          })),
-        ],
+      })),
+    ],
+    blocks: [
+      ...Array.from({
+        length: Math.floor(Math.random() * 3) + 1,
+      }).map((_, j) => ({
+        id: `mock-block-id-${num}-${j}`,
+        contentId: `mock-content-id-${num}-${j % romVersionList.length}`,
+        order: j,
+        title: `コードブロック${j + 1}`,
+        address: Math.floor(Math.random() * 0xffff)
+          .toString(16)
+          .toUpperCase()
+          .padStart(4, "0"),
+        code: Array.from({
+          length: Math.floor(Math.random() * 20) + 10,
+        })
+          .map(() => Math.random().toString(16).slice(2, 4).toUpperCase())
+          .join(""),
       })),
     ],
   };

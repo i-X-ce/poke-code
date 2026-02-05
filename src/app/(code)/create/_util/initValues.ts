@@ -1,19 +1,22 @@
 import { CodeBlock, CodeContent, CodeData } from "@/lib/types/CodeDataModel";
 import { PokeVersions } from "@/lib/types/PokeVersion";
 
-export const INIT_CODE_BLOCK: CodeBlock = {
+export const createInitCodeBlock = (contentId: string): CodeBlock => ({
+  id: crypto.randomUUID(),
+  contentId,
   title: "",
   address: "DA00",
   code: "",
-} as const;
+});
 
 export const INIT_CODE_CONTENT = (allVersion: boolean = true): CodeContent => ({
   id: crypto.randomUUID(),
   versions: allVersion ? Object.values(PokeVersions) : [],
-  blocks: [],
 });
 
 const Date2String = (date: Date): string => date.toISOString().split("T")[0];
+
+const initialContent = INIT_CODE_CONTENT();
 
 export const INIT_CODE_DATA: CodeData = {
   id: "init-id",
@@ -23,5 +26,6 @@ export const INIT_CODE_DATA: CodeData = {
   tags: [] as string[],
   detail: "",
   description: "",
-  content: [INIT_CODE_CONTENT()],
+  content: [initialContent],
+  blocks: [createInitCodeBlock(initialContent.id)],
 };

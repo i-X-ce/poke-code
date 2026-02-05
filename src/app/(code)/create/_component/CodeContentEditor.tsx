@@ -21,122 +21,91 @@ import {
   Popover,
   Stack,
 } from "@mui/material";
-import { MouseEventHandler, memo, useCallback, useState } from "react";
-import { Control, useController } from "react-hook-form";
-import { INIT_CODE_BLOCK, INIT_CODE_CONTENT } from "../_util/initValues";
+import { MouseEventHandler, memo, useState } from "react";
+import { useController, useFieldArray, useFormContext } from "react-hook-form";
+import { createInitCodeBlock, INIT_CODE_CONTENT } from "../_util/initValues";
 import { useSnackbar } from "notistack";
 import CodeBlockEditor from "./CodeBlockEditor";
 
 const MAX_CONTENT_COUNT = Object.keys(PokeVersions).length;
 
-interface CodeContentEditorProps {
-  control: Control<CodeDataInput>;
-}
-
-const CodeContentEditor = memo(function CodeContentEditor({
-  control,
-}: CodeContentEditorProps) {
+const CodeContentEditor = memo(() => {
+  const { control } = useFormContext<CodeDataInput>();
   const {
-    field: { value, onChange },
-    formState: { errors },
+    field: { value: contentValue, onChange },
   } = useController({ control, name: "content" });
-  const [selectedId, setSelectedVersion] = useState(value[0]?.id || "");
+
+  const {
+    append: appendContent,
+    move: moveContent,
+    remove: removeContent,
+  } = useFieldArray({
+    control,
+    name: "content",
+  });
+  const {
+    append: appendBlock,
+    fields: blocksFields,
+    move: blocksMove,
+    remove: blocksRemove,
+  } = useFieldArray({
+    control,
+    name: "blocks",
+  });
+
+  const [selectedId, setSelectedVersion] = useState(
+    contentValue?.[0]?.id || "",
+  );
   const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
   const { enqueueSnackbar } = useSnackbar();
 
-  const currentContentIndex = value.findIndex((c) => c.id === selectedId);
-  const currentContent = value[currentContentIndex];
-  const currentBlocks = currentContent?.blocks || [];
+  const currentContentIndex =
+    contentValue?.findIndex((c) => c.id === selectedId) || 0;
+  const currentContent = contentValue?.[currentContentIndex] || null;
 
-  const currentErrors = errors?.content?.[currentContentIndex];
-  const isMaxedContent = value.length >= MAX_CONTENT_COUNT;
+  const isMaxedContent = contentValue?.length >= MAX_CONTENT_COUNT;
 
-  const handleChangeId = useCallback((id: CodeContent["id"]) => {
+  const handleChangeId = (id: CodeContent["id"]) => {
     setSelectedVersion(id);
-  }, []);
+  };
 
-  const updateCurrentContentBlocks = useCallback(
-    (newBlocks: CodeBlock[]) => {
-      const newContent = [...value];
-      const index = value.findIndex((c) => c.id === selectedId);
-      if (index >= 0) {
-        const current = value[index];
-        newContent[index] = {
-          ...current,
-          blocks: newBlocks,
-        };
-      }
-      onChange(newContent);
-    },
-    [value, selectedId, onChange],
-  );
+  const handleAddBlock = () => {
+    if (!currentContent) return;
+    const newBlock: CodeBlock = createInitCodeBlock(currentContent.id);
+    appendBlock(newBlock);
+  };
 
-  const handleAddBlock = useCallback(() => {
-    updateCurrentContentBlocks([...currentBlocks, INIT_CODE_BLOCK]);
-  }, [currentBlocks, updateCurrentContentBlocks]);
+  const handleChangeVersion = (version: PokeVersionType) => {
+    const currentContentIndex = contentValue.findIndex(
+      (c) => c.id === selectedId,
+    );
+    if (currentContentIndex < 0) return;
 
-  const handleMoveBlock = useCallback(
-    (fromIndex = 0, step: number = 0) => {
-      const toIndex = fromIndex + step;
-      if (toIndex < 0 || toIndex >= currentBlocks.length) return;
+    const currentContent = contentValue[currentContentIndex];
+    const included = currentContent.versions.includes(version);
 
-      const newBlocks = [...currentBlocks];
-      const [movedBlock] = newBlocks.splice(fromIndex, 1);
-      newBlocks.splice(toIndex, 0, movedBlock);
-      updateCurrentContentBlocks(newBlocks);
-    },
-    [currentBlocks, updateCurrentContentBlocks],
-  );
+    if (included) {
+      const newValue = [...contentValue];
+      newValue[currentContentIndex] = {
+        ...currentContent,
+        versions: sortVersions(
+          currentContent.versions.filter((v) => v !== version),
+        ),
+      };
+      onChange(newValue);
+    } else {
+      const newValue = contentValue.map((content, i) => ({
+        ...content,
+        versions:
+          currentContentIndex === i
+            ? [...currentContent.versions, version]
+            : sortVersions(content.versions.filter((v) => v !== version)),
+      }));
+      onChange(newValue);
+    }
+  };
 
-  const handleRemoveBlock = useCallback(
-    (index: number) => {
-      updateCurrentContentBlocks(currentBlocks.filter((_, i) => i !== index));
-    },
-    [currentBlocks, updateCurrentContentBlocks],
-  );
-
-  const handleChangeBlock = useCallback(
-    (index: number, field: Partial<CodeBlock>) => {
-      const newBlocks = currentBlocks.map((b, i) =>
-        i === index ? { ...b, ...field } : b,
-      );
-      updateCurrentContentBlocks(newBlocks);
-    },
-    [currentBlocks, updateCurrentContentBlocks],
-  );
-
-  const handleChangeVersion = useCallback(
-    (version: PokeVersionType) => {
-      const currentContentIndex = value.findIndex((c) => c.id === selectedId);
-      if (currentContentIndex < 0) return;
-
-      const currentContent = value[currentContentIndex];
-      const included = currentContent.versions.includes(version);
-
-      if (included) {
-        const newValue = [...value];
-        newValue[currentContentIndex] = {
-          ...currentContent,
-          versions: sortVersions(
-            currentContent.versions.filter((v) => v !== version),
-          ),
-        };
-        onChange(newValue);
-      } else {
-        const newValue = value.map((content, i) => ({
-          ...content,
-          versions:
-            currentContentIndex === i
-              ? [...currentContent.versions, version]
-              : sortVersions(content.versions.filter((v) => v !== version)),
-        }));
-        onChange(newValue);
-      }
-    },
-    [value, selectedId, onChange],
-  );
-
-  const handleAddContent = useCallback(() => {
+  const handleAddContent = () => {
     if (isMaxedContent) {
       enqueueSnackbar("これ以上コードコンテンツを追加できません", {
         variant: "error",
@@ -145,45 +114,38 @@ const CodeContentEditor = memo(function CodeContentEditor({
     }
 
     const newContent = INIT_CODE_CONTENT(false);
-    onChange([...value, newContent]);
+    appendContent(newContent);
     setSelectedVersion(newContent.id);
-  }, [isMaxedContent, value, onChange, enqueueSnackbar]);
+  };
 
-  const handleMoveContent = useCallback(
-    (fromIndex: number, step: number) => {
-      const toIndex = fromIndex + step;
-      if (toIndex < 0 || toIndex >= value.length) return;
+  const handleMoveUpContent = () => {
+    if (currentContentIndex <= 0) return;
+    moveContent(currentContentIndex, currentContentIndex - 1);
+  };
 
-      const newContents = [...value];
-      const [movedContent] = newContents.splice(fromIndex, 1);
-      newContents.splice(toIndex, 0, movedContent);
-      onChange(newContents);
-    },
-    [value, onChange],
-  );
+  const handleMoveDownContent = () => {
+    if (
+      currentContentIndex < 0 ||
+      currentContentIndex >= contentValue.length - 1
+    )
+      return;
+    moveContent(currentContentIndex, currentContentIndex + 1);
+  };
 
-  const handleRemoveContent = useCallback(
-    (id: CodeContent["id"]) => {
-      if (value.length <= 1) {
-        enqueueSnackbar("コードコンテンツは最低一つ必要です", {
-          variant: "error",
-        });
-        return;
-      }
+  const handleRemoveContent = () => {
+    if (contentValue.length <= 1) {
+      enqueueSnackbar("コードコンテンツは最低一つ必要です", {
+        variant: "error",
+      });
+      return;
+    }
+    removeContent(currentContentIndex);
+    handleCloseMore();
+  };
 
-      const newContents = value.filter((c) => c.id !== id);
-      onChange(newContents);
-      if (selectedId === id && newContents.length > 0) {
-        setSelectedVersion(newContents[0].id);
-      }
-      handleCloseMore();
-    },
-    [value, selectedId, onChange, enqueueSnackbar],
-  );
-
-  const handleOpenMore: MouseEventHandler = useCallback((e) => {
+  const handleOpenMore: MouseEventHandler = (e) => {
     setMoreAnchorEl(e.currentTarget as HTMLElement);
-  }, []);
+  };
 
   const handleCloseMore = () => {
     setMoreAnchorEl(null);
@@ -191,7 +153,7 @@ const CodeContentEditor = memo(function CodeContentEditor({
 
   return (
     <CodeContentView
-      content={value}
+      content={contentValue}
       mode="edit"
       selectedId={selectedId}
       onChangeId={handleChangeId}
@@ -199,14 +161,15 @@ const CodeContentEditor = memo(function CodeContentEditor({
       addDisabled={isMaxedContent}>
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Stack direction={"row"} alignItems={"center"} gap={1}>
-          {Object.values(PokeVersions).map((v) => (
-            <VersionChip
-              key={v}
-              version={v}
-              disabled={!currentContent.versions.includes(v)}
-              onClick={() => handleChangeVersion(v)}
-            />
-          ))}
+          {currentContent &&
+            Object.values(PokeVersions).map((v) => (
+              <VersionChip
+                key={v}
+                version={v}
+                disabled={!currentContent.versions.includes(v)}
+                onClick={() => handleChangeVersion(v)}
+              />
+            ))}
         </Stack>
 
         <IconButton size="small" onClick={handleOpenMore}>
@@ -214,14 +177,13 @@ const CodeContentEditor = memo(function CodeContentEditor({
         </IconButton>
 
         <Popover
-          id={`${currentContent.id}-more-menu`}
+          id={`${currentContent?.id}-more-menu`}
           anchorEl={moreAnchorEl}
           open={Boolean(moreAnchorEl)}
           onClose={handleCloseMore}>
           <List>
             <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => handleMoveContent(currentContentIndex, -1)}>
+              <ListItemButton onClick={handleMoveUpContent}>
                 <ListItemIcon>
                   <ArrowBack />
                 </ListItemIcon>
@@ -229,8 +191,7 @@ const CodeContentEditor = memo(function CodeContentEditor({
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => handleMoveContent(currentContentIndex, 1)}>
+              <ListItemButton onClick={handleMoveDownContent}>
                 <ListItemIcon>
                   <ArrowForward />
                 </ListItemIcon>
@@ -238,8 +199,7 @@ const CodeContentEditor = memo(function CodeContentEditor({
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => handleRemoveContent(currentContent.id)}>
+              <ListItemButton onClick={handleRemoveContent}>
                 <ListItemIcon>
                   <Delete />
                 </ListItemIcon>
@@ -250,18 +210,15 @@ const CodeContentEditor = memo(function CodeContentEditor({
         </Popover>
       </Stack>
 
-      {currentBlocks.map(({ title, address, code }, index) => {
-        const blockErrors = currentErrors?.blocks?.[index];
+      {blocksFields.map(({ id, contentId }, index) => {
+        if (contentId !== selectedId) return null;
         return (
           <CodeBlockEditor
-            key={`${selectedId}-${index}`}
-            block={{ title, address, code }}
+            key={id}
             index={index}
-            selectedId={selectedId}
-            blockErrors={blockErrors}
-            onChangeBlock={handleChangeBlock}
-            onMoveBlock={handleMoveBlock}
-            onRemoveBlock={handleRemoveBlock}
+            move={blocksMove}
+            remove={blocksRemove}
+            fields={blocksFields}
           />
         );
       })}

@@ -1,7 +1,7 @@
 "use client";
 import useCopyClipboard from "@/hooks/useCopyClipboard";
-import { type CodeBlock } from "@/lib/types/CodeDataModel";
-import { Box, Chip, Grid, Stack, Typography } from "@mui/material";
+import { type CodeBlock as CodeBlockView } from "@/lib/types/CodeDataModel";
+import { Box, Chip, Grid, Stack } from "@mui/material";
 import React from "react";
 import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
@@ -12,7 +12,7 @@ const num2Hex = (num: number, pad: number, fillString: string = "0") => {
   return num.toString(16).toUpperCase().padStart(pad, fillString);
 };
 
-function CodeBlock({ block }: { block: CodeBlock }) {
+function CodeBlockView({ block }: { block: CodeBlockView }) {
   const { handleCopy, copied } = useCopyClipboard(block.code);
   const [mousePos, setMousePos] = React.useState<PosType>({ x: -1, y: -1 });
 
@@ -108,4 +108,4 @@ function CodeBlock({ block }: { block: CodeBlock }) {
   );
 }
 
-export default CodeBlock;
+export default CodeBlockView;

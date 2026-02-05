@@ -3,10 +3,10 @@ import fs from "fs/promises";
 import React from "react";
 import CodeView from "../_components/CodeView";
 import { PATH } from "@/lib/constant/paths";
-import { readCode } from "@/service/server/codes";
 import MoreButton from "@/app/_components/MoreButton";
 import { Stack } from "@mui/material";
 import BookmarkButton from "@/app/_components/BookmarkButton";
+import { createMockCodeData } from "@/lib/types/CodeDataModel";
 
 interface CodePageProps {
   params: Promise<{ id: string }>;
@@ -14,7 +14,8 @@ interface CodePageProps {
 
 const CodePage: React.FC<CodePageProps> = async ({ params }) => {
   const { id } = await params;
-  const { data } = await readCode(id);
+  // const { data } = await readCode(id);
+  const data = createMockCodeData(0);
 
   if (!data) {
     return <div>Code not found</div>;

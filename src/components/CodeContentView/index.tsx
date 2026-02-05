@@ -1,8 +1,8 @@
 "use client";
-import { CodeContent } from "@/lib/types/CodeDataModel";
+import { CodeBlock, CodeContent } from "@/lib/types/CodeDataModel";
 import { IconButton, Stack, Tooltip } from "@mui/material";
-import React, { memo } from "react";
-import CodeBlock from "./CodeBlock";
+import React, { memo, useState } from "react";
+import CodeBlockView from "./CodeBlockView";
 import { Add } from "@mui/icons-material";
 import VersionTabGroup from "./VersionTabGroup";
 
@@ -10,6 +10,7 @@ export type ModeType = "view" | "edit";
 
 interface CodeContentViewProps {
   content?: CodeContent[];
+  blocks?: CodeBlock[];
   selectedId?: CodeContent["id"];
   mode?: ModeType;
   onChangeId?: (id: CodeContent["id"]) => void;
@@ -21,6 +22,7 @@ interface CodeContentViewProps {
 const CodeContentView = memo(
   ({
     content,
+    blocks,
     selectedId,
     mode,
     onChangeId,
@@ -28,7 +30,7 @@ const CodeContentView = memo(
     addDisabled,
     children,
   }: CodeContentViewProps) => {
-    const [localSelectedVersion, localSetSelectedVersion] = React.useState(
+    const [localSelectedVersion, localSetSelectedVersion] = useState(
       content && content[0].id,
     );
 
@@ -81,10 +83,10 @@ const CodeContentView = memo(
           {mode === "edit"
             ? children
             : content &&
-              content
-                .find((c) => c.id === selectedIdView)
-                ?.blocks.map((block, index) => (
-                  <CodeBlock key={`${selectedIdView}-${index}`} block={block} />
+              blocks
+                ?.filter((b) => b.contentId === selectedIdView)
+                ?.map((block) => (
+                  <CodeBlockView key={block.id} block={block} />
                 ))}
         </Stack>
       </Stack>

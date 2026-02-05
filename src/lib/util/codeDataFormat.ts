@@ -1,4 +1,4 @@
-import { CodeData } from "../types/CodeDataModel";
+import { CodeBlock, CodeData } from "../types/CodeDataModel";
 
 /**
  * コードサイズをcontentから計算する
@@ -6,11 +6,17 @@ import { CodeData } from "../types/CodeDataModel";
  * @param content
  * @returns
  */
-export const codeSize = (content?: CodeData["content"]) => {
-  if (!content) return 0;
-  return Math.max(
-    ...content.map((c) =>
-      c.blocks.reduce((acc, b) => Math.ceil(acc + b.code.length / 2), 0),
-    ),
-  );
+export const codeSize = (blocks?: CodeBlock[]) => {
+  if (!blocks || blocks.length === 0) {
+    return 0;
+  }
+  const blockSum = blocks.reduce<Record<string, number>>((acc, block) => {
+    if (!acc[block.contentId]) {
+      acc[block.contentId] = 0;
+    }
+    acc[block.contentId] += Math.ceil(block.code?.length / 2);
+    return acc;
+  }, {});
+
+  return Math.max(...Object.values(blockSum));
 };
