@@ -9,7 +9,7 @@ import {
   DialogTitle,
   Stack,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import VersionFilter from "./VersionFilter";
 import TagFilter from "./TagFilter";
 import SizeFilter from "./SizeFilter";
@@ -19,11 +19,12 @@ import { useDialog } from "@/hooks/useDialog";
 
 function FilterDialog() {
   const { parsedParams, updateQuery } = useURLQuery();
-  const { handleSubmit, register, control } = useForm<SearchOptions>({
+  const formProps = useForm<SearchOptions>({
     defaultValues: {
       ...parsedParams,
     },
   });
+  const { handleSubmit } = formProps;
   const { closeDialog } = useDialog();
 
   const onSubmit = (data: SearchOptions) => {
@@ -32,26 +33,26 @@ function FilterDialog() {
   };
 
   return (
-    <Box component={"form"} onSubmit={handleSubmit(onSubmit)}>
-      <DialogTitle>検索フィルタ</DialogTitle>
-      <DialogContent>
-        <Stack gap={3} mt={2}>
-          <OrderSelector control={control} />
-          <VersionFilter control={control} />
-          <TagFilter control={control} />
-          <SizeFilter register={register} />
-          <BookmarkedFilter control={control} />
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={closeDialog} >
-          閉じる
-        </Button>
-        <Button type="submit" variant="contained">
-          絞り込む
-        </Button>
-      </DialogActions>
-    </Box>
+    <FormProvider {...formProps}>
+      <Box component={"form"} onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>検索フィルタ</DialogTitle>
+        <DialogContent>
+          <Stack gap={3} mt={2}>
+            <OrderSelector />
+            <VersionFilter />
+            <TagFilter />
+            <SizeFilter />
+            <BookmarkedFilter />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog}>閉じる</Button>
+          <Button type="submit" variant="contained">
+            絞り込む
+          </Button>
+        </DialogActions>
+      </Box>
+    </FormProvider>
   );
 }
 

@@ -1,19 +1,10 @@
 import { SearchOptions } from "@/lib/types/SearchOptions";
-import { Control, useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import FilterItem from "./FilterItem";
-import {
-  FormControlLabel,
-  Chip,
-  Switch,
-  Typography,
-  Checkbox,
-} from "@mui/material";
+import { FormControlLabel, Checkbox } from "@mui/material";
 
-interface BookmarkedFilterProps {
-  control: Control<SearchOptions>;
-}
-
-function BookmarkedFilter({ control }: BookmarkedFilterProps) {
+function BookmarkedFilter() {
+  const { control } = useFormContext<SearchOptions>();
   const { field } = useController({ control, name: "onlyBookmarked" });
   const { value } = field;
 

@@ -1,16 +1,13 @@
 "use client";
-import { Control, Controller, useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import FilterItem from "./FilterItem";
-import { SearchOptions } from "@/lib/types/SearchOptions";
 import { Stack } from "@mui/material";
 import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import VersionChip from "@/components/VersionChip";
+import { SearchOptions } from "@/lib/types/SearchOptions";
 
-interface VersionFilterProps {
-  control: Control<SearchOptions>;
-}
-
-function VersionFilter({ control }: VersionFilterProps) {
+function VersionFilter() {
+  const { control } = useFormContext<SearchOptions>();
   const {
     field: { value, onChange },
   } = useController({ control, name: "versions" });

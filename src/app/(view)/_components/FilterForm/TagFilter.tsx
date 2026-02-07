@@ -1,5 +1,5 @@
 import { SearchOptions } from "@/lib/types/SearchOptions";
-import { Control, useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import FilterItem from "./FilterItem";
 import { Box, Chip, CircularProgress, Stack } from "@mui/material";
 import { useLoading } from "@/hooks/useLoading";
@@ -7,11 +7,8 @@ import { useEffect, useState } from "react";
 import { getTagList } from "@/service/client/headers";
 import { useSnackbar } from "notistack";
 
-interface TagFilterProps {
-  control: Control<SearchOptions>;
-}
-
-function TagFilter({ control }: TagFilterProps) {
+function TagFilter() {
+  const { control } = useFormContext<SearchOptions>();
   const { isLoading, startLoading } = useLoading();
   const [allTags, setAllTags] = useState<SearchOptions["tags"]>([]);
   const {

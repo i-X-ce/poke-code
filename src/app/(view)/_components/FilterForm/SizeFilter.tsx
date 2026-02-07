@@ -1,5 +1,5 @@
 import { SearchOptions } from "@/lib/types/SearchOptions";
-import { UseFormRegister } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import FilterItem from "./FilterItem";
 import {
   InputAdornment,
@@ -10,11 +10,8 @@ import {
 } from "@mui/material";
 import { useMemo } from "react";
 
-interface SizeFilterProps {
-  register: UseFormRegister<SearchOptions>;
-}
-
-function SizeFilter({ register }: SizeFilterProps) {
+function SizeFilter() {
+  const { register } = useFormContext<SearchOptions>();
   const commonTextFieldProps: TextFieldProps = useMemo(
     () => ({
       type: "number",

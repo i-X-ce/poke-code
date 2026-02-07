@@ -1,11 +1,10 @@
 import { SearchOptions } from "@/lib/types/SearchOptions";
-import { Control, useController } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import FilterItem from "./FilterItem";
 import {
   Autocomplete,
   IconButton,
   IconButtonProps,
-  InputLabel,
   Stack,
   TextField,
   Tooltip,
@@ -13,11 +12,8 @@ import {
 import { useMemo } from "react";
 import { North, South } from "@mui/icons-material";
 
-interface OrderSelectorProps {
-  control: Control<SearchOptions>;
-}
-
-function OrderSelector({ control }: OrderSelectorProps) {
+function OrderSelector() {
+  const { control } = useFormContext<SearchOptions>();
   const {
     field: { value: orderByValue, onChange: onOrderByChange },
   } = useController({ control, name: "orderBy" });
