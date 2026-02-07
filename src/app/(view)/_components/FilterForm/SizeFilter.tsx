@@ -32,7 +32,7 @@ function SizeFilter() {
     <FilterItem label="サイズ">
       <Stack direction={"row"} gap={1} flexWrap={"wrap"}>
         <TextField
-          {...register("sizeMax")}
+          {...register("sizeMin")}
           {...commonTextFieldProps}
           label="下限"
         />
@@ -40,7 +40,7 @@ function SizeFilter() {
           ~
         </Typography>
         <TextField
-          {...register("sizeMin")}
+          {...register("sizeMax")}
           {...commonTextFieldProps}
           label="上限"
         />
