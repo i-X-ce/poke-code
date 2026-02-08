@@ -56,6 +56,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const checkSubmitErrors = (data = getValues()) => {
     const parsed = CodeDataSchema.safeParse(data);
     if (parsed.success) return;
+    console.error("コードデータのバリデーションエラー:", parsed.error);
 
     const { issues } = parsed.error;
     const errorMessages = issues.map((issue) => issue.message);

@@ -95,6 +95,10 @@ export const getHeaders = async ({
       let compareValue = 0;
       if (orderBy === "date") {
         compareValue = new Date(a.date).getTime() - new Date(b.date).getTime();
+        if (compareValue === 0) {
+          compareValue =
+            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+        }
       } else if (orderBy === "title") {
         compareValue = a.title.localeCompare(b.title);
       }

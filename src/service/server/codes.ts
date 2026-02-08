@@ -66,8 +66,11 @@ export async function createCode(
   try {
     const parsed = CodeDataSchema.parse(data);
     const id = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+    const updatedAt = createdAt;
+
     const { description, ...dataWithoutDescription } = parsed;
-    const dataToSave = { ...dataWithoutDescription, id };
+    const dataToSave = { ...dataWithoutDescription, id, createdAt, updatedAt };
 
     // ディレクトリ作成
     const dirPath = path.join(process.cwd(), PATH.server.CODE_DATA(id));
@@ -113,7 +116,9 @@ export const updateCode = async (
   try {
     const parsed = CodeDataSchema.parse(data);
     const { description, ...dataWithoutDescription } = parsed;
-    const dataToSave = { ...dataWithoutDescription, id };
+
+    const updatedAt = new Date().toISOString();
+    const dataToSave = { ...dataWithoutDescription, id, updatedAt };
 
     const codeDataDir = path.join(process.cwd(), PATH.server.CODE_DATA(id));
 

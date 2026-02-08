@@ -18,7 +18,7 @@ function CreateForm({ formProps }: CreateFormProps) {
       <Stack component={"form"} id={CREATE_FORM_ID} gap={2}>
         <IsPublicField />
         <CreateFormTextField fieldName="title" variant="filled" />
-        <CreateFormTextField fieldName="date" />
+        <CreateFormTextField fieldName="date" type="datetime-local" />
         <CreateFormTextField fieldName="tags" />
         <CreateFormTextField fieldName="detail" />
         <CreateFormTextField fieldName="description" minRows={10} multiline />

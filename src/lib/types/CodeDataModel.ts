@@ -21,7 +21,12 @@ export const CodeDataHeaderSchema = z.object({
     .string()
     .min(1, "タイトルは1文字以上入力してください")
     .max(100, "タイトルは100文字以内で入力してください"),
-  date: z.iso.date(),
+  date: z.preprocess((val) => {
+    if (typeof val === "string" || val instanceof Date) {
+      return new Date(val).toISOString();
+    }
+    return val;
+  }, z.iso.datetime()),
   tags: z
     .preprocess(
       (value) => {
@@ -48,6 +53,8 @@ export const CodeDataHeaderSchema = z.object({
     .string()
     .min(1, "概要は1文字以上入力してください")
     .max(500, "概要は5000文字以内で入力してください"),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 // JSONに保存するヘッダーメタデータのスキーマ
@@ -167,6 +174,8 @@ aaa
 <!-- コメントのテスト -->
 
     `,
+    createdAt: new Date().toString(),
+    updatedAt: new Date().toString(),
     content: [
       ...romVersionList.map((v, i) => ({
         id: `mock-content-id-${num}-${i}`,
