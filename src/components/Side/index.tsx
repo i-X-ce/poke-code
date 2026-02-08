@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
 import { useAtomValue } from "jotai";
 import { bookmarkBaseAtom } from "@/atoms/base";
+import TagList from "./TagList";
 
 function Side() {
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
@@ -85,6 +86,7 @@ function Side() {
           )}
         </Stack>
       </Box>
+      <TagList />
       <DevelopmentComponent>
         <Button
           LinkComponent={Link}
