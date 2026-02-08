@@ -6,7 +6,6 @@ import {
   CreateViewModes,
   useCreateViewMode,
 } from "../_hooks/useCreateViewMode";
-import CodeView from "../../_components/CodeView";
 import { CodeDataInput, CodeDataSchema } from "@/lib/types/CodeDataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,6 +19,8 @@ import { useUpdateCode } from "@/hooks/codes/useUpdateCode";
 import { useCreateCode } from "@/hooks/codes/useCreateCode";
 import { useSaveCode } from "@/hooks/codes/useSaveCode";
 import CodeViewWrapper from "./CodeViewWrapper";
+import { useRouter } from "next/navigation";
+import { PATH } from "@/lib/constant/paths";
 
 interface CreateViewProps {
   mode: "create" | "edit";
@@ -39,11 +40,12 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const { createCodeFetcher } = useCreateCode();
   const { isSaving, saveCodeFetcher } = useSaveCode();
   const { updateCodeFetcher } = useUpdateCode();
+  const router = useRouter();
 
   const {
     getValues,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isSubmitSuccessful },
   } = formProps;
 
   const actionName = useMemo(
@@ -63,6 +65,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
 
   const onSubmit = async (data: CodeDataInput) => {
     try {
+      if (isSubmitting || isSubmitSuccessful) return;
       checkSubmitErrors(data);
 
       const {
@@ -87,6 +90,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
       enqueueSnackbar(`コードデータを${actionName}しました: ${id}`, {
         variant: "success",
       });
+      router.push(PATH.DETAIL(id));
     } catch (error) {
       console.error(error);
       enqueueSnackbar((error as Error).message, { variant: "error" });
@@ -197,7 +201,8 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
               handleSubmit(onSubmit)(e);
               checkSubmitErrors();
             }}
-            loading={isSubmitting}>
+            loading={isSubmitting}
+            disabled={isSubmitSuccessful}>
             {actionName}する
           </Button>
         </ButtonGroup>

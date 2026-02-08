@@ -87,6 +87,13 @@ export async function createCode(
 
     await updateHeadersFile();
 
+    // 一時保存データの削除
+    const tempDirPath = path.join(
+      process.cwd(),
+      PATH.server.TEMPORARY_CODE_DATA,
+    );
+    await fs.rm(tempDirPath, { recursive: true, force: true });
+
     return {
       ok: true,
       data: id,
@@ -205,7 +212,7 @@ export async function saveCodeData(data: CodeDataInput): Promise<ActionResult> {
  * @returns
  */
 export async function loadTemporaryCodeData(): Promise<
-  ActionResult<CodeDataInput>
+  ActionResult<CodeDataInput | undefined>
 > {
   try {
     const tempDirPath = path.join(
@@ -219,10 +226,18 @@ export async function loadTemporaryCodeData(): Promise<
       FILE_NAME.DESCRIPTION_MD,
     );
 
+    if (!(await fs.stat(tempFilePath).catch(() => false))) {
+      return {
+        ok: true,
+        data: undefined,
+      };
+    }
+
     const dataJson = await fs.readFile(tempFilePath, "utf-8");
     const description = await fs.readFile(descriptionFilePath, "utf-8");
     const data = JSON.parse(dataJson);
-    const codeData = CodeDataSchema.parse({ ...data, description });
+    // const codeData = CodeDataSchema.parse({ ...data, description });
+    const codeData = { ...data, description };
 
     return {
       ok: true,
