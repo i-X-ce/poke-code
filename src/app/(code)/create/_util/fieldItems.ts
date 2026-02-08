@@ -51,6 +51,14 @@ export const fieldItems: {
       label: "コードブロック",
       placeholder: "",
     },
+    createdAt: {
+      label: "作成日時",
+      placeholder: "",
+    },
+    updatedAt: {
+      label: "更新日時",
+      placeholder: "",
+    },
   },
   block: {
     id: {
