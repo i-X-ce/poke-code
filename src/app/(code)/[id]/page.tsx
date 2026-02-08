@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs/promises";
-import React from "react";
 import CodeView from "../_components/CodeView";
 import { PATH } from "@/lib/constant/paths";
 import MoreButton from "@/app/_components/MoreButton";

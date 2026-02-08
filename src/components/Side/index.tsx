@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { Add, AutoAwesome, Bookmark, Home } from "@mui/icons-material";
 import SideItem from "./SideItem";
 import SideItemChild from "./SideItemChild";
@@ -7,11 +7,12 @@ import DevelopmentComponent from "../DevelopmentComponent";
 import { PATH } from "@/lib/constant/paths";
 import Link from "next/link";
 import { getHeaders } from "@/service/client/headers";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
 import { useAtomValue } from "jotai";
 import { bookmarkBaseAtom } from "@/atoms/base";
 import TagList from "./TagList";
+import TagListSkeleton from "./TagListSkeleton";
 
 function Side() {
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
@@ -86,7 +87,10 @@ function Side() {
           )}
         </Stack>
       </Box>
-      <TagList />
+      <Suspense fallback={<TagListSkeleton />}>
+        <TagList />
+      </Suspense>
+
       <DevelopmentComponent>
         <Button
           LinkComponent={Link}
