@@ -11,7 +11,8 @@ interface CodeViewProps {
 }
 
 function CodeView({ data }: CodeViewProps) {
-  const { title, tags, date, detail, description, content, blocks } = data;
+  const { title, tags, date, detail, description, content, blocks, isPublic } =
+    data;
 
   return (
     <Box>
@@ -24,7 +25,7 @@ function CodeView({ data }: CodeViewProps) {
         {title}
       </Typography>
       <Stack gap={2} mb={4}>
-        <CodeTags tags={tags} />
+        <CodeTags tags={tags} isPublic={isPublic} />
         <CodeInfo date={date} codeSize={codeSize(blocks)} />
         <Typography color="textSecondary">{detail}</Typography>
         <Divider />

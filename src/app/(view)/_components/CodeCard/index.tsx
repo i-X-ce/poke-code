@@ -25,7 +25,7 @@ interface CodeCardProps {
 
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
   const { versions } = data;
-  const { title, tags, date, detail, codeSize } = data;
+  const { title, tags, date, detail, codeSize, isPublic } = data;
 
   return (
     <Card sx={{ position: "relative", height: "100%" }}>
@@ -41,7 +41,7 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
                 {title}
               </Typography>
               <CodeInfo date={date} codeSize={codeSize} />
-              <CodeTags tags={tags} />
+              <CodeTags tags={tags} isPublic={isPublic}/>
               <Typography color="textSecondary" className={styles.detail}>
                 {detail}
               </Typography>

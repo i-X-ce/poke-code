@@ -7,6 +7,7 @@ import {
   HeaderJsonSchema,
 } from "@/lib/types/CodeDataModel";
 import { type SearchOptions } from "@/lib/types/SearchOptions";
+import isDevelopment from "@/lib/util/isDevelopment";
 import { getDefaultStore, useAtomValue } from "jotai";
 
 interface GetHeadersResult {
@@ -82,6 +83,11 @@ export const getHeaders = async ({
       filteredHeaders = filteredHeaders.filter((header) =>
         bookmarkedIds.includes(header.id),
       );
+    }
+
+    // 公開中のみ
+    if (!isDevelopment) {
+      filteredHeaders = filteredHeaders.filter((header) => header.isPublic);
     }
 
     // ソート

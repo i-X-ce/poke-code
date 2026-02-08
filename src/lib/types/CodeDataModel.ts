@@ -50,9 +50,16 @@ export const CodeDataHeaderSchema = z.object({
     .max(500, "概要は5000文字以内で入力してください"),
 });
 
+// JSONに保存するヘッダーメタデータのスキーマ
 export const CodeDataHeaderJsonSchema = CodeDataHeaderSchema.extend({
   versions: z.enum(PokeVersions).array(),
   codeSize: z.number(),
+});
+
+// JSON全体のスキーマ
+export const HeaderJsonSchema = z.object({
+  tags: z.array(z.string()),
+  headers: z.array(CodeDataHeaderJsonSchema),
 });
 
 export const CodeDataSchema = z.object({
@@ -66,11 +73,6 @@ export const CodeDataSchema = z.object({
     .min(1, "コンテンツは一つ以上必要です")
     .max(Object.keys(PokeVersions).length, "コンテンツの数が多すぎます"),
   blocks: z.array(CodeBlockSchema).min(1, "コードブロックは一つ以上必要です"),
-});
-
-export const HeaderJsonSchema = z.object({
-  tags: z.array(z.string()),
-  headers: z.array(CodeDataHeaderJsonSchema),
 });
 
 export type CodeBlock = z.infer<typeof CodeBlockSchema>;

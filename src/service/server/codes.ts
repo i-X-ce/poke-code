@@ -12,6 +12,7 @@ import {
 import { FILE_NAME } from "../../lib/constant/fileName";
 import { ActionResult } from "../../lib/types/ActionResult";
 import { codeSize } from "../../lib/util/codeDataFormat";
+import isDevelopment from "@/lib/util/isDevelopment";
 
 /**
  * コードデータの読み取り（ID指定）
@@ -33,6 +34,13 @@ export async function readCode(
     const description = await fs.readFile(descriptionFilePath, "utf-8");
     const data = JSON.parse(dataJson);
     const codeData = CodeDataSchema.parse({ ...data, description });
+
+    if (!isDevelopment && !codeData.isPublic) {
+      return {
+        ok: false,
+        message: "指定されたコードデータは非公開です",
+      };
+    }
 
     return {
       ok: true,
