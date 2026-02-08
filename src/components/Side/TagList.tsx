@@ -26,26 +26,30 @@ const TagList = () => {
   };
 
   return (
-    <Stack direction={"row"} flexWrap={"wrap"} gap={1} mt={2}>
-      {isLoading && (
-        <Box
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          width={"100%"}>
-          <CircularProgress size={16} />
-        </Box>
+    <>
+      {(isLoading || tags.length > 0) && (
+        <Stack direction={"row"} flexWrap={"wrap"} gap={1} mt={2}>
+          {isLoading && (
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              width={"100%"}>
+              <CircularProgress size={16} />
+            </Box>
+          )}
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              onClick={() => handleSelectTag(tag)}
+              label={tag}
+              variant={parsedParams.tags?.includes(tag) ? "filled" : "outlined"}
+              color={parsedParams.tags?.includes(tag) ? "primary" : "default"}
+            />
+          ))}
+        </Stack>
       )}
-      {tags.map((tag) => (
-        <Chip
-          key={tag}
-          onClick={() => handleSelectTag(tag)}
-          label={tag}
-          variant={parsedParams.tags?.includes(tag) ? "filled" : "outlined"}
-          color={parsedParams.tags?.includes(tag) ? "primary" : "default"}
-        />
-      ))}
-    </Stack>
+    </>
   );
 };
 
