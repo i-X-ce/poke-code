@@ -41,6 +41,8 @@ function OrderSelector() {
   const handleOrderByChange = (value?: SearchOptions["orderBy"]) => {
     if (value) {
       onOrderByChange(value);
+    } else {
+      onOrderByChange(null);
     }
   };
 
@@ -57,11 +59,11 @@ function OrderSelector() {
       <Stack direction={"row"} gap={2} flexWrap={"wrap"} alignItems={"center"}>
         <Autocomplete
           options={orderOptions}
+          value={orderOptions.find((o) => o.value === orderByValue) || null}
           onChange={(_, value) => handleOrderByChange(value?.value)}
           renderInput={(params) => (
             <TextField
               {...params}
-              value={orderByValue}
               onChange={onOrderByChange}
               label="並び順"
               slotProps={{ inputLabel: { shrink: true } }}
