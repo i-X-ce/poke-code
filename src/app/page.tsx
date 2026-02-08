@@ -1,61 +1,101 @@
-"use client"
-import { CodeDataModel, createMockCodeData } from "@/lib/model/CodeDataModel";
-import { Grid, IconButton, Pagination, Stack, TextField } from "@mui/material";
+"use client";
+import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  IconButton,
+  Pagination,
+  Stack,
+} from "@mui/material";
 import CodeCard from "./(view)/_components/CodeCard";
-import { useState } from "react";
-import { Search, Tune } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { Tune } from "@mui/icons-material";
+import { useLoading } from "@/hooks/useLoading";
+import { useSnackbar } from "notistack";
+import { getHeaders } from "@/service/client/headers";
+import { useURLQuery } from "@/hooks/useURLQuery";
+import SearchTextField from "./(view)/_components/SearchTextField";
+import { useDialog } from "@/hooks/useDialog";
+import FilterDialog from "./(view)/_components/FilterForm/FilterDialog";
 
 // 1ページあたりのカード表示数
 const MAX_CARD_PER_PAGE = 12;
 
-// モックデータの総数
-const MOCK_DATA_LENGTH = MAX_CARD_PER_PAGE * 3 + 1;
-
-function getCodeData(page: number): CodeDataModel[] {
-  return Array.from({
-    length: MAX_CARD_PER_PAGE * (page + 1) > MOCK_DATA_LENGTH ? MOCK_DATA_LENGTH % MAX_CARD_PER_PAGE : MAX_CARD_PER_PAGE
-  }).map((_, i) => (createMockCodeData(page * MAX_CARD_PER_PAGE + i)));
-}
-
 export default function Home() {
-  const [page, setPage] = useState(0);
-  const codeData: CodeDataModel[] = getCodeData(page);
+  const [codeData, setCodeData] = useState<CodeDataHeaderJson[]>([]);
+  const [pageCount, setPageCount] = useState(0);
+  const { isLoading, startLoading } = useLoading();
+  const { enqueueSnackbar } = useSnackbar();
+  const { parsedParams, searchParams, updateQuery } = useURLQuery();
+  const { openDialog } = useDialog();
+  const page = parsedParams.page || 0;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { ok, data } = await getHeaders({
+          ...parsedParams,
+          limit: MAX_CARD_PER_PAGE,
+        });
+        if (!ok) throw new Error();
+
+        setCodeData(data?.headers || []);
+        setPageCount(Math.ceil((data?.totalCount || 0) / MAX_CARD_PER_PAGE));
+      } catch (error) {
+        enqueueSnackbar("コードデータの取得に失敗しました", {
+          variant: "error",
+        });
+      }
+    };
+    startLoading(fetchData);
+  }, [searchParams.toString()]);
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage - 1);
-  }
+    updateQuery({ page: newPage - 1 });
+  };
+
+  const handleOpenFilterDialog = () => {
+    openDialog(<FilterDialog />);
+  };
 
   return (
-    <Stack gap={3}>
+    <Stack flex={1} gap={3}>
       <Stack direction={"row"} gap={1} alignItems={"end"}>
-        <TextField
-          variant="standard"
-          label="検索"
-          fullWidth
-          slotProps={{
-            input:
-            {
-              endAdornment:
-                <IconButton><Search /></IconButton>
-            }
-          }}
-        />
-        <IconButton><Tune /></IconButton>
+        <SearchTextField />
+        <IconButton onClick={handleOpenFilterDialog}>
+          <Tune />
+        </IconButton>
       </Stack>
-      <Grid container spacing={2}>
-        {codeData.map((data) => (
-          <Grid key={data.id} size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-            <CodeCard data={data} />
-          </Grid>
-        ))}
 
-      </Grid>
-      <Pagination
-        page={page + 1}
-        count={Math.ceil(MOCK_DATA_LENGTH / MAX_CARD_PER_PAGE)}
-        onChange={(_, v) => { handlePageChange(v); }}
-        shape="rounded"
-      />
+      {isLoading ? (
+        <Box
+          flex={1}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {codeData.map((data) => (
+            <Grid key={data.id} size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+              <CodeCard data={data} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      {pageCount > 1 && (
+        <Pagination
+          page={page + 1}
+          count={Math.ceil(pageCount)}
+          onChange={(_, v) => {
+            handlePageChange(v);
+          }}
+          shape="rounded"
+        />
+      )}
     </Stack>
   );
 }

@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Google_Sans_Code, WDXL_Lubrifont_JP_N, Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
-import Side from "./_components/Side";
+import Side from "../components/Side";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import CustomThemeProvider from "./_components/CustomThemeProvider";
-import AppTitle from "./_components/AppTitle";
-import CommonSection from "./_components/CommonSection";
+import CustomThemeProvider from "../components/CustomThemeProvider";
+import AppTitle from "../components/AppTitle";
+import CommonSection from "../components/CommonSection";
 import styles from "./layout.module.css";
-import CommonFooter from "./_components/CommonFooter";
+import CommonFooter from "../components/CommonFooter";
+import SnackbarProviderWrapper from "../components/SnackbarProviderWrapper";
+import DialogController from "../components/DialogController";
+import { Box } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,14 +26,17 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <CustomThemeProvider>
-            <AppTitle />
-            <CommonSection>
-              <div className={styles.rootDiv}>
-                <Side />
-                {children}
-              </div>
-            </CommonSection>
-            <CommonFooter />
+            <SnackbarProviderWrapper>
+              <AppTitle />
+              <CommonSection>
+                <div className={styles.rootDiv}>
+                  <Side />
+                  <Box flex={1}>{children}</Box>
+                </div>
+              </CommonSection>
+              <CommonFooter />
+              <DialogController />
+            </SnackbarProviderWrapper>
           </CustomThemeProvider>
         </AppRouterCacheProvider>
       </body>

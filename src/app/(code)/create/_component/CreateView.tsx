@@ -1,0 +1,209 @@
+"use client";
+import { Box, Button, ButtonGroup } from "@mui/material";
+import CreateForm from "./CreateForm";
+import { Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
+import {
+  CreateViewModes,
+  useCreateViewMode,
+} from "../_hooks/useCreateViewMode";
+import CodeView from "../../_components/CodeView";
+import { CodeDataInput, CodeDataSchema } from "@/lib/types/CodeDataModel";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { INIT_CODE_DATA } from "../_util/initValues";
+import { CREATE_FORM_ID } from "../_consts/formId";
+import { memo, useEffect, useMemo } from "react";
+import { useDialog } from "@/hooks/useDialog";
+import ErrorDialogContent from "./ErrorDialogContent";
+import { useSnackbar } from "notistack";
+import { useUpdateCode } from "@/hooks/codes/useUpdateCode";
+import { useCreateCode } from "@/hooks/codes/useCreateCode";
+import { useSaveCode } from "@/hooks/codes/useSaveCode";
+import CodeViewWrapper from "./CodeViewWrapper";
+
+interface CreateViewProps {
+  mode: "create" | "edit";
+  initData?: Partial<CodeDataInput>;
+  errorMessage?: string;
+}
+
+const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
+  const formProps = useForm<CodeDataInput>({
+    resolver: zodResolver(CodeDataSchema),
+    mode: "onChange",
+    defaultValues: initData || INIT_CODE_DATA,
+  });
+  const { viewMode, toggleViewMode } = useCreateViewMode();
+  const { openDialog } = useDialog();
+  const { enqueueSnackbar } = useSnackbar();
+  const { createCodeFetcher } = useCreateCode();
+  const { isSaving, saveCodeFetcher } = useSaveCode();
+  const { updateCodeFetcher } = useUpdateCode();
+
+  const {
+    getValues,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formProps;
+
+  const actionName = useMemo(
+    () => (mode === "create" ? "投稿" : "更新"),
+    [mode],
+  );
+
+  const checkSubmitErrors = (data = getValues()) => {
+    const parsed = CodeDataSchema.safeParse(data);
+    if (parsed.success) return;
+
+    const { issues } = parsed.error;
+    const errorMessages = issues.map((issue) => issue.message);
+    openDialog(<ErrorDialogContent errors={errorMessages} />);
+    throw new Error("データに不備があります");
+  };
+
+  const onSubmit = async (data: CodeDataInput) => {
+    try {
+      checkSubmitErrors(data);
+
+      const {
+        ok,
+        data: id,
+        message,
+      } = await (async () => {
+        switch (mode) {
+          case "edit":
+            return updateCodeFetcher(data.id, data);
+          case "create":
+            return createCodeFetcher(data);
+          default:
+            return createCodeFetcher(data);
+        }
+      })();
+
+      if (!ok) {
+        throw new Error(message || `コードデータの${actionName}に失敗しました`);
+      }
+
+      enqueueSnackbar(`コードデータを${actionName}しました: ${id}`, {
+        variant: "success",
+      });
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar((error as Error).message, { variant: "error" });
+      throw error;
+    }
+  };
+
+  const onSave =
+    mode === "create"
+      ? async () => {
+          try {
+            const data = getValues();
+            const { ok, message } = await saveCodeFetcher(data);
+
+            if (!ok) {
+              throw new Error(
+                message || "コードデータの一時保存に失敗しました",
+              );
+            }
+
+            enqueueSnackbar("コードデータを一時保存しました", {
+              variant: "success",
+            });
+          } catch (error) {
+            console.error(error);
+            enqueueSnackbar((error as Error).message, { variant: "error" });
+            throw error;
+          }
+        }
+      : () => {};
+
+  const onToggleViewMode = () => {
+    try {
+      checkSubmitErrors();
+      toggleViewMode();
+    } catch {}
+  };
+
+  // ショートカットキーの登録
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        // Ctrl+S or Cmd+S で保存
+        e.preventDefault();
+        if (mode === "create") {
+          onSave();
+        } else if (mode === "edit") {
+          checkSubmitErrors();
+          handleSubmit(onSubmit)();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
+        // Ctrl+Q or Cmd+Q で表示切替
+        e.preventDefault();
+        onToggleViewMode();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onSave, onToggleViewMode]);
+
+  useEffect(() => {
+    if (!errorMessage) return;
+    enqueueSnackbar(errorMessage, { variant: "error" });
+  }, []);
+
+  return (
+    <>
+      {viewMode === CreateViewModes.EDIT && (
+        <CreateForm formProps={formProps} />
+      )}
+      {viewMode === CreateViewModes.PREVIEW && (
+        <CodeViewWrapper formProps={formProps} />
+      )}
+
+      {/* アクション */}
+      <Box
+        my={4}
+        position={"sticky"}
+        bottom={16}
+        display={"flex"}
+        justifyContent={"end"}>
+        <ButtonGroup size="large" sx={{ backgroundColor: "background.paper" }}>
+          <Button
+            onClick={onToggleViewMode}
+            startIcon={
+              viewMode === CreateViewModes.EDIT ? <RemoveRedEye /> : <Edit />
+            }
+            variant="outlined">
+            {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
+          </Button>
+          {mode === "create" && (
+            <Button
+              onClick={onSave}
+              startIcon={<Save />}
+              variant="outlined"
+              loading={isSaving}>
+              一時保存
+            </Button>
+          )}
+          <Button
+            form={CREATE_FORM_ID}
+            type="submit"
+            startIcon={<Public />}
+            variant="contained"
+            onClick={(e) => {
+              // CodeContentEditorの方のエラーが見えない場合があるので、ここで明示的にエラー内容を出力する
+              // handleSubmitだと入力内容に問題があってもonSubmitが呼ばれないため、ここでチェックする
+              handleSubmit(onSubmit)(e);
+              checkSubmitErrors();
+            }}
+            loading={isSubmitting}>
+            {actionName}する
+          </Button>
+        </ButtonGroup>
+      </Box>
+    </>
+  );
+});
+
+export default CreateView;
