@@ -1,3 +1,4 @@
+import { PATH } from "@/lib/constant/paths";
 import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import { SearchOptions } from "@/lib/types/SearchOptions";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -61,7 +62,7 @@ export const useURLQuery = () => {
     });
 
     const queryString = queryParams.toString();
-    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
+    const newUrl = `${PATH.HOME}?${queryString}`;
     router.replace(newUrl);
     router.refresh();
   };
