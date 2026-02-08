@@ -19,3 +19,14 @@ export type SearchOptions = (
   orderDirection?: "asc" | "desc";
   onlyBookmarked?: boolean;
 };
+
+export const DEFAULT_SEARCH_OPTIONS: SearchOptions = {
+  orderBy: undefined,
+  orderDirection: undefined,
+  q: undefined,
+  tags: undefined,
+  versions: undefined,
+  sizeMin: undefined,
+  sizeMax: undefined,
+  onlyBookmarked: undefined,
+};
