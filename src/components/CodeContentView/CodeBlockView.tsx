@@ -7,6 +7,7 @@ import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import CodeGrid from "./CodeGrid";
 import { PosType } from "@/lib/types/PosType";
+import { formatCode } from "@/lib/util/codeDataFormat";
 
 const num2Hex = (num: number, pad: number, fillString: string = "0") => {
   return num.toString(16).toUpperCase().padStart(pad, fillString);
@@ -16,7 +17,8 @@ function CodeBlockView({ block }: { block: CodeBlockView }) {
   const { handleCopy, copied } = useCopyClipboard(block.code);
   const [mousePos, setMousePos] = React.useState<PosType>({ x: -1, y: -1 });
 
-  const codeLength = Math.floor(block.code.length / 2);
+  const code = formatCode(block.code);
+  const codeLength = Math.floor(code.length / 2);
   const startAddress = block.address ? parseInt(block.address, 16) : 0;
   const startRange = block.address ? parseInt(block.address, 16) & 0xfff0 : 0;
   const endRange = (startAddress + codeLength - 1) | 0xf;
@@ -94,7 +96,7 @@ function CodeBlockView({ block }: { block: CodeBlockView }) {
                       onMouseLeave={handleLeave}>
                       {sub < 0 || sub >= codeLength
                         ? ""
-                        : block.code.substring(sub * 2, (sub + 1) * 2)}
+                        : code.substring(sub * 2, (sub + 1) * 2)}
                     </CodeGrid>
                   );
                 })}

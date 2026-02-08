@@ -20,3 +20,13 @@ export const codeSize = (blocks?: CodeBlock[]) => {
 
   return Math.max(...Object.values(blockSum));
 };
+
+/**
+ * コードのフォーマットを整える（空白削除）
+ *
+ * @param code
+ * @returns
+ */
+export const formatCode = (code: CodeBlock["code"]) => {
+  return code.replace(/\s+/g, "").toUpperCase();
+};
