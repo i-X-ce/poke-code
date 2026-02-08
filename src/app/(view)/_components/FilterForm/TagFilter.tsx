@@ -55,7 +55,7 @@ function TagFilter() {
               label={tag}
               onClick={() => handleToggleTag(tag)}
               variant={value?.includes(tag) ? "filled" : "outlined"}
-              color={"primary"}
+              color={value?.includes(tag) ? "primary" : "default"}
             />
           ))}
         </Stack>
