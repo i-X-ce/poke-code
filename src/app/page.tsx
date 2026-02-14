@@ -7,10 +7,11 @@ import {
   IconButton,
   Pagination,
   Stack,
+  Typography,
 } from "@mui/material";
 import CodeCard from "./(view)/_components/CodeCard";
 import { useEffect, useState } from "react";
-import { Tune } from "@mui/icons-material";
+import { SearchOff, Tune } from "@mui/icons-material";
 import { useLoading } from "@/hooks/useLoading";
 import { useSnackbar } from "notistack";
 import { getHeaders } from "@/service/client/headers";
@@ -59,6 +60,8 @@ export default function Home() {
     openDialog(<FilterDialog />);
   };
 
+  const minHeight = "70vh";
+
   return (
     <Stack flex={1} gap={3}>
       <Stack direction={"row"} gap={1} alignItems={"end"}>
@@ -73,17 +76,41 @@ export default function Home() {
           flex={1}
           display={"flex"}
           justifyContent={"center"}
-          alignItems={"center"}>
+          alignItems={"center"}
+          minHeight={minHeight}
+        >
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2}>
-          {codeData.map((data) => (
-            <Grid key={data.id} size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
-              <CodeCard data={data} />
-            </Grid>
-          ))}
-        </Grid>
+        <>
+          {codeData.length < 1 ? (
+            <Stack
+              flex={1}
+              justifyContent={"center"}
+              alignItems={"center"}
+              minHeight={minHeight}
+              gap={2}
+            >
+              <SearchOff color="action" fontSize="large" />
+              <Typography color="textSecondary">
+                コードデータが見つかりませんでした。
+              </Typography>
+            </Stack>
+          ) : (
+            <Stack flex={1} minHeight={minHeight}>
+              <Grid container spacing={2}>
+                {codeData.map((data) => (
+                  <Grid
+                    key={data.id}
+                    size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
+                  >
+                    <CodeCard data={data} />
+                  </Grid>
+                ))}
+              </Grid>
+            </Stack>
+          )}
+        </>
       )}
 
       {pageCount > 1 && (
