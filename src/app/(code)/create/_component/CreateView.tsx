@@ -1,7 +1,7 @@
 "use client";
 import { Box, Button, ButtonGroup } from "@mui/material";
 import CreateForm from "./CreateForm";
-import { Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
+import { Clear, Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
 import {
   CreateViewModes,
   useCreateViewMode,
@@ -21,6 +21,7 @@ import { useSaveCode } from "@/hooks/codes/useSaveCode";
 import CodeViewWrapper from "./CodeViewWrapper";
 import { useRouter } from "next/navigation";
 import { PATH } from "@/lib/constant/paths";
+import ClearDialogContent from "./ClearDialogContent";
 
 interface CreateViewProps {
   mode: "create" | "edit";
@@ -45,7 +46,8 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const {
     getValues,
     handleSubmit,
-    formState: { isSubmitting, isSubmitSuccessful },
+    reset,
+    formState: { isSubmitting, isSubmitSuccessful, isDirty },
   } = formProps;
 
   const actionName = useMemo(
@@ -130,6 +132,19 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
     } catch {}
   };
 
+  const onClear = () => {
+    const onReset = () => {
+      reset(INIT_CODE_DATA);
+      enqueueSnackbar("内容をクリアしました", { variant: "success" });
+    };
+
+    if (!isDirty) {
+      onReset();
+      return;
+    }
+    openDialog(<ClearDialogContent onClear={onReset} />);
+  };
+
   // ショートカットキーの登録
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -172,24 +187,32 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
         position={"sticky"}
         bottom={16}
         display={"flex"}
-        justifyContent={"end"}>
+        justifyContent={"end"}
+      >
         <ButtonGroup size="large" sx={{ backgroundColor: "background.paper" }}>
           <Button
             onClick={onToggleViewMode}
             startIcon={
               viewMode === CreateViewModes.EDIT ? <RemoveRedEye /> : <Edit />
             }
-            variant="outlined">
+            variant="outlined"
+          >
             {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
           </Button>
           {mode === "create" && (
-            <Button
-              onClick={onSave}
-              startIcon={<Save />}
-              variant="outlined"
-              loading={isSaving}>
-              一時保存
-            </Button>
+            <>
+              <Button onClick={onClear} startIcon={<Clear />}>
+                クリア
+              </Button>
+              <Button
+                onClick={onSave}
+                startIcon={<Save />}
+                variant="outlined"
+                loading={isSaving}
+              >
+                一時保存
+              </Button>
+            </>
           )}
           <Button
             form={CREATE_FORM_ID}
@@ -203,7 +226,8 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
               checkSubmitErrors();
             }}
             loading={isSubmitting}
-            disabled={isSubmitSuccessful}>
+            disabled={isSubmitSuccessful}
+          >
             {actionName}する
           </Button>
         </ButtonGroup>
