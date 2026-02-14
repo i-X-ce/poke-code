@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { CREATE_FORM_ID } from "../_consts/formId";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
@@ -42,6 +42,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const { isSaving, saveCodeFetcher } = useSaveCode();
   const { updateCodeFetcher } = useUpdateCode();
   const router = useRouter();
+  const [resetFlag, setResetFlag] = useState(false); // クリア後にフォームの内容をリセットするためのフラグ
 
   const {
     getValues,
@@ -134,6 +135,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
 
   const onClear = () => {
     const onReset = () => {
+      setResetFlag((prev) => !prev); // フォームの内容をリセットするためにフラグを切り替える
       reset(INIT_CODE_DATA);
       enqueueSnackbar("内容をクリアしました", { variant: "success" });
     };
@@ -175,10 +177,10 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   return (
     <>
       {viewMode === CreateViewModes.EDIT && (
-        <CreateForm formProps={formProps} />
+        <CreateForm key={String(resetFlag)} formProps={formProps} />
       )}
       {viewMode === CreateViewModes.PREVIEW && (
-        <CodeViewWrapper formProps={formProps} />
+        <CodeViewWrapper key={String(resetFlag)} formProps={formProps} />
       )}
 
       {/* アクション */}
