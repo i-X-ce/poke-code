@@ -1,24 +1,13 @@
 "use client";
-import { CodeBlock, CodeDataInput } from "@/lib/types/CodeDataModel";
+import { CodeDataInput } from "@/lib/types/CodeDataModel";
 import { ArrowDownward, ArrowUpward, Delete } from "@mui/icons-material";
-import {
-  Box,
-  IconButton,
-  Paper,
-  Stack,
-  TextField,
-  TextFieldProps,
-} from "@mui/material";
+import { Box, IconButton, Paper, Stack } from "@mui/material";
 import { memo } from "react";
-import { fieldItems } from "../_util/fieldItems";
-import {
-  FieldName,
-  UseFieldArrayMove,
-  UseFieldArrayRemove,
-  useFormContext,
-} from "react-hook-form";
+import { UseFieldArrayMove, UseFieldArrayRemove } from "react-hook-form";
 import { useDialog } from "@/hooks/useDialog";
-import DeleteCheckDialogContent from "./DeleteCheckDialogContent";
+import DeleteCheckDialogContent from "../DeleteCheckDialogContent";
+import { CodeBlockTextField } from "./CodeBlockTextField";
+import CodeBlockCodeField from "./CodeBlockCodeField";
 
 interface CodeBlockEditorProps {
   index: number;
@@ -73,13 +62,7 @@ const CodeBlockEditor = memo(
           <CodeBlockTextField fieldName="title" index={index} />
         </Stack>
         <Box position={"relative"}>
-          <CodeBlockTextField
-            fieldName="code"
-            index={index}
-            multiline
-            minRows={4}
-            fullWidth
-          />
+          <CodeBlockCodeField index={index} />
 
           <Box position={"absolute"} top={-30} right={10}>
             <Paper elevation={1}>
@@ -98,35 +81,6 @@ const CodeBlockEditor = memo(
           </Box>
         </Box>
       </Stack>
-    );
-  },
-);
-
-type CodeBlockTextFieldProps = {
-  index: number;
-  fieldName: FieldName<CodeDataInput["blocks"][number]>;
-} & TextFieldProps;
-
-const CodeBlockTextField = memo(
-  ({ index, fieldName, ...props }: CodeBlockTextFieldProps) => {
-    const {
-      register,
-      formState: { errors },
-    } = useFormContext<CodeDataInput>();
-    const blockErrors = errors.blocks?.[index];
-
-    return (
-      <TextField
-        label={fieldItems.block[fieldName].label}
-        placeholder={fieldItems.block[fieldName].placeholder}
-        error={!!blockErrors?.[fieldName]}
-        helperText={blockErrors?.[fieldName]?.message}
-        slotProps={{ inputLabel: { shrink: true } }}
-        size="small"
-        autoComplete="off"
-        {...register(`blocks.${index}.${fieldName}`)}
-        {...props}
-      />
     );
   },
 );

@@ -173,7 +173,8 @@ const CodeContentEditor = memo(() => {
       selectedId={selectedId}
       onChangeId={handleChangeId}
       onAdd={handleAddContent}
-      addDisabled={isMaxedContent}>
+      addDisabled={isMaxedContent}
+    >
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Stack direction={"row"} alignItems={"center"} gap={1}>
           {currentContent &&
@@ -195,7 +196,8 @@ const CodeContentEditor = memo(() => {
           id={`${currentContent?.id}-more-menu`}
           anchorEl={moreAnchorEl}
           open={Boolean(moreAnchorEl)}
-          onClose={handleCloseMore}>
+          onClose={handleCloseMore}
+        >
           <List>
             <ListItem disablePadding>
               <ListItemButton onClick={handleMoveUpContent}>

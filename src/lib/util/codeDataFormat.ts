@@ -30,3 +30,18 @@ export const codeSize = (blocks?: CodeBlock[]) => {
 export const formatCode = (code: CodeBlock["code"]) => {
   return code.replace(/\s+/g, "").toUpperCase();
 };
+
+/**
+ * ArrayBufferの内容をフォーマットする
+ *
+ * @param code
+ * @returns
+ */
+export const formatArrayBufferCode = (code: ArrayBuffer) => {
+  const uint8Array = new Uint8Array(code);
+  const hexString = Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase();
+  return formatCode(hexString);
+};
