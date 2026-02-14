@@ -93,14 +93,19 @@ export const getHeaders = async ({
     // ソート
     filteredHeaders.sort((a, b) => {
       let compareValue = 0;
+      const updateDateCompare =
+        new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+
       if (orderBy === "date") {
         compareValue = new Date(a.date).getTime() - new Date(b.date).getTime();
         if (compareValue === 0) {
-          compareValue =
-            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+          compareValue = updateDateCompare;
         }
       } else if (orderBy === "title") {
         compareValue = a.title.localeCompare(b.title);
+        if (compareValue === 0) {
+          compareValue = updateDateCompare;
+        }
       }
 
       return orderDirection === "asc" ? compareValue : -compareValue;
