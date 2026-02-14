@@ -1,4 +1,4 @@
-import { CodeBlock, CodeData } from "../types/CodeDataModel";
+import { CodeBlock } from "../types/CodeDataModel";
 
 /**
  * コードサイズをcontentから計算する
