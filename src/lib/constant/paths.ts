@@ -4,10 +4,12 @@ export const PATH = {
   CREATE: "/create",
   EDIT: (id: string | number) => `/${id}/edit`,
   HEADERS: "/data/headers.json",
+  IMAGES: (id?: string) => `/data/${id ? `codes/${id}/` : "temporary/"}`,
 
   api: {
     CODE: (id: string = "") => `/api/codes/${id}`, // GET, PUT, DELETE
     CODE_CREATE: `/api/codes/create`, // POST, GET, PUT
+    IMAGE: `/api/images`, // POST
   },
 
   server: {

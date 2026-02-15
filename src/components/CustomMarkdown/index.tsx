@@ -1,14 +1,20 @@
+"use client";
 import { Divider, Typography } from "@mui/material";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import CustomMarkdownCodeComponent from "./CustomMarkdownCodeComponent";
 import rehypeRaw from "rehype-raw";
 import { GoogleSansCode } from "@/lib/util/fonts";
+import { useParams, usePathname } from "next/navigation";
+import { PATH } from "@/lib/constant/paths";
 
 interface CustomMarkdownProps {
   children?: string;
 }
 function CustomMarkdown({ children }: CustomMarkdownProps) {
+  const pathname = usePathname();
+  const params = useParams();
+
   return (
     <ReactMarkdown
       rehypePlugins={[rehypeRaw]}
@@ -20,7 +26,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
               fontWeight={"500"}
               paddingTop={6}
               gutterBottom
-              color="textPrimary">
+              color="textPrimary"
+            >
               {children}
             </Typography>
             <Divider />
@@ -33,7 +40,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
               fontWeight={"500"}
               paddingTop={5}
               gutterBottom
-              color="textPrimary">
+              color="textPrimary"
+            >
               {children}
             </Typography>
             <Divider />
@@ -46,7 +54,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
               fontWeight={"500"}
               paddingTop={3}
               gutterBottom
-              color="textPrimary">
+              color="textPrimary"
+            >
               {children}
             </Typography>
             <Divider />
@@ -57,7 +66,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             variant="h6"
             paddingTop={2}
             gutterBottom
-            color="textPrimary">
+            color="textPrimary"
+          >
             {children}
           </Typography>
         ),
@@ -67,7 +77,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             fontWeight={"400"}
             paddingTop={1}
             gutterBottom
-            color="textPrimary">
+            color="textPrimary"
+          >
             {children}
           </Typography>
         ),
@@ -77,7 +88,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             fontWeight={"400"}
             paddingTop={1}
             gutterBottom
-            color="textPrimary">
+            color="textPrimary"
+          >
             {children}
           </Typography>
         ),
@@ -91,7 +103,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             component={"a"}
             href={href}
             color="primary"
-            sx={{ textDecoration: "underline" }}>
+            sx={{ textDecoration: "underline" }}
+          >
             {children}
           </Typography>
         ),
@@ -103,14 +116,16 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
         ul: ({ children }) => (
           <Typography
             component={"ul"}
-            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}>
+            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}
+          >
             {children}
           </Typography>
         ),
         ol: ({ children }) => (
           <Typography
             component={"ol"}
-            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}>
+            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}
+          >
             {children}
           </Typography>
         ),
@@ -134,7 +149,8 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
                 fontFamily: GoogleSansCode.style.fontFamily,
                 paddingX: isInline ? 1 : 0,
                 borderRadius: 1,
-              }}>
+              }}
+            >
               {children}
             </Typography>
           );
@@ -149,22 +165,35 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             ml={3}
             mr={0}
             p={1.5}
-            borderLeft={"2px solid var(--bc-gray)"}>
+            borderLeft={"2px solid var(--bc-gray)"}
+          >
             {children}
           </Typography>
         ),
-        img: ({ src, alt }) => (
-          <img
-            src={src}
-            alt={alt}
-            style={{
-              boxShadow: "var(--sh-regular)",
-              maxWidth: "100%",
-              minWidth: "40%",
-            }}
-          />
-        ),
-      }}>
+        img: ({ src, alt }) => {
+          const id = Array.isArray(params.id) ? params.id[0] : params.id;
+          const preStr = pathname.includes("create")
+            ? PATH.IMAGES()
+            : PATH.IMAGES(id);
+          const fullSrc =
+            typeof src === "string" && src.startsWith("http")
+              ? src
+              : `${preStr}${src}`;
+
+          return (
+            <img
+              src={fullSrc}
+              alt={alt}
+              style={{
+                boxShadow: "var(--sh-regular)",
+                maxWidth: "100%",
+                minWidth: "40%",
+              }}
+            />
+          );
+        },
+      }}
+    >
       {children}
     </ReactMarkdown>
   );

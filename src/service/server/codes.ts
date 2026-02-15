@@ -246,8 +246,6 @@ export async function loadTemporaryCodeData(): Promise<
     // const codeData = CodeDataSchema.parse({ ...data, description });
     const codeData = { ...data, description };
 
-    console.log("コードデータを読み込みました:", codeData);
-
     return {
       ok: true,
       data: codeData,
