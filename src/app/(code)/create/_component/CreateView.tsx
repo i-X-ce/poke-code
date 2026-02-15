@@ -190,6 +190,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
         bottom={16}
         display={"flex"}
         justifyContent={"end"}
+        zIndex={20}
       >
         <ButtonGroup size="large" sx={{ backgroundColor: "background.paper" }}>
           <Button
@@ -201,20 +202,20 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
           >
             {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
           </Button>
+          {viewMode === "edit" && (
+            <Button onClick={onClear} startIcon={<Clear />}>
+              クリア
+            </Button>
+          )}
           {mode === "create" && (
-            <>
-              <Button onClick={onClear} startIcon={<Clear />}>
-                クリア
-              </Button>
-              <Button
-                onClick={onSave}
-                startIcon={<Save />}
-                variant="outlined"
-                loading={isSaving}
-              >
-                一時保存
-              </Button>
-            </>
+            <Button
+              onClick={onSave}
+              startIcon={<Save />}
+              variant="outlined"
+              loading={isSaving}
+            >
+              一時保存
+            </Button>
           )}
           <Button
             form={CREATE_FORM_ID}
