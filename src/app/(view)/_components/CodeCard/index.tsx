@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import VersionChip from "../../../../components/VersionChip";
 import CodeInfo from "@/components/CodeInfo";
 import { PATH } from "@/lib/constant/paths";
@@ -25,11 +25,6 @@ interface CodeCardProps {
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
   const { versions } = data;
   const { title, tags, date, detail, codeSize, isPublic } = data;
-  const [openTags, setOpenTags] = useState(false);
-
-  const handleOpenTags = () => {
-    setOpenTags(true);
-  };
 
   return (
     <Card sx={{ position: "relative", height: "100%", minWidth: 0 }}>
