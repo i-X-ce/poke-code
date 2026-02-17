@@ -10,6 +10,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 import React from "react";
 
@@ -21,12 +22,14 @@ function DeleteDialogContent({ id }: DeleteDialogProps) {
   const { closeDialog } = useDialog();
   const { enqueueSnackbar } = useSnackbar();
   const { isLoading: isDeleting, deleteCodeFetcher } = useDeleteCode();
+  const router = useRouter();
 
   const handleDelete = async () => {
     const { ok, message } = await deleteCodeFetcher(id);
 
     if (ok) {
       enqueueSnackbar("コードを削除しました", { variant: "success" });
+      await router.push("/");
       window.location.reload();
     } else {
       enqueueSnackbar(message);
@@ -57,7 +60,8 @@ function DeleteDialogContent({ id }: DeleteDialogProps) {
           onClick={handleDelete}
           variant="contained"
           color="error"
-          loading={isDeleting}>
+          loading={isDeleting}
+        >
           削除する
         </Button>
       </DialogActions>

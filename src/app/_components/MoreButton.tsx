@@ -51,9 +51,8 @@ function MoreButton({ id }: MoreButtonProps) {
   };
 
   const handleDelete = () => {
-    openDialog(<DeleteDialogContent id={id} />);
     handleClose();
-    router.push(PATH.HOME);
+    openDialog(<DeleteDialogContent id={id} />);
   };
 
   return (
@@ -65,7 +64,8 @@ function MoreButton({ id }: MoreButtonProps) {
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        onClose={handleClose}>
+        onClose={handleClose}
+      >
         <nav>
           <List>
             <DevelopmentComponent>
