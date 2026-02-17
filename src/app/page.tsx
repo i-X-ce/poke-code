@@ -100,10 +100,7 @@ export default function Home() {
             <Stack flex={1} minHeight={minHeight}>
               <Grid container spacing={2}>
                 {codeData.map((data) => (
-                  <Grid
-                    key={data.id}
-                    size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}
-                  >
+                  <Grid key={data.id} size={{ xs: 12, lg: 6 }}>
                     <CodeCard data={data} />
                   </Grid>
                 ))}
