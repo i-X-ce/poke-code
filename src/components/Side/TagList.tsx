@@ -22,7 +22,7 @@ const TagList = () => {
   }, []);
 
   const handleSelectTag = (tag: string) => {
-    toggleArrayQuery("tags", tag);
+    toggleArrayQuery("tags", tag, { page: 0 });
   };
 
   return (
@@ -34,7 +34,8 @@ const TagList = () => {
               display={"flex"}
               alignItems={"center"}
               justifyContent={"center"}
-              width={"100%"}>
+              width={"100%"}
+            >
               <CircularProgress size={16} />
             </Box>
           )}

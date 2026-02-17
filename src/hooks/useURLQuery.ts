@@ -67,15 +67,22 @@ export const useURLQuery = () => {
     router.refresh();
   };
 
-  const toggleArrayQuery = (key: keyof SearchOptions, value: string) => {
+  const toggleArrayQuery = (
+    key: keyof SearchOptions,
+    value: string,
+    option?: Partial<SearchOptions>,
+  ) => {
     const currentValues = parsedParams[key] || [];
     if (!Array.isArray(currentValues)) return;
 
     if (currentValues.includes(value)) {
       const newValues = currentValues.filter((v) => v !== value);
-      updateQuery({ [key]: newValues.length ? newValues : undefined });
+      updateQuery({
+        [key]: newValues.length ? newValues : undefined,
+        ...option,
+      });
     } else {
-      updateQuery({ [key]: [...currentValues, value] });
+      updateQuery({ [key]: [...currentValues, value], ...option });
     }
   };
 
