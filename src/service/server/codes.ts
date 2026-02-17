@@ -274,7 +274,7 @@ export async function loadTemporaryCodeData(): Promise<
  * ヘッダーファイルのアップデート
  *
  */
-const updateHeadersFile = async (): Promise<ActionResult> => {
+export const updateHeadersFile = async (): Promise<ActionResult> => {
   try {
     const folderNames = await fs.readdir(
       path.join(process.cwd(), PATH.server.CODE_DATA()),

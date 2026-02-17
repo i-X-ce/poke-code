@@ -1,6 +1,6 @@
 "use client";
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
-import { Add, AutoAwesome, Bookmark, Home } from "@mui/icons-material";
+import { Add, AutoAwesome, Bookmark, Home, Refresh } from "@mui/icons-material";
 import SideItem from "./SideItem";
 import SideItemChild from "./SideItemChild";
 import DevelopmentComponent from "../DevelopmentComponent";
@@ -13,6 +13,8 @@ import { useAtomValue } from "jotai";
 import { bookmarkBaseAtom } from "@/atoms/base";
 import TagList from "./TagList";
 import TagListSkeleton from "./TagListSkeleton";
+import { useRefresh } from "@/hooks/api/useRefresh";
+import { useSnackbar } from "notistack";
 
 function Side() {
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
@@ -20,6 +22,20 @@ function Side() {
     CodeDataHeaderJson[]
   >([]);
   const bookmarkedIds = useAtomValue(bookmarkBaseAtom);
+  const { enqueueSnackbar } = useSnackbar();
+  const { isLoading: isRefreshing, refreshFetcher } = useRefresh();
+
+  const handleRefresh = async () => {
+    try {
+      const result = await refreshFetcher();
+      if (!result.ok) {
+        throw new Error("リフレッシュに失敗しました");
+      }
+      enqueueSnackbar("リフレッシュが完了しました", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar("リフレッシュに失敗しました", { variant: "error" });
+    }
+  };
 
   useEffect(() => {
     const fetchNewCodeData = async () => {
@@ -63,7 +79,8 @@ function Side() {
           borderRadius: 1,
           border: `1px solid ${theme.palette.divider}`,
           overflow: "clip",
-        })}>
+        })}
+      >
         <Stack>
           <SideItem
             title="ホーム"
@@ -79,7 +96,8 @@ function Side() {
           {bookmarkedCodeData.length > 0 && (
             <SideItem
               title="ブックマーク"
-              leftIcon={<Bookmark color="action" />}>
+              leftIcon={<Bookmark color="action" />}
+            >
               {bookmarkedCodeData.map((data) => (
                 <SideItemChild key={data.id} data={data} />
               ))}
@@ -92,15 +110,26 @@ function Side() {
       </Suspense>
 
       <DevelopmentComponent>
-        <Button
-          LinkComponent={Link}
-          href={PATH.CREATE}
-          endIcon={<Add />}
-          fullWidth
-          variant="contained"
-          sx={{ marginTop: 2 }}>
-          新規作成
-        </Button>
+        <Stack mt={2} gap={2}>
+          <Button
+            onClick={handleRefresh}
+            endIcon={<Refresh />}
+            fullWidth
+            variant="outlined"
+            loading={isRefreshing}
+          >
+            リフレッシュ
+          </Button>
+          <Button
+            LinkComponent={Link}
+            href={PATH.CREATE}
+            endIcon={<Add />}
+            fullWidth
+            variant="contained"
+          >
+            新規作成
+          </Button>
+        </Stack>
       </DevelopmentComponent>
     </Box>
   );
