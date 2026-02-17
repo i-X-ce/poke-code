@@ -91,12 +91,16 @@ export async function createCode(
     const descriptionFilePath = path.join(dirPath, FILE_NAME.DESCRIPTION_MD);
     await fs.writeFile(descriptionFilePath, description, "utf-8");
 
-    // 画像ファイルの削除・移動
-    const tempImageDirPath = path.join(process.cwd(), PATH.server.IMAGES());
-    await deleteUnreferencedImages(description, tempImageDirPath);
-    const newImageDirPath = path.join(process.cwd(), PATH.server.IMAGES(id));
-    await fs.mkdir(newImageDirPath, { recursive: true });
-    await fs.rename(tempImageDirPath, newImageDirPath);
+    try {
+      // 画像ファイルの削除・移動
+      const tempImageDirPath = path.join(process.cwd(), PATH.server.IMAGES());
+      await deleteUnreferencedImages(description, tempImageDirPath);
+      const newImageDirPath = path.join(process.cwd(), PATH.server.IMAGES(id));
+      await fs.mkdir(newImageDirPath, { recursive: true });
+      await fs.rename(tempImageDirPath, newImageDirPath);
+    } catch (error) {
+      console.error("画像ファイルの移動に失敗しました", error);
+    }
 
     await finalizeCodeData(description, id);
 
