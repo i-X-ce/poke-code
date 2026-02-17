@@ -187,7 +187,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
       <Box
         my={4}
         position={"sticky"}
-        bottom={16}
+        bottom={{ xs: 64, md: 16 }}
         display={"flex"}
         justifyContent={"end"}
         zIndex={20}

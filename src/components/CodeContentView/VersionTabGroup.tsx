@@ -15,7 +15,13 @@ const VersionTabGroup = memo(
     return (
       <CardActionArea
         onClick={onClick}
-        sx={{ borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+        sx={{
+          borderTopLeftRadius: 4,
+          borderTopRightRadius: 4,
+          width: "auto",
+          flexShrink: 0,
+        }}
+      >
         <Stack direction={"row"} alignItems={"end"}>
           {versions.length === 0 ? (
             <VersionTab
