@@ -1,10 +1,5 @@
 import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
-import {
-  Box,
-  CardActionArea,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, CardActionArea, Stack, Typography } from "@mui/material";
 import CodeInfo from "../CodeInfo";
 import { PATH } from "@/lib/constant/paths";
 import Link from "next/link";
@@ -18,17 +13,25 @@ function SideItemChild({ data }: { data: CodeDataHeaderJson }) {
       position={"relative"}
       display={"flex"}
       alignItems={"center"}
-      ml={2}
+      // ml={2}
       sx={(theme) => ({
-        bgcolor: theme.palette.background.paper,
+        // bgcolor: theme.palette.background.paper,
         borderTop: `1px solid ${theme.palette.divider}`,
-      })}>
-      <CardActionArea LinkComponent={Link} href={PATH.DETAIL(data.id)}>
+      })}
+    >
+      <Box width={16} alignSelf={"stretch"} sx={{ bgcolor: "divider" }} />
+
+      <CardActionArea
+        LinkComponent={Link}
+        href={PATH.DETAIL(data.id)}
+        sx={{ flex: 1 }}
+      >
         <Stack
           direction={"row"}
           p={1}
           alignItems={"center"}
-          justifyContent={"space-between"}>
+          justifyContent={"space-between"}
+        >
           <Stack gap={0.5} minWidth={0} pr={4}>
             <Typography noWrap>{data.title}</Typography>
             <CodeInfo date={date} codeSize={codeSize} size="small" />

@@ -32,19 +32,22 @@ function SideItem({
     <>
       <Box
         sx={(theme) => ({
-          bgcolor: theme.palette.background.paper,
+          // bgcolor: theme.palette.background.paper,
           borderTop: topLevel ? "none" : `1px solid ${theme.palette.divider}`,
-        })}>
+        })}
+      >
         <CardActionArea
           LinkComponent={href ? Link : undefined}
           {...(href && { href: href })}
-          onClick={handleToggleOpen}>
+          onClick={handleToggleOpen}
+        >
           <Stack
             direction={"row"}
             alignItems={"center"}
             justifyContent={"space-between"}
             p={2}
-            color={"action"}>
+            color={"action"}
+          >
             <Stack direction={"row"} alignItems={"center"} gap={2}>
               {leftIcon}
               <Typography color="textPrimary">{title}</Typography>

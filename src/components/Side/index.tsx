@@ -103,7 +103,7 @@ function Side() {
     <>
       <Box
         sx={(theme) => ({
-          bgcolor: "divider",
+          // bgcolor: "divider",
           borderRadius: 1,
           border: `1px solid ${theme.palette.divider}`,
           overflow: "clip",
