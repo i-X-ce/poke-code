@@ -21,11 +21,12 @@ function CodeView({ data }: CodeViewProps) {
         fontWeight={"500"}
         paddingRight={12}
         gutterBottom
-        color="textPrimary">
+        color="textPrimary"
+      >
         {title}
       </Typography>
       <Stack gap={2} mb={4}>
-        <CodeTags tags={tags} isPublic={isPublic} />
+        <CodeTags tags={tags} isPublic={isPublic} open />
         <CodeInfo date={date} codeSize={codeSize(blocks)} />
         <Typography color="textSecondary">{detail}</Typography>
         <Divider />

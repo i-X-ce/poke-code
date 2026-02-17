@@ -9,10 +9,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import VersionChip from "../../../../components/VersionChip";
 import CodeInfo from "@/components/CodeInfo";
-import styles from "./styles.module.css";
 import { PATH } from "@/lib/constant/paths";
 import CodeTags from "@/components/CodeTags";
 import Link from "next/link";
@@ -26,23 +25,37 @@ interface CodeCardProps {
 const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
   const { versions } = data;
   const { title, tags, date, detail, codeSize, isPublic } = data;
+  const [openTags, setOpenTags] = useState(false);
+
+  const handleOpenTags = () => {
+    setOpenTags(true);
+  };
 
   return (
-    <Card sx={{ position: "relative", height: "100%" }}>
+    <Card sx={{ position: "relative", height: "100%", minWidth: 0 }}>
       <CardActionArea
         LinkComponent={Link}
         href={PATH.DETAIL(data.id)}
-        sx={{ height: "100%" }}>
-        <CardContent sx={{ height: "100%" }}>
+        sx={{ height: "100%", minWidth: 0 }}
+      >
+        <CardContent sx={{ height: "100%", minWidth: 0 }}>
           <Stack justifyContent={"space-between"} height={"100%"} gap={1}>
-            <Stack gap={1}>
-              <Typography variant="h6" className={styles.title}>
+            <Stack gap={1} minWidth={0}>
+              <Typography variant="h6" noWrap>
                 {/* <Typography component={"span"} fontSize={"1.8rem"}>{data.icon}</Typography> */}
                 {title}
               </Typography>
               <CodeInfo date={date} codeSize={codeSize} />
-              <CodeTags tags={tags} isPublic={isPublic}/>
-              <Typography color="textSecondary" className={styles.detail}>
+              <CodeTags tags={tags} isPublic={isPublic} />
+              <Typography
+                color="textSecondary"
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
                 {detail}
               </Typography>
             </Stack>

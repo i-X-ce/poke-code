@@ -5,7 +5,6 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import CustomThemeProvider from "../components/CustomThemeProvider";
 import AppTitle from "../components/AppTitle";
 import CommonSection from "../components/CommonSection";
-import styles from "./layout.module.css";
 import CommonFooter from "../components/CommonFooter";
 import SnackbarProviderWrapper from "../components/SnackbarProviderWrapper";
 import DialogController from "../components/DialogController";
@@ -29,10 +28,10 @@ export default function RootLayout({
             <SnackbarProviderWrapper>
               <AppTitle />
               <CommonSection>
-                <div className={styles.rootDiv}>
+                <Box position={"relative"} display={"flex"} gap={4}>
                   <Side />
                   <Box flex={1}>{children}</Box>
-                </div>
+                </Box>
               </CommonSection>
               <CommonFooter />
               <DialogController />
