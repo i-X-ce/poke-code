@@ -1,7 +1,7 @@
 "use client";
 import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { type CodeBlock as CodeBlockView } from "@/lib/types/CodeDataModel";
-import { Box, Chip, Grid, Stack } from "@mui/material";
+import { Box, Chip, Grid, Stack, useMediaQuery } from "@mui/material";
 import React, { memo, MouseEventHandler, useCallback, useRef } from "react";
 import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
@@ -20,14 +20,17 @@ interface CodeBlockViewProps {
 
 const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
   const { handleCopy, copied } = useCopyClipboard(formatCode(block.code));
+  const isSm = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const stepNum = isSm ? 8 : 16;
 
   const code = formatCode(block.code);
   const codeLength = Math.floor(code.length / 2);
   const startAddress = block.address ? parseInt(block.address, 16) : 0;
   const startRange = block.address ? parseInt(block.address, 16) & 0xfff0 : 0;
-  const endRange = (startAddress + codeLength - 1) | 0xf;
+  const endRange = (startAddress + codeLength - 1) | (stepNum - 1);
   const addressRange = endRange - startRange;
 
   const handleMouseEnter = (pos: CellPos) => {
@@ -82,12 +85,12 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
           ref={containerRef}
           onMouseLeave={handleMouseLeave}
           container
-          columns={18}
+          columns={stepNum + 2}
           fontFamily={GoogleSansCode.style.fontFamily}
           position={"relative"}
         >
           {/* 上端の数値 */}
-          {Array.from({ length: 17 }).map((_, i) => {
+          {Array.from({ length: stepNum + 1 }).map((_, i) => {
             const pos: CellPos = { x: i, y: 0 };
             return (
               <CodeGrid
@@ -100,7 +103,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
             );
           })}
           {/* アドレスとコード部 */}
-          {Array.from({ length: Math.ceil(addressRange / 16) }).map(
+          {Array.from({ length: Math.ceil(addressRange / stepNum) }).map(
             (_, addressIndex) => {
               const pos: CellPos = { x: 0, y: addressIndex + 1 };
               return (
@@ -110,15 +113,16 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
                     pos={pos}
                     onMouseEnter={() => handleMouseEnter(pos)}
                   >
-                    {num2Hex(startRange + addressIndex * 16, 4).substring(
+                    {num2Hex(startRange + addressIndex * stepNum, 4).substring(
                       0,
                       3,
                     ) + "x"}
                   </CodeGrid>
 
                   {/* コード部 */}
-                  {Array.from({ length: 16 }).map((_, byteIndex) => {
-                    const address = startRange + addressIndex * 16 + byteIndex;
+                  {Array.from({ length: stepNum }).map((_, byteIndex) => {
+                    const address =
+                      startRange + addressIndex * stepNum + byteIndex;
                     const sub = address - startAddress;
                     const pos: CellPos = {
                       x: byteIndex + 1,

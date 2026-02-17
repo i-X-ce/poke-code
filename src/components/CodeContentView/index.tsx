@@ -92,7 +92,7 @@ const CodeContentView = memo(
         {/* コードブロック部 */}
         <Stack
           borderRadius={1}
-          p={2}
+          p={{ xs: 0.5, md: 2 }}
           gap={2}
           sx={(theme) => ({
             minHeight: 200,

@@ -83,13 +83,14 @@ const CodeGrid = memo(
           />
           <Box
             flex={1}
-            px={isColumnEdge ? 1 : 0}
-            py={0.5}
+            px={{ xs: isColumnEdge ? 0.5 : 0, md: isColumnEdge ? 1 : 0.5 }}
+            py={{ xs: 0.1, md: 0.5 }}
             display={isColumnEdge ? "start" : "flex"}
             alignItems={"stretch"}
             justifyContent={"center"}
             position={"relative"}
             zIndex={2}
+            fontSize={{ xs: 12, md: "1rem" }}
           >
             {children}
           </Box>
