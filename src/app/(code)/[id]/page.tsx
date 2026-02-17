@@ -22,7 +22,13 @@ const CodePage: React.FC<CodePageProps> = async ({ params }) => {
   return (
     <>
       <CodeView data={data} />
-      <Stack direction={"row"} position={"absolute"} p={1} top={0} right={0}>
+      <Stack
+        direction={"row"}
+        position={"absolute"}
+        p={{ xs: 0, md: 1 }}
+        top={{ xs: -48, md: 0 }}
+        right={0}
+      >
         <BookmarkButton id={data.id} />
         <MoreButton id={data.id} />
       </Stack>
