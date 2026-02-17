@@ -13,6 +13,7 @@ import { FILE_NAME } from "../../lib/constant/fileName";
 import { ActionResult } from "../../lib/types/ActionResult";
 import { codeSize } from "../../lib/util/codeDataFormat";
 import isDevelopment from "@/lib/util/isDevelopment";
+import { deleteUnreferencedImages } from "./images";
 
 /**
  * コードデータの読み取り（ID指定）
@@ -90,7 +91,14 @@ export async function createCode(
     const descriptionFilePath = path.join(dirPath, FILE_NAME.DESCRIPTION_MD);
     await fs.writeFile(descriptionFilePath, description, "utf-8");
 
-    await updateHeadersFile();
+    // 画像ファイルの削除・移動
+    const tempImageDirPath = path.join(process.cwd(), PATH.server.IMAGES());
+    await deleteUnreferencedImages(description, tempImageDirPath);
+    const newImageDirPath = path.join(process.cwd(), PATH.server.IMAGES(id));
+    await fs.mkdir(newImageDirPath, { recursive: true });
+    await fs.rename(tempImageDirPath, newImageDirPath);
+
+    await finalizeCodeData(description, id);
 
     // 一時保存データの削除
     const tempDirPath = path.join(
@@ -139,7 +147,7 @@ export const updateCode = async (
     );
     await fs.writeFile(descriptionFilePath, description, "utf-8");
 
-    await updateHeadersFile();
+    await finalizeCodeData(description, id);
 
     return {
       ok: true,
@@ -326,4 +334,24 @@ const updateHeadersFile = async (): Promise<ActionResult> => {
       message: "ヘッダーファイルの更新に失敗しました",
     };
   }
+};
+
+/**
+ * コード保存時、共通で行う最終処理
+ * - ヘッダーファイルの更新
+ * - 未参照の画像の削除
+ *
+ * @param description
+ * @param id
+ * @returns
+ */
+export const finalizeCodeData = async (
+  description: string,
+  id?: CodeData["id"],
+) => {
+  const codeDataDir = path.join(process.cwd(), PATH.server.IMAGES(id));
+  await Promise.all([
+    deleteUnreferencedImages(description, codeDataDir),
+    updateHeadersFile(),
+  ]);
 };

@@ -3,11 +3,12 @@ import React from "react";
 import { useController, useFormContext } from "react-hook-form";
 import CreateFormTextField from "./CreateFormTextField";
 import DropzoneWrapper from "@/components/DropzoneWrapper";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { AddPhotoAlternate } from "@mui/icons-material";
 import { useImageUpload } from "@/hooks/images/useImage";
 import { useSnackbar } from "notistack";
 import { INIT_CODE_DATA } from "../_util/initValues";
+import { IMAGE_FOLDER } from "@/lib/constant/paths";
 
 const DescriptionField = () => {
   const { control, getValues } = useFormContext<CodeDataInput>();
@@ -30,7 +31,7 @@ const DescriptionField = () => {
               file,
               id === INIT_CODE_DATA.id ? undefined : id,
             );
-            return `![${file.name}](${imageUrl})`;
+            return `![${file.name}](${IMAGE_FOLDER}/${imageUrl})  `;
           } catch (error) {
             return null;
           }
@@ -52,6 +53,7 @@ const DescriptionField = () => {
           <Typography color="textSecondary">ここに画像をドロップ</Typography>
         </Stack>
       }
+      loading={isLoading}
     >
       <CreateFormTextField
         fieldName="description"
@@ -59,6 +61,7 @@ const DescriptionField = () => {
         multiline
         value={value}
         onChange={onChange}
+        disabled={isLoading}
       />
     </DropzoneWrapper>
   );

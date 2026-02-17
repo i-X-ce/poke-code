@@ -9,7 +9,6 @@ export const POST = async (request: NextRequest) => {
     if (!ok) {
       throw new Error("画像のアップロードに失敗しました");
     }
-    console.log("画像が保存されました:", data);
     return new NextResponse(data);
   } catch (error) {
     return new Response(
