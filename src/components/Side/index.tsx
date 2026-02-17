@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, CircularProgress, Stack } from "@mui/material";
+import { Box, Button, Stack, styled, SwipeableDrawer } from "@mui/material";
 import { Add, AutoAwesome, Bookmark, Home, Refresh } from "@mui/icons-material";
 import SideItem from "./SideItem";
 import SideItemChild from "./SideItemChild";
@@ -15,6 +15,22 @@ import TagList from "./TagList";
 import TagListSkeleton from "./TagListSkeleton";
 import { useRefresh } from "@/hooks/api/useRefresh";
 import { useSnackbar } from "notistack";
+import { grey } from "@mui/material/colors";
+
+const drawerBleeding = 40;
+
+const Puller = styled("div")(({ theme }) => ({
+  width: 30,
+  height: 6,
+  backgroundColor: grey[300],
+  borderRadius: 3,
+  position: "absolute",
+  top: 8,
+  left: "calc(50% - 15px)",
+  ...theme.applyStyles("dark", {
+    backgroundColor: grey[900],
+  }),
+}));
 
 function Side() {
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
@@ -24,6 +40,7 @@ function Side() {
   const bookmarkedIds = useAtomValue(bookmarkBaseAtom);
   const { enqueueSnackbar } = useSnackbar();
   const { isLoading: isRefreshing, refreshFetcher } = useRefresh();
+  const [open, setOpen] = useState(false);
 
   const handleRefresh = async () => {
     try {
@@ -35,6 +52,14 @@ function Side() {
     } catch (error) {
       enqueueSnackbar("リフレッシュに失敗しました", { variant: "error" });
     }
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -71,8 +96,11 @@ function Side() {
     fetchBookmarkedCodeData();
   }, [bookmarkedIds]);
 
-  return (
-    <Box flexShrink={0} width={300}>
+  const container =
+    window !== undefined ? () => window.document.body : undefined;
+
+  const content = (
+    <>
       <Box
         sx={(theme) => ({
           bgcolor: "divider",
@@ -131,7 +159,63 @@ function Side() {
           </Button>
         </Stack>
       </DevelopmentComponent>
-    </Box>
+    </>
+  );
+
+  return (
+    <>
+      <Box display={{ xs: "none", md: "block" }} flexShrink={0} width={300}>
+        {content}
+      </Box>
+
+      <SwipeableDrawer
+        container={container}
+        anchor="bottom"
+        open={open}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        swipeAreaWidth={drawerBleeding}
+        disableSwipeToOpen={false}
+        keepMounted
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "relative",
+          zIndex: 80,
+          "& .MuiDrawer-paper": {
+            overflow: "visible",
+            maxHeight: "85dvh",
+          },
+        }}
+      >
+        <Box
+          sx={(theme) => ({
+            position: "absolute",
+            top: -drawerBleeding,
+            width: "100%",
+            height: drawerBleeding,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            visibility: "visible",
+            right: 0,
+            left: 0,
+            bgcolor: theme.palette.background.paper,
+            ...theme.applyStyles("dark", { backgroundColor: grey[800] }),
+          })}
+        >
+          <Puller />
+        </Box>
+        <Box
+          p={2}
+          sx={{
+            maxHeight: `calc(85dvh - ${drawerBleeding}px)`,
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          {content}
+        </Box>
+      </SwipeableDrawer>
+    </>
   );
 }
 
