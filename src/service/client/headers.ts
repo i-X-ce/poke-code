@@ -30,7 +30,7 @@ export const getHeaders = async ({
   versions,
   sizeMin,
   sizeMax,
-  orderBy = "date",
+  orderBy = isDevelopment ? "updateDate" : "date",
   orderDirection = "desc",
   onlyBookmarked = false,
 }: SearchOptions): Promise<ActionResult<GetHeadersResult>> => {
@@ -106,6 +106,8 @@ export const getHeaders = async ({
         if (compareValue === 0) {
           compareValue = updateDateCompare;
         }
+      } else if (orderBy === "updateDate") {
+        compareValue = updateDateCompare;
       }
 
       return orderDirection === "asc" ? compareValue : -compareValue;
