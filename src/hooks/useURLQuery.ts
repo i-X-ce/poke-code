@@ -63,7 +63,7 @@ export const useURLQuery = () => {
 
     const queryString = queryParams.toString();
     const newUrl = `${PATH.HOME}?${queryString}`;
-    router.replace(newUrl);
+    router.push(newUrl);
     router.refresh();
   };
 
