@@ -9,7 +9,7 @@ function CommonSection({ children }: { children: React.ReactNode }) {
       sx={{
         marginY: 0,
         marginX: "auto",
-        paddingTop: 20,
+        paddingTop: 15,
         paddingX: 2,
         maxWidth: commonStyles.maxWidth,
       }}
