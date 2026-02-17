@@ -98,10 +98,25 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
                 pos={pos}
                 onMouseEnter={() => handleMouseEnter(pos)}
               >
-                {i === 0 ? "" : num2Hex(i - 1, 2, "x")}
+                {i === 0 ? "" : num2Hex(i - 1, 2)}
               </CodeGrid>
             );
           })}
+          {isSm &&
+            Array.from({ length: stepNum + 1 }).map((_, i) => {
+              const pos: CellPos = { x: i, y: 0 };
+              return (
+                <CodeGrid
+                  key={i}
+                  pos={pos}
+                  onMouseEnter={() => handleMouseEnter(pos)}
+                  stickyRow={1}
+                >
+                  {i === 0 ? "" : num2Hex(i + stepNum - 1, 2)}
+                </CodeGrid>
+              );
+            })}
+
           {/* アドレスとコード部 */}
           {Array.from({ length: Math.ceil(addressRange / stepNum) }).map(
             (_, addressIndex) => {
@@ -113,10 +128,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
                     pos={pos}
                     onMouseEnter={() => handleMouseEnter(pos)}
                   >
-                    {num2Hex(startRange + addressIndex * stepNum, 4).substring(
-                      0,
-                      3,
-                    ) + "x"}
+                    {num2Hex(startRange + addressIndex * stepNum, 4)}
                   </CodeGrid>
 
                   {/* コード部 */}

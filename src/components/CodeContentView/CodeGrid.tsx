@@ -13,10 +13,11 @@ interface CodeGridParams {
   pos: CellPos;
   onMouseEnter: MouseEventHandler<HTMLDivElement>;
   label?: string;
+  stickyRow?: number;
 }
 
 const CodeGrid = memo(
-  ({ pos, children, onMouseEnter, label }: CodeGridParams) => {
+  ({ pos, children, onMouseEnter, label, stickyRow = 0 }: CodeGridParams) => {
     const isColumnEdge = pos.x === 0;
     const isRowEdge = pos.y === 0;
 
@@ -31,7 +32,7 @@ const CodeGrid = memo(
           size={isColumnEdge ? 2 : 1}
           sx={(theme) => ({
             position: isRowEdge ? "sticky" : "relative",
-            top: isRowEdge ? 0 : "auto",
+            top: isRowEdge ? stickyRow * 20 : "auto",
             zIndex: isRowEdge ? 5 : "auto",
             display: "flex",
             color: "text.secondary",
