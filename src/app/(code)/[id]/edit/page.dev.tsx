@@ -1,7 +1,6 @@
 import { readCode } from "@/service/server/codes";
 import CreateView from "../../create/_component/CreateView";
 import { Metadata } from "next";
-import { PROJECT_NAME } from "@/lib/constant/projectName";
 
 export async function generateMetadata({
   params,
@@ -17,7 +16,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${data.title}を編集 - ${PROJECT_NAME}`,
+    title: `${data.title}を編集`,
     description: `コード「${data.title}」の編集ページです`,
   };
 }

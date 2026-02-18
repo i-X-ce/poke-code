@@ -10,9 +10,11 @@ import SnackbarProviderWrapper from "../components/SnackbarProviderWrapper";
 import DialogController from "../components/DialogController";
 import { Box } from "@mui/material";
 import { PROJECT_NAME } from "@/lib/constant/projectName";
+import isDevelopment from "@/lib/util/isDevelopment";
+import { PATH } from "@/lib/constant/paths";
 
 const metadataBase = (() => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL;
+  const siteUrl = isDevelopment ? "http://localhost:3000" : PATH.GITHUB_PAGES;
   if (!siteUrl) {
     return new URL("http://localhost:3000");
   }
@@ -25,12 +27,16 @@ const metadataBase = (() => {
 })();
 
 export const metadata: Metadata = {
-  title: PROJECT_NAME,
+  title: {
+    default: PROJECT_NAME,
+    template: "%s - " + PROJECT_NAME,
+  },
   description: "初代ポケモンのコードを共有するためのサイト",
   metadataBase,
   icons: {
     icon: "/favicon.svg",
   },
+  robots: "index, follow",
 };
 
 export default function RootLayout({

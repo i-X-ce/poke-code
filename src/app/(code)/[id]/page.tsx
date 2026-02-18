@@ -7,7 +7,6 @@ import { Stack } from "@mui/material";
 import BookmarkButton from "@/app/_components/BookmarkButton";
 import { readCode } from "@/service/server/codes";
 import { Metadata } from "next";
-import { PROJECT_NAME } from "@/lib/constant/projectName";
 
 export async function generateStaticParams() {
   const codesDirectory = path.join(process.cwd(), PATH.server.CODE_DATA());
@@ -33,7 +32,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${data.title} - ${PROJECT_NAME}`,
+    title: `${data.title}`,
     description: data.description,
     keywords: data.tags,
   };

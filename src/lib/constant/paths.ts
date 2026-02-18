@@ -8,6 +8,8 @@ export const PATH = {
   HEADERS: "/data/headers.json",
   IMAGES: (id?: string) => `/data/${id ? `codes/${id}` : "temporary"}/`,
 
+  GITHUB_PAGES: "https://i-x-ce.github.io/poke-code/",
+
   api: {
     CODE: (id: string = "") => `/api/codes/${id}`, // GET, PUT, DELETE
     CODE_CREATE: `/api/codes/create`, // POST, GET, PUT
