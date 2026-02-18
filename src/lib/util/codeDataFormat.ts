@@ -14,7 +14,7 @@ export const codeSize = (blocks?: CodeBlock[]) => {
     if (!acc[block.contentId]) {
       acc[block.contentId] = 0;
     }
-    acc[block.contentId] += Math.ceil(block.code?.length / 2);
+    acc[block.contentId] += Math.trunc(block.code?.length / 2);
     return acc;
   }, {});
 
