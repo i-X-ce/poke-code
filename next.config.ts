@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "export",
   pageExtensions: ["tsx", "ts", "jsx", "js"],
+  basePath: isDevelopment ? undefined : "/poke-code",
+  assetPrefix: isDevelopment ? undefined : "/poke-code/",
 };
 
 if (isDevelopment) {

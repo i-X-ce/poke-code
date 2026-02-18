@@ -7,6 +7,7 @@ import {
   HeaderJsonSchema,
 } from "@/lib/types/CodeDataModel";
 import { type SearchOptions } from "@/lib/types/SearchOptions";
+import isDevelopment from "@/lib/util/isDevelopment";
 import { getDefaultStore, useAtomValue } from "jotai";
 
 interface GetHeadersResult {
@@ -29,7 +30,7 @@ export const getHeaders = async ({
   versions,
   sizeMin,
   sizeMax,
-  orderBy = "date",
+  orderBy = isDevelopment ? "updateDate" : "date",
   orderDirection = "desc",
   onlyBookmarked = false,
 }: SearchOptions): Promise<ActionResult<GetHeadersResult>> => {
@@ -84,13 +85,29 @@ export const getHeaders = async ({
       );
     }
 
+    // 公開中のみ
+    if (!isDevelopment) {
+      filteredHeaders = filteredHeaders.filter((header) => header.isPublic);
+    }
+
     // ソート
     filteredHeaders.sort((a, b) => {
       let compareValue = 0;
+      const updateDateCompare =
+        new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+
       if (orderBy === "date") {
         compareValue = new Date(a.date).getTime() - new Date(b.date).getTime();
+        if (compareValue === 0) {
+          compareValue = updateDateCompare;
+        }
       } else if (orderBy === "title") {
         compareValue = a.title.localeCompare(b.title);
+        if (compareValue === 0) {
+          compareValue = updateDateCompare;
+        }
+      } else if (orderBy === "updateDate") {
+        compareValue = updateDateCompare;
       }
 
       return orderDirection === "asc" ? compareValue : -compareValue;

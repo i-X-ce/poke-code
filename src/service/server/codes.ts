@@ -12,6 +12,8 @@ import {
 import { FILE_NAME } from "../../lib/constant/fileName";
 import { ActionResult } from "../../lib/types/ActionResult";
 import { codeSize } from "../../lib/util/codeDataFormat";
+import isDevelopment from "@/lib/util/isDevelopment";
+import { deleteUnreferencedImages } from "./images";
 
 /**
  * コードデータの読み取り（ID指定）
@@ -33,6 +35,15 @@ export async function readCode(
     const description = await fs.readFile(descriptionFilePath, "utf-8");
     const data = JSON.parse(dataJson);
     const codeData = CodeDataSchema.parse({ ...data, description });
+
+    if (!isDevelopment && !codeData.isPublic) {
+      return {
+        ok: false,
+        message: "指定されたコードデータは非公開です",
+      };
+    }
+
+    codeData.date = codeData.date.split(".")[0]; // 表示のとき困るのでミリ秒以下を削除
 
     return {
       ok: true,
@@ -58,8 +69,11 @@ export async function createCode(
   try {
     const parsed = CodeDataSchema.parse(data);
     const id = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+    const updatedAt = createdAt;
+
     const { description, ...dataWithoutDescription } = parsed;
-    const dataToSave = { ...dataWithoutDescription, id };
+    const dataToSave = { ...dataWithoutDescription, id, createdAt, updatedAt };
 
     // ディレクトリ作成
     const dirPath = path.join(process.cwd(), PATH.server.CODE_DATA(id));
@@ -77,7 +91,25 @@ export async function createCode(
     const descriptionFilePath = path.join(dirPath, FILE_NAME.DESCRIPTION_MD);
     await fs.writeFile(descriptionFilePath, description, "utf-8");
 
-    await updateHeadersFile();
+    try {
+      // 画像ファイルの削除・移動
+      const tempImageDirPath = path.join(process.cwd(), PATH.server.IMAGES());
+      await deleteUnreferencedImages(description, tempImageDirPath);
+      const newImageDirPath = path.join(process.cwd(), PATH.server.IMAGES(id));
+      await fs.mkdir(newImageDirPath, { recursive: true });
+      await fs.rename(tempImageDirPath, newImageDirPath);
+    } catch (error) {
+      console.error("画像ファイルの移動に失敗しました", error);
+    }
+
+    await finalizeCodeData(description, id);
+
+    // 一時保存データの削除
+    const tempDirPath = path.join(
+      process.cwd(),
+      PATH.server.TEMPORARY_CODE_DATA,
+    );
+    await fs.rm(tempDirPath, { recursive: true, force: true });
 
     return {
       ok: true,
@@ -98,7 +130,9 @@ export const updateCode = async (
   try {
     const parsed = CodeDataSchema.parse(data);
     const { description, ...dataWithoutDescription } = parsed;
-    const dataToSave = { ...dataWithoutDescription, id };
+
+    const updatedAt = new Date().toISOString();
+    const dataToSave = { ...dataWithoutDescription, id, updatedAt };
 
     const codeDataDir = path.join(process.cwd(), PATH.server.CODE_DATA(id));
 
@@ -117,7 +151,7 @@ export const updateCode = async (
     );
     await fs.writeFile(descriptionFilePath, description, "utf-8");
 
-    await updateHeadersFile();
+    await finalizeCodeData(description, id);
 
     return {
       ok: true,
@@ -197,7 +231,7 @@ export async function saveCodeData(data: CodeDataInput): Promise<ActionResult> {
  * @returns
  */
 export async function loadTemporaryCodeData(): Promise<
-  ActionResult<CodeDataInput>
+  ActionResult<CodeDataInput | undefined>
 > {
   try {
     const tempDirPath = path.join(
@@ -211,10 +245,18 @@ export async function loadTemporaryCodeData(): Promise<
       FILE_NAME.DESCRIPTION_MD,
     );
 
+    if (!(await fs.stat(tempFilePath).catch(() => false))) {
+      return {
+        ok: true,
+        data: undefined,
+      };
+    }
+
     const dataJson = await fs.readFile(tempFilePath, "utf-8");
     const description = await fs.readFile(descriptionFilePath, "utf-8");
     const data = JSON.parse(dataJson);
-    const codeData = CodeDataSchema.parse({ ...data, description });
+    // const codeData = CodeDataSchema.parse({ ...data, description });
+    const codeData = { ...data, description };
 
     return {
       ok: true,
@@ -232,7 +274,7 @@ export async function loadTemporaryCodeData(): Promise<
  * ヘッダーファイルのアップデート
  *
  */
-const updateHeadersFile = async (): Promise<ActionResult> => {
+export const updateHeadersFile = async (): Promise<ActionResult> => {
   try {
     const folderNames = await fs.readdir(
       path.join(process.cwd(), PATH.server.CODE_DATA()),
@@ -296,4 +338,24 @@ const updateHeadersFile = async (): Promise<ActionResult> => {
       message: "ヘッダーファイルの更新に失敗しました",
     };
   }
+};
+
+/**
+ * コード保存時、共通で行う最終処理
+ * - ヘッダーファイルの更新
+ * - 未参照の画像の削除
+ *
+ * @param description
+ * @param id
+ * @returns
+ */
+export const finalizeCodeData = async (
+  description: string,
+  id?: CodeData["id"],
+) => {
+  const codeDataDir = path.join(process.cwd(), PATH.server.IMAGES(id));
+  await Promise.all([
+    deleteUnreferencedImages(description, codeDataDir),
+    updateHeadersFile(),
+  ]);
 };

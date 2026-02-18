@@ -24,6 +24,7 @@ import { MouseEventHandler, useState } from "react";
 import DeleteDialogContent from "./DeleteDialog";
 import DevelopmentComponent from "@/components/DevelopmentComponent";
 import { useBookmark } from "@/hooks/useBookmark";
+import { useRouter } from "next/navigation";
 
 type MoreButtonProps = {
   id: CodeData["id"];
@@ -33,6 +34,7 @@ function MoreButton({ id }: MoreButtonProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { openDialog } = useDialog();
   const { isBookmarked, toggleBookmark } = useBookmark(id);
+  const router = useRouter();
 
   const handleOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
     setAnchorEl(e.currentTarget);
@@ -49,8 +51,8 @@ function MoreButton({ id }: MoreButtonProps) {
   };
 
   const handleDelete = () => {
-    openDialog(<DeleteDialogContent id={id} />);
     handleClose();
+    openDialog(<DeleteDialogContent id={id} />);
   };
 
   return (
@@ -62,7 +64,8 @@ function MoreButton({ id }: MoreButtonProps) {
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        onClose={handleClose}>
+        onClose={handleClose}
+      >
         <nav>
           <List>
             <DevelopmentComponent>

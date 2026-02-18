@@ -1,24 +1,77 @@
 "use client";
-import { Box, Button, Stack } from "@mui/material";
-import { Add, AutoAwesome, Bookmark, Home } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Stack,
+  styled,
+  SwipeableDrawer,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { Add, AutoAwesome, Bookmark, Home, Refresh } from "@mui/icons-material";
 import SideItem from "./SideItem";
 import SideItemChild from "./SideItemChild";
 import DevelopmentComponent from "../DevelopmentComponent";
 import { PATH } from "@/lib/constant/paths";
 import Link from "next/link";
 import { getHeaders } from "@/service/client/headers";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { bookmarkBaseAtom } from "@/atoms/base";
 import TagList from "./TagList";
+import TagListSkeleton from "./TagListSkeleton";
+import { useRefresh } from "@/hooks/api/useRefresh";
+import { useSnackbar } from "notistack";
+import { grey } from "@mui/material/colors";
+import { closeSideAtom, openSideAtom, sideAtom } from "@/atoms/ui/side";
 
-function Side() {
+const drawerBleeding = 40;
+
+const Puller = styled("div")(({ theme }) => ({
+  width: 30,
+  height: 6,
+  backgroundColor: grey[300],
+  borderRadius: 3,
+  position: "absolute",
+  top: 8,
+  left: "calc(50% - 15px)",
+  ...theme.applyStyles("dark", {
+    backgroundColor: grey[900],
+  }),
+}));
+
+interface SideProps {
+  window?: () => Window;
+}
+
+function Side({ window }: SideProps) {
+  const theme = useTheme();
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
   const [bookmarkedCodeData, setBookmarkedCodeData] = useState<
     CodeDataHeaderJson[]
   >([]);
   const bookmarkedIds = useAtomValue(bookmarkBaseAtom);
+  const { enqueueSnackbar } = useSnackbar();
+  const { isLoading: isRefreshing, refreshFetcher } = useRefresh();
+  const open = useAtomValue(sideAtom);
+
+  const handleRefresh = async () => {
+    try {
+      const result = await refreshFetcher();
+      if (!result.ok) {
+        throw new Error("リフレッシュに失敗しました");
+      }
+      enqueueSnackbar("リフレッシュが完了しました", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar("リフレッシュに失敗しました", { variant: "error" });
+    }
+  };
+
+  const handleOpen = useSetAtom(openSideAtom);
+
+  const handleClose = useSetAtom(closeSideAtom);
 
   useEffect(() => {
     const fetchNewCodeData = async () => {
@@ -54,15 +107,25 @@ function Side() {
     fetchBookmarkedCodeData();
   }, [bookmarkedIds]);
 
-  return (
-    <Box flexShrink={0} width={300}>
+  useEffect(() => {
+    if (isMdUp) {
+      handleClose();
+    }
+  }, [isMdUp]);
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
+  const content = (
+    <>
       <Box
         sx={(theme) => ({
-          bgcolor: "divider",
+          // bgcolor: "divider",
           borderRadius: 1,
           border: `1px solid ${theme.palette.divider}`,
           overflow: "clip",
-        })}>
+        })}
+      >
         <Stack>
           <SideItem
             title="ホーム"
@@ -78,7 +141,8 @@ function Side() {
           {bookmarkedCodeData.length > 0 && (
             <SideItem
               title="ブックマーク"
-              leftIcon={<Bookmark color="action" />}>
+              leftIcon={<Bookmark color="action" />}
+            >
               {bookmarkedCodeData.map((data) => (
                 <SideItemChild key={data.id} data={data} />
               ))}
@@ -86,19 +150,89 @@ function Side() {
           )}
         </Stack>
       </Box>
-      <TagList />
+      <Suspense fallback={<TagListSkeleton />}>
+        <TagList />
+      </Suspense>
+
       <DevelopmentComponent>
-        <Button
-          LinkComponent={Link}
-          href={PATH.CREATE}
-          endIcon={<Add />}
-          fullWidth
-          variant="contained"
-          sx={{ marginTop: 2 }}>
-          新規作成
-        </Button>
+        <Stack mt={2} gap={2}>
+          <Button
+            onClick={handleRefresh}
+            endIcon={<Refresh />}
+            fullWidth
+            variant="outlined"
+            loading={isRefreshing}
+          >
+            リフレッシュ
+          </Button>
+          <Button
+            LinkComponent={Link}
+            href={PATH.CREATE}
+            endIcon={<Add />}
+            fullWidth
+            variant="contained"
+          >
+            新規作成
+          </Button>
+        </Stack>
       </DevelopmentComponent>
-    </Box>
+    </>
+  );
+
+  return (
+    <>
+      <Box display={{ xs: "none", md: "block" }} flexShrink={0} width={300}>
+        {content}
+      </Box>
+
+      {!isMdUp && (
+        <SwipeableDrawer
+          container={container}
+          anchor="bottom"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          swipeAreaWidth={drawerBleeding}
+          disableSwipeToOpen={false}
+          keepMounted
+          sx={{
+            position: "relative",
+            "& .MuiDrawer-paper": {
+              overflow: "visible",
+              maxHeight: "85dvh",
+            },
+          }}
+        >
+          <Box
+            sx={(theme) => ({
+              position: "absolute",
+              top: -drawerBleeding,
+              width: "100%",
+              height: drawerBleeding,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+              visibility: "visible",
+              right: 0,
+              left: 0,
+              bgcolor: theme.palette.background.paper,
+              ...theme.applyStyles("dark", { backgroundColor: grey[800] }),
+            })}
+          >
+            <Puller />
+          </Box>
+          <Box
+            p={2}
+            sx={{
+              maxHeight: `calc(85dvh - ${drawerBleeding}px)`,
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {content}
+          </Box>
+        </SwipeableDrawer>
+      )}
+    </>
   );
 }
 

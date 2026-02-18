@@ -14,7 +14,18 @@ export const INIT_CODE_CONTENT = (allVersion: boolean = true): CodeContent => ({
   versions: allVersion ? Object.values(PokeVersions) : [],
 });
 
-const Date2String = (date: Date): string => date.toISOString().split("T")[0];
+const Date2String = (date: Date): string => {
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  date.setSeconds(0);
+  return formatter.format(date).replace(" ", "T");
+};
 
 const initialContent = INIT_CODE_CONTENT();
 
@@ -28,4 +39,6 @@ export const INIT_CODE_DATA: CodeData = {
   description: "",
   content: [initialContent],
   blocks: [createInitCodeBlock(initialContent.id)],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 };

@@ -1,7 +1,6 @@
 import React from "react";
-import styles from "./style.module.css";
 import { PokeVersionType } from "@/lib/types/PokeVersion";
-import ver2css, { str2css } from "@/lib/util/str2css";
+import ver2css from "@/lib/util/str2css";
 import { Box, CardActionArea, useTheme } from "@mui/material";
 
 function VersionChip({
@@ -15,13 +14,20 @@ function VersionChip({
 }) {
   const content = (
     <Box
-      className={styles.root}
       borderRadius={1}
       color={(theme) => theme.palette.background.paper}
       sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "1.5rem",
+        aspectRatio: "1 / 1",
+        fontSize: "12px",
+        fontFamily: "var(--font-zen-kaku-gothic-new)",
         backgroundColor: (theme) =>
           disabled ? theme.palette.action.disabledBackground : ver2css(version),
-      }}>
+      }}
+    >
       {version.toUpperCase()}
     </Box>
   );
@@ -30,7 +36,8 @@ function VersionChip({
     return (
       <CardActionArea
         onClick={onClick}
-        sx={{ borderRadius: 1, width: "fit-content" }}>
+        sx={{ borderRadius: 1, width: "fit-content" }}
+      >
         {content}
       </CardActionArea>
     );

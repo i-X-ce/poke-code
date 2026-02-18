@@ -11,24 +11,28 @@ interface CodeViewProps {
 }
 
 function CodeView({ data }: CodeViewProps) {
-  const { title, tags, date, detail, description, content, blocks } = data;
+  const { title, tags, date, detail, description, content, blocks, isPublic } =
+    data;
 
   return (
     <Box>
       <Typography
         variant="h4"
         fontWeight={"500"}
-        paddingRight={12}
+        paddingRight={{ xs: 0, md: 12 }}
         gutterBottom
-        color="textPrimary">
+        color="textPrimary"
+      >
         {title}
       </Typography>
+
       <Stack gap={2} mb={4}>
-        <CodeTags tags={tags} />
+        <CodeTags tags={tags} isPublic={isPublic} open />
         <CodeInfo date={date} codeSize={codeSize(blocks)} />
         <Typography color="textSecondary">{detail}</Typography>
         <Divider />
       </Stack>
+
       <CustomMarkdown>{description}</CustomMarkdown>
       <CodeContentView content={content} blocks={blocks} />
     </Box>

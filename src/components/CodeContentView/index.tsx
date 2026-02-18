@@ -1,7 +1,7 @@
 "use client";
 import { CodeBlock, CodeContent } from "@/lib/types/CodeDataModel";
 import { IconButton, Stack, Tooltip } from "@mui/material";
-import React, { memo, useState } from "react";
+import { memo, ReactNode, useState } from "react";
 import CodeBlockView from "./CodeBlockView";
 import { Add } from "@mui/icons-material";
 import VersionTabGroup from "./VersionTabGroup";
@@ -16,7 +16,7 @@ interface CodeContentViewProps {
   onChangeId?: (id: CodeContent["id"]) => void;
   onAdd?: () => void;
   addDisabled?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 const CodeContentView = memo(
@@ -44,10 +44,29 @@ const CodeContentView = memo(
     const selectedIdView = selectedId || localSelectedVersion;
 
     return (
-      <Stack position={"relative"} marginTop={10}>
+      <Stack position={"relative"} marginTop={10} minWidth={0}>
         {/* バージョンタグ部 */}
-        <Stack direction={"row"} justifyContent={"space-between"}>
-          <Stack direction={"row"} alignItems={"end"} gap={1}>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"end"}
+          minWidth={0}
+          maxWidth={"100%"}
+          sx={{ overflow: "hidden" }}
+        >
+          <Stack
+            direction={"row"}
+            alignItems={"end"}
+            gap={1}
+            minWidth={0}
+            sx={{
+              flex: 1,
+              width: 0,
+              overflowX: "auto",
+              overflowY: "hidden",
+              flexWrap: "nowrap",
+            }}
+          >
             {content &&
               content.map(
                 ({ id, versions }) =>
@@ -73,18 +92,19 @@ const CodeContentView = memo(
         {/* コードブロック部 */}
         <Stack
           borderRadius={1}
-          p={2}
+          p={{ xs: 0.5, md: 2 }}
           gap={2}
           sx={(theme) => ({
             minHeight: 200,
             borderStartStartRadius: 0,
             border: `1px solid ${theme.palette.divider}`,
-          })}>
+          })}
+        >
           {mode === "edit"
             ? children
             : content &&
               blocks
-                ?.filter((b) => b.contentId === selectedIdView)
+                ?.filter((block) => block.contentId === selectedIdView)
                 ?.map((block) => (
                   <CodeBlockView key={block.id} block={block} />
                 ))}

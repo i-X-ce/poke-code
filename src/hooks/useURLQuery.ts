@@ -1,11 +1,16 @@
+import { closeSideAtom } from "@/atoms/ui/side";
+import { PATH } from "@/lib/constant/paths";
 import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import { SearchOptions } from "@/lib/types/SearchOptions";
+import { useSetAtom } from "jotai";
+import { useAtomCallback } from "jotai/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const useURLQuery = () => {
   const searchParams = useSearchParams();
   const queryParams = new URLSearchParams(searchParams.toString());
   const router = useRouter();
+  const closeSidebar = useSetAtom(closeSideAtom);
   const parsedParams: Partial<SearchOptions> = (() => {
     const params: Partial<SearchOptions> = {};
 
@@ -61,20 +66,28 @@ export const useURLQuery = () => {
     });
 
     const queryString = queryParams.toString();
-    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
-    router.replace(newUrl);
+    const newUrl = `${PATH.HOME}?${queryString}`;
+    router.push(newUrl);
     router.refresh();
+    closeSidebar();
   };
 
-  const toggleArrayQuery = (key: keyof SearchOptions, value: string) => {
+  const toggleArrayQuery = (
+    key: keyof SearchOptions,
+    value: string,
+    option?: Partial<SearchOptions>,
+  ) => {
     const currentValues = parsedParams[key] || [];
     if (!Array.isArray(currentValues)) return;
 
     if (currentValues.includes(value)) {
       const newValues = currentValues.filter((v) => v !== value);
-      updateQuery({ [key]: newValues.length ? newValues : undefined });
+      updateQuery({
+        [key]: newValues.length ? newValues : undefined,
+        ...option,
+      });
     } else {
-      updateQuery({ [key]: [...currentValues, value] });
+      updateQuery({ [key]: [...currentValues, value], ...option });
     }
   };
 

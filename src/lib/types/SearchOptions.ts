@@ -15,7 +15,7 @@ export type SearchOptions = (
   versions?: PokeVersionType[];
   sizeMin?: number;
   sizeMax?: number;
-  orderBy?: "date" | "title";
+  orderBy?: "date" | "title" | "updateDate";
   orderDirection?: "asc" | "desc";
   onlyBookmarked?: boolean;
 };

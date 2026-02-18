@@ -20,8 +20,17 @@ export const CodeDataHeaderSchema = z.object({
   title: z
     .string()
     .min(1, "タイトルは1文字以上入力してください")
-    .max(100, "タイトルは100文字以内で入力してください"),
-  date: z.iso.date(),
+    .max(50, "タイトルは50文字以内で入力してください"),
+  date: z.preprocess((val) => {
+    try {
+      if (typeof val === "string" || val instanceof Date) {
+        return new Date(val).toISOString();
+      }
+      return val;
+    } catch {
+      return val;
+    }
+  }, z.iso.datetime("有効な日付を入力してください")),
   tags: z
     .preprocess(
       (value) => {
@@ -47,12 +56,21 @@ export const CodeDataHeaderSchema = z.object({
   detail: z
     .string()
     .min(1, "概要は1文字以上入力してください")
-    .max(500, "概要は5000文字以内で入力してください"),
+    .max(200, "概要は200文字以内で入力してください"),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
+// JSONに保存するヘッダーメタデータのスキーマ
 export const CodeDataHeaderJsonSchema = CodeDataHeaderSchema.extend({
   versions: z.enum(PokeVersions).array(),
   codeSize: z.number(),
+});
+
+// JSON全体のスキーマ
+export const HeaderJsonSchema = z.object({
+  tags: z.array(z.string()),
+  headers: z.array(CodeDataHeaderJsonSchema),
 });
 
 export const CodeDataSchema = z.object({
@@ -66,11 +84,6 @@ export const CodeDataSchema = z.object({
     .min(1, "コンテンツは一つ以上必要です")
     .max(Object.keys(PokeVersions).length, "コンテンツの数が多すぎます"),
   blocks: z.array(CodeBlockSchema).min(1, "コードブロックは一つ以上必要です"),
-});
-
-export const HeaderJsonSchema = z.object({
-  tags: z.array(z.string()),
-  headers: z.array(CodeDataHeaderJsonSchema),
 });
 
 export type CodeBlock = z.infer<typeof CodeBlockSchema>;
@@ -165,6 +178,8 @@ aaa
 <!-- コメントのテスト -->
 
     `,
+    createdAt: new Date().toString(),
+    updatedAt: new Date().toString(),
     content: [
       ...romVersionList.map((v, i) => ({
         id: `mock-content-id-${num}-${i}`,

@@ -1,11 +1,22 @@
-import React from 'react'
-import styles from './styles.module.css'
-import { commonStyles } from '@/lib/util/commonStyle'
+import React from "react";
+import { commonStyles } from "@/lib/util/commonStyle";
+import { Box } from "@mui/material";
 
 function CommonSection({ children }: { children: React.ReactNode }) {
-    return (
-        <section className={styles.section} style={{ maxWidth: commonStyles.maxWidth }}>{children}</section>
-    )
+  return (
+    <Box
+      component={"section"}
+      sx={{
+        marginY: 0,
+        marginX: "auto",
+        paddingTop: 15,
+        paddingX: 2,
+        maxWidth: commonStyles.maxWidth,
+      }}
+    >
+      {children}
+    </Box>
+  );
 }
 
-export default CommonSection
+export default CommonSection;

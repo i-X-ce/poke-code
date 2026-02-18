@@ -1,18 +1,23 @@
 "use client";
-import { Box, Button, ButtonGroup } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  ButtonProps,
+  useMediaQuery,
+} from "@mui/material";
 import CreateForm from "./CreateForm";
-import { Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
+import { Clear, Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
 import {
   CreateViewModes,
   useCreateViewMode,
 } from "../_hooks/useCreateViewMode";
-import CodeView from "../../_components/CodeView";
 import { CodeDataInput, CodeDataSchema } from "@/lib/types/CodeDataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { CREATE_FORM_ID } from "../_consts/formId";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useDialog } from "@/hooks/useDialog";
 import ErrorDialogContent from "./ErrorDialogContent";
 import { useSnackbar } from "notistack";
@@ -20,6 +25,13 @@ import { useUpdateCode } from "@/hooks/codes/useUpdateCode";
 import { useCreateCode } from "@/hooks/codes/useCreateCode";
 import { useSaveCode } from "@/hooks/codes/useSaveCode";
 import CodeViewWrapper from "./CodeViewWrapper";
+import { useRouter } from "next/navigation";
+import { PATH } from "@/lib/constant/paths";
+import ClearDialogContent from "./ClearDialogContent";
+
+const buttonProps: ButtonProps = {
+  sx: { fontSize: { xs: "0.75rem", md: "1rem" } },
+};
 
 interface CreateViewProps {
   mode: "create" | "edit";
@@ -39,11 +51,15 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const { createCodeFetcher } = useCreateCode();
   const { isSaving, saveCodeFetcher } = useSaveCode();
   const { updateCodeFetcher } = useUpdateCode();
+  const router = useRouter();
+  const [resetFlag, setResetFlag] = useState(false); // クリア後にフォームの内容をリセットするためのフラグ
+  const isMdUp = useMediaQuery((theme) => theme.breakpoints.up("md"));
 
   const {
     getValues,
     handleSubmit,
-    formState: { isSubmitting },
+    reset,
+    formState: { isSubmitting, isSubmitSuccessful, isDirty },
   } = formProps;
 
   const actionName = useMemo(
@@ -54,6 +70,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const checkSubmitErrors = (data = getValues()) => {
     const parsed = CodeDataSchema.safeParse(data);
     if (parsed.success) return;
+    console.error("コードデータのバリデーションエラー:", parsed.error);
 
     const { issues } = parsed.error;
     const errorMessages = issues.map((issue) => issue.message);
@@ -63,6 +80,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
 
   const onSubmit = async (data: CodeDataInput) => {
     try {
+      if (isSubmitting || isSubmitSuccessful) return;
       checkSubmitErrors(data);
 
       const {
@@ -87,6 +105,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
       enqueueSnackbar(`コードデータを${actionName}しました: ${id}`, {
         variant: "success",
       });
+      router.push(PATH.DETAIL(id));
     } catch (error) {
       console.error(error);
       enqueueSnackbar((error as Error).message, { variant: "error" });
@@ -125,6 +144,20 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
     } catch {}
   };
 
+  const onClear = () => {
+    const onReset = () => {
+      setResetFlag((prev) => !prev); // フォームの内容をリセットするためにフラグを切り替える
+      reset(INIT_CODE_DATA);
+      enqueueSnackbar("内容をクリアしました", { variant: "success" });
+    };
+
+    if (!isDirty) {
+      onReset();
+      return;
+    }
+    openDialog(<ClearDialogContent onClear={onReset} />);
+  };
+
   // ショートカットキーの登録
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -155,38 +188,55 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   return (
     <>
       {viewMode === CreateViewModes.EDIT && (
-        <CreateForm formProps={formProps} />
+        <CreateForm key={String(resetFlag)} formProps={formProps} />
       )}
       {viewMode === CreateViewModes.PREVIEW && (
-        <CodeViewWrapper formProps={formProps} />
+        <CodeViewWrapper key={String(resetFlag)} formProps={formProps} />
       )}
 
       {/* アクション */}
       <Box
         my={4}
         position={"sticky"}
-        bottom={16}
+        bottom={{ xs: 64, md: 16 }}
         display={"flex"}
-        justifyContent={"end"}>
-        <ButtonGroup size="large" sx={{ backgroundColor: "background.paper" }}>
+        justifyContent={"end"}
+        zIndex={20}
+      >
+        <ButtonGroup
+          orientation={isMdUp ? "horizontal" : "vertical"}
+          sx={{
+            backgroundColor: "background.paper",
+          }}
+        >
           <Button
+            {...buttonProps}
             onClick={onToggleViewMode}
             startIcon={
               viewMode === CreateViewModes.EDIT ? <RemoveRedEye /> : <Edit />
             }
-            variant="outlined">
+            variant="outlined"
+          >
             {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
           </Button>
+          {viewMode === "edit" && (
+            <Button {...buttonProps} onClick={onClear} startIcon={<Clear />}>
+              クリア
+            </Button>
+          )}
           {mode === "create" && (
             <Button
+              {...buttonProps}
               onClick={onSave}
               startIcon={<Save />}
               variant="outlined"
-              loading={isSaving}>
+              loading={isSaving}
+            >
               一時保存
             </Button>
           )}
           <Button
+            {...buttonProps}
             form={CREATE_FORM_ID}
             type="submit"
             startIcon={<Public />}
@@ -197,7 +247,9 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
               handleSubmit(onSubmit)(e);
               checkSubmitErrors();
             }}
-            loading={isSubmitting}>
+            loading={isSubmitting}
+            disabled={isSubmitSuccessful}
+          >
             {actionName}する
           </Button>
         </ButtonGroup>
