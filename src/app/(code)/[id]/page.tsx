@@ -39,7 +39,7 @@ export async function generateMetadata({
   };
 }
 
-interface CodePageProps {
+export interface CodePageProps {
   params: Promise<{ id: string }>;
 }
 

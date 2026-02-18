@@ -34,9 +34,14 @@ const CodeCard: React.FC<CodeCardProps> = ({ data }) => {
         sx={{ height: "100%", minWidth: 0 }}
       >
         <CardContent sx={{ height: "100%", minWidth: 0 }}>
-          <Stack justifyContent={"space-between"} height={"100%"} gap={1}>
+          <Stack
+            justifyContent={"space-between"}
+            height={"100%"}
+            gap={1}
+            minWidth={0}
+          >
             <Stack gap={1} minWidth={0}>
-              <Typography variant="h6" noWrap>
+              <Typography pr={4} variant="h6" noWrap>
                 {/* <Typography component={"span"} fontSize={"1.8rem"}>{data.icon}</Typography> */}
                 {title}
               </Typography>

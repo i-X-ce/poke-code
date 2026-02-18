@@ -20,7 +20,7 @@ export const CodeDataHeaderSchema = z.object({
   title: z
     .string()
     .min(1, "タイトルは1文字以上入力してください")
-    .max(100, "タイトルは100文字以内で入力してください"),
+    .max(50, "タイトルは50文字以内で入力してください"),
   date: z.preprocess((val) => {
     try {
       if (typeof val === "string" || val instanceof Date) {
@@ -56,7 +56,7 @@ export const CodeDataHeaderSchema = z.object({
   detail: z
     .string()
     .min(1, "概要は1文字以上入力してください")
-    .max(500, "概要は5000文字以内で入力してください"),
+    .max(200, "概要は200文字以内で入力してください"),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 });
