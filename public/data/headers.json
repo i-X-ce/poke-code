@@ -1,0 +1,41 @@
+{
+  "tags": [
+    "ツール"
+  ],
+  "headers": [
+    {
+      "id": "d066995a-4964-484d-8eec-15683899adda",
+      "isPublic": true,
+      "title": "連打計測ツール",
+      "date": "2026-02-18T16:28:00.000Z",
+      "tags": [
+        "ツール"
+      ],
+      "detail": "連打速度を測定するツールです。",
+      "createdAt": "2026-02-18T16:30:52.369Z",
+      "updatedAt": "2026-02-18T16:30:52.369Z",
+      "versions": [
+        "R1",
+        "G1"
+      ],
+      "codeSize": 1508
+    },
+    {
+      "id": "e872d3ea-76d2-4ddb-b7a5-0a84ebddad1f",
+      "isPublic": true,
+      "title": "習得技表示ツール",
+      "date": "2026-02-18T16:24:00.000Z",
+      "tags": [
+        "ツール"
+      ],
+      "detail": "習得技を表示するツールです。",
+      "createdAt": "2026-02-18T16:27:33.810Z",
+      "updatedAt": "2026-02-18T16:27:33.810Z",
+      "versions": [
+        "R1",
+        "G1"
+      ],
+      "codeSize": 586
+    }
+  ]
+}
