@@ -1,5 +1,13 @@
 "use client";
-import { Box, Button, Stack, styled, SwipeableDrawer } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  styled,
+  SwipeableDrawer,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { Add, AutoAwesome, Bookmark, Home, Refresh } from "@mui/icons-material";
 import SideItem from "./SideItem";
 import SideItemChild from "./SideItemChild";
@@ -37,6 +45,8 @@ interface SideProps {
 }
 
 function Side({ window }: SideProps) {
+  const theme = useTheme();
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
   const [bookmarkedCodeData, setBookmarkedCodeData] = useState<
     CodeDataHeaderJson[]
@@ -99,6 +109,12 @@ function Side({ window }: SideProps) {
     };
     fetchBookmarkedCodeData();
   }, [bookmarkedIds]);
+
+  useEffect(() => {
+    if (isMdUp) {
+      setOpen(false);
+    }
+  }, [isMdUp]);
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
@@ -172,53 +188,53 @@ function Side({ window }: SideProps) {
         {content}
       </Box>
 
-      <SwipeableDrawer
-        container={container}
-        anchor="bottom"
-        open={open}
-        onClose={handleClose}
-        onOpen={handleOpen}
-        swipeAreaWidth={drawerBleeding}
-        disableSwipeToOpen={false}
-        keepMounted
-        sx={{
-          display: { xs: "block", md: "none" },
-          position: "relative",
-          zIndex: 80,
-          "& .MuiDrawer-paper": {
-            overflow: "visible",
-            maxHeight: "85dvh",
-          },
-        }}
-      >
-        <Box
-          sx={(theme) => ({
-            position: "absolute",
-            top: -drawerBleeding,
-            width: "100%",
-            height: drawerBleeding,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            visibility: "visible",
-            right: 0,
-            left: 0,
-            bgcolor: theme.palette.background.paper,
-            ...theme.applyStyles("dark", { backgroundColor: grey[800] }),
-          })}
-        >
-          <Puller />
-        </Box>
-        <Box
-          p={2}
+      {!isMdUp && (
+        <SwipeableDrawer
+          container={container}
+          anchor="bottom"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          swipeAreaWidth={drawerBleeding}
+          disableSwipeToOpen={false}
+          keepMounted
           sx={{
-            maxHeight: `calc(85dvh - ${drawerBleeding}px)`,
-            overflowY: "auto",
-            WebkitOverflowScrolling: "touch",
+            position: "relative",
+            "& .MuiDrawer-paper": {
+              overflow: "visible",
+              maxHeight: "85dvh",
+            },
           }}
         >
-          {content}
-        </Box>
-      </SwipeableDrawer>
+          <Box
+            sx={(theme) => ({
+              position: "absolute",
+              top: -drawerBleeding,
+              width: "100%",
+              height: drawerBleeding,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+              visibility: "visible",
+              right: 0,
+              left: 0,
+              bgcolor: theme.palette.background.paper,
+              ...theme.applyStyles("dark", { backgroundColor: grey[800] }),
+            })}
+          >
+            <Puller />
+          </Box>
+          <Box
+            p={2}
+            sx={{
+              maxHeight: `calc(85dvh - ${drawerBleeding}px)`,
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {content}
+          </Box>
+        </SwipeableDrawer>
+      )}
     </>
   );
 }
