@@ -4,9 +4,12 @@ import CodeInfo from "../CodeInfo";
 import { PATH } from "@/lib/constant/paths";
 import Link from "next/link";
 import MoreButton from "@/app/_components/MoreButton";
+import { useSetAtom } from "jotai";
+import { closeSideAtom } from "@/atoms/ui/side";
 
 function SideItemChild({ data }: { data: CodeDataHeaderJson }) {
   const { id, date, codeSize } = data;
+  const closeSidebar = useSetAtom(closeSideAtom);
 
   return (
     <Box
@@ -25,6 +28,7 @@ function SideItemChild({ data }: { data: CodeDataHeaderJson }) {
         LinkComponent={Link}
         href={PATH.DETAIL(data.id)}
         sx={{ flex: 1 }}
+        onClick={closeSidebar}
       >
         <Stack
           direction={"row"}

@@ -17,13 +17,14 @@ import Link from "next/link";
 import { getHeaders } from "@/service/client/headers";
 import { Suspense, useEffect, useState } from "react";
 import { CodeDataHeaderJson } from "@/lib/types/CodeDataModel";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { bookmarkBaseAtom } from "@/atoms/base";
 import TagList from "./TagList";
 import TagListSkeleton from "./TagListSkeleton";
 import { useRefresh } from "@/hooks/api/useRefresh";
 import { useSnackbar } from "notistack";
 import { grey } from "@mui/material/colors";
+import { closeSideAtom, openSideAtom, sideAtom } from "@/atoms/ui/side";
 
 const drawerBleeding = 40;
 
@@ -54,7 +55,7 @@ function Side({ window }: SideProps) {
   const bookmarkedIds = useAtomValue(bookmarkBaseAtom);
   const { enqueueSnackbar } = useSnackbar();
   const { isLoading: isRefreshing, refreshFetcher } = useRefresh();
-  const [open, setOpen] = useState(false);
+  const open = useAtomValue(sideAtom);
 
   const handleRefresh = async () => {
     try {
@@ -68,13 +69,9 @@ function Side({ window }: SideProps) {
     }
   };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const handleOpen = useSetAtom(openSideAtom);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = useSetAtom(closeSideAtom);
 
   useEffect(() => {
     const fetchNewCodeData = async () => {
@@ -112,7 +109,7 @@ function Side({ window }: SideProps) {
 
   useEffect(() => {
     if (isMdUp) {
-      setOpen(false);
+      handleClose();
     }
   }, [isMdUp]);
 

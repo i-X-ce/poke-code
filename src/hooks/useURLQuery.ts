@@ -1,12 +1,16 @@
+import { closeSideAtom } from "@/atoms/ui/side";
 import { PATH } from "@/lib/constant/paths";
 import { PokeVersions, PokeVersionType } from "@/lib/types/PokeVersion";
 import { SearchOptions } from "@/lib/types/SearchOptions";
+import { useSetAtom } from "jotai";
+import { useAtomCallback } from "jotai/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const useURLQuery = () => {
   const searchParams = useSearchParams();
   const queryParams = new URLSearchParams(searchParams.toString());
   const router = useRouter();
+  const closeSidebar = useSetAtom(closeSideAtom);
   const parsedParams: Partial<SearchOptions> = (() => {
     const params: Partial<SearchOptions> = {};
 
@@ -65,6 +69,7 @@ export const useURLQuery = () => {
     const newUrl = `${PATH.HOME}?${queryString}`;
     router.push(newUrl);
     router.refresh();
+    closeSidebar();
   };
 
   const toggleArrayQuery = (
