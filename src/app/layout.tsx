@@ -14,6 +14,9 @@ import { PROJECT_NAME } from "@/lib/constant/projectName";
 export const metadata: Metadata = {
   title: PROJECT_NAME,
   description: "初代ポケモンのコードを共有するためのサイト",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
