@@ -32,7 +32,11 @@ const Puller = styled("div")(({ theme }) => ({
   }),
 }));
 
-function Side() {
+interface SideProps {
+  window?: () => Window;
+}
+
+function Side({ window }: SideProps) {
   const [newCodeData, setNewCodeData] = useState<CodeDataHeaderJson[]>([]);
   const [bookmarkedCodeData, setBookmarkedCodeData] = useState<
     CodeDataHeaderJson[]
@@ -97,7 +101,7 @@ function Side() {
   }, [bookmarkedIds]);
 
   const container =
-    window !== undefined ? () => window.document.body : undefined;
+    window !== undefined ? () => window().document.body : undefined;
 
   const content = (
     <>
