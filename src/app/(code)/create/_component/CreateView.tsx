@@ -1,5 +1,11 @@
 "use client";
-import { Box, Button, ButtonGroup } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  ButtonProps,
+  useMediaQuery,
+} from "@mui/material";
 import CreateForm from "./CreateForm";
 import { Clear, Edit, Public, RemoveRedEye, Save } from "@mui/icons-material";
 import {
@@ -23,6 +29,10 @@ import { useRouter } from "next/navigation";
 import { PATH } from "@/lib/constant/paths";
 import ClearDialogContent from "./ClearDialogContent";
 
+const buttonProps: ButtonProps = {
+  sx: { fontSize: { xs: "0.75rem", md: "1rem" } },
+};
+
 interface CreateViewProps {
   mode: "create" | "edit";
   initData?: Partial<CodeDataInput>;
@@ -43,6 +53,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
   const { updateCodeFetcher } = useUpdateCode();
   const router = useRouter();
   const [resetFlag, setResetFlag] = useState(false); // クリア後にフォームの内容をリセットするためのフラグ
+  const isMdUp = useMediaQuery((theme) => theme.breakpoints.up("md"));
 
   const {
     getValues,
@@ -192,8 +203,14 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
         justifyContent={"end"}
         zIndex={20}
       >
-        <ButtonGroup size="large" sx={{ backgroundColor: "background.paper" }}>
+        <ButtonGroup
+          orientation={isMdUp ? "horizontal" : "vertical"}
+          sx={{
+            backgroundColor: "background.paper",
+          }}
+        >
           <Button
+            {...buttonProps}
             onClick={onToggleViewMode}
             startIcon={
               viewMode === CreateViewModes.EDIT ? <RemoveRedEye /> : <Edit />
@@ -203,12 +220,13 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
             {viewMode === CreateViewModes.EDIT ? "プレビュー" : "編集に戻る"}
           </Button>
           {viewMode === "edit" && (
-            <Button onClick={onClear} startIcon={<Clear />}>
+            <Button {...buttonProps} onClick={onClear} startIcon={<Clear />}>
               クリア
             </Button>
           )}
           {mode === "create" && (
             <Button
+              {...buttonProps}
               onClick={onSave}
               startIcon={<Save />}
               variant="outlined"
@@ -218,6 +236,7 @@ const CreateView = memo(({ mode, initData, errorMessage }: CreateViewProps) => {
             </Button>
           )}
           <Button
+            {...buttonProps}
             form={CREATE_FORM_ID}
             type="submit"
             startIcon={<Public />}
