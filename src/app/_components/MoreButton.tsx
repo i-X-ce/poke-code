@@ -1,6 +1,6 @@
 "use client";
 import { useDialog } from "@/hooks/useDialog";
-import { PATH } from "@/lib/constant/paths";
+import { PATH, withBasePath } from "@/lib/constant/paths";
 import { CodeData } from "@/lib/types/CodeDataModel";
 import {
   Bookmark,
@@ -45,7 +45,10 @@ function MoreButton({ id }: MoreButtonProps) {
   };
 
   const handleLinkCopy = async () => {
-    const url = window.location.origin + PATH.DETAIL(id);
+    const url = new URL(
+      withBasePath(PATH.DETAIL(id)),
+      window.location.origin,
+    ).toString();
     await navigator.clipboard.writeText(url);
     handleClose();
   };

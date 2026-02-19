@@ -1,14 +1,42 @@
+import isDevelopment from "../util/isDevelopment";
+
+export const USER_ID = "i-x-ce";
+
 export const IMAGE_FOLDER = "images";
+
+export const BASE_PATH = "/poke-code";
+
+/**
+ * basePathを考慮してパスを生成する
+ *
+ * @param path
+ * @returns
+ */
+export const withBasePath = (path: string) => {
+  if (!path.startsWith("/") || isDevelopment) {
+    return path;
+  }
+
+  if (path === BASE_PATH || path.startsWith(`${BASE_PATH}/`)) {
+    return path;
+  }
+
+  if (path === "/") {
+    return BASE_PATH;
+  }
+
+  return `${BASE_PATH}${path}`;
+};
 
 export const PATH = {
   HOME: "/",
   DETAIL: (id: string | number) => `/${id}`,
   CREATE: "/create",
   EDIT: (id: string | number) => `/${id}/edit`,
-  HEADERS: "/data/headers.json",
+  HEADERS: withBasePath("/data/headers.json"),
   IMAGES: (id?: string) => `/data/${id ? `codes/${id}` : "temporary"}/`,
 
-  GITHUB_PAGES: "https://i-x-ce.github.io/poke-code/",
+  GITHUB_PAGES: `https://${USER_ID}.github.io${BASE_PATH}/`,
 
   api: {
     CODE: (id: string = "") => `/api/codes/${id}`, // GET, PUT, DELETE

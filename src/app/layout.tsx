@@ -11,7 +11,7 @@ import DialogController from "../components/DialogController";
 import { Box } from "@mui/material";
 import { PROJECT_NAME } from "@/lib/constant/projectName";
 import isDevelopment from "@/lib/util/isDevelopment";
-import { PATH } from "@/lib/constant/paths";
+import { PATH, withBasePath } from "@/lib/constant/paths";
 
 const metadataBase = (() => {
   const siteUrl = isDevelopment ? "http://localhost:3000" : PATH.GITHUB_PAGES;
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   description: "初代ポケモンのコードを共有するためのサイト",
   metadataBase,
   icons: {
-    icon: "/favicon.svg",
+    icon: withBasePath("/favicon.svg"),
   },
   robots: "index, follow",
 };
