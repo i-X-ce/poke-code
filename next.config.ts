@@ -1,4 +1,4 @@
-import { BASE_PATH } from "@/lib/constant/paths";
+import { BASE_PATH } from "@/lib/constant/userSetting";
 import isDevelopment from "@/lib/util/isDevelopment";
 import type { NextConfig } from "next";
 
