@@ -2,15 +2,14 @@ import { BASE_PATH } from "@/lib/constant/userSetting";
 import isDevelopment from "@/lib/util/isDevelopment";
 import type { NextConfig } from "next";
 
-const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
-
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   /* config options here */
   output: "export",
   pageExtensions: ["tsx", "ts", "jsx", "js"],
-  basePath: isDevelopment || isGitHubActions ? undefined : BASE_PATH,
-  assetPrefix: isDevelopment || isGitHubActions ? undefined : `${BASE_PATH}/`,
+  basePath: isDevelopment ? undefined : BASE_PATH,
+  assetPrefix: isDevelopment ? undefined : `${BASE_PATH}/`,
+  trailingSlash: true,
 };
 
 if (isDevelopment) {
