@@ -33,7 +33,7 @@ export const PATH = {
   HEADERS: withBasePath("/data/headers.json"),
   IMAGES: (id?: string) => `/data/${id ? `codes/${id}` : "temporary"}/`,
 
-  GITHUB_PAGES: `https://${USER_ID}.github.io/`,
+  GITHUB_PAGES: `https://${USER_ID}.github.io`,
 
   api: {
     CODE: (id: string = "") => `/api/codes/${id}`, // GET, PUT, DELETE
