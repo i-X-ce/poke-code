@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   output: "export",
   pageExtensions: ["tsx", "ts", "jsx", "js"],
   basePath: isDevelopment ? undefined : BASE_PATH,
-  // assetPrefix: isDevelopment ? undefined : `${BASE_PATH}/`,
+  assetPrefix: isDevelopment ? undefined : `${BASE_PATH}/`,
   trailingSlash: true,
 };
 
