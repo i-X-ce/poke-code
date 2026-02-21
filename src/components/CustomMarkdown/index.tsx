@@ -1,12 +1,12 @@
 "use client";
-import { Divider, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import CustomMarkdownCodeComponent from "./CustomMarkdownCodeComponent";
 import rehypeRaw from "rehype-raw";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import { useParams, usePathname } from "next/navigation";
-import { PATH } from "@/lib/constant/paths";
+import { PATH, withBasePath } from "@/lib/constant/paths";
 
 interface CustomMarkdownProps {
   children?: string;
@@ -178,7 +178,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
           const fullSrc =
             typeof src === "string" && src.startsWith("http")
               ? src
-              : `${preStr}${src}`;
+              : withBasePath(`${preStr}${src}`);
 
           return (
             <img

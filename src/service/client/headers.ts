@@ -8,7 +8,7 @@ import {
 } from "@/lib/types/CodeDataModel";
 import { type SearchOptions } from "@/lib/types/SearchOptions";
 import isDevelopment from "@/lib/util/isDevelopment";
-import { getDefaultStore, useAtomValue } from "jotai";
+import { getDefaultStore } from "jotai";
 
 interface GetHeadersResult {
   headers: CodeDataHeaderJson[];

@@ -15,7 +15,7 @@ function CodeView({ data }: CodeViewProps) {
     data;
 
   return (
-    <Box>
+    <Box position={"relative"}>
       <Typography
         variant="h4"
         fontWeight={"500"}
