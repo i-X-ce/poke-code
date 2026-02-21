@@ -30,7 +30,7 @@ const metadataBase = (() => {
 export const metadata: Metadata = {
   title: {
     default: PROJECT_NAME,
-    template: "%s - " + PROJECT_NAME,
+    template: `%s | ${PROJECT_NAME}`,
   },
   description: "初代ポケモンのコードを共有するためのサイト",
   metadataBase,
