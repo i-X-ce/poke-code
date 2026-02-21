@@ -60,7 +60,13 @@ const CodeGrid = memo(
               position: "absolute",
               inset: 0,
               backgroundColor:
-                isColumnEdge || isRowEdge ? "action.hover" : "background.paper",
+                isColumnEdge || isRowEdge
+                  ? pos.y % 2 === 0
+                    ? "action.selected"
+                    : "action.hover"
+                  : pos.y % 2 === 0
+                    ? "action.hover"
+                    : "background.paper",
 
               borderBottom: isRowEdge
                 ? `1px ${theme.palette.divider} solid`
