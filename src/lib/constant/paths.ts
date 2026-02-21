@@ -1,10 +1,7 @@
 import isDevelopment from "../util/isDevelopment";
-
-export const USER_ID = "i-x-ce";
+import { BASE_PATH, USER_ID } from "./userSetting";
 
 export const IMAGE_FOLDER = "images";
-
-export const BASE_PATH = "/poke-code";
 
 /**
  * basePathを考慮してパスを生成する

@@ -33,7 +33,7 @@ export async function generateMetadata({
 
   return {
     title: `${data.title}`,
-    description: data.description,
+    description: data.detail,
     keywords: data.tags,
   };
 }

@@ -12,6 +12,7 @@ import { Box } from "@mui/material";
 import { PROJECT_NAME } from "@/lib/constant/projectName";
 import isDevelopment from "@/lib/util/isDevelopment";
 import { PATH, withBasePath } from "@/lib/constant/paths";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const metadataBase = (() => {
   const siteUrl = isDevelopment ? "http://localhost:3000" : PATH.GITHUB_PAGES;
@@ -47,6 +48,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
+        <GoogleAnalytics />
         <AppRouterCacheProvider>
           <CustomThemeProvider>
             <SnackbarProviderWrapper>
