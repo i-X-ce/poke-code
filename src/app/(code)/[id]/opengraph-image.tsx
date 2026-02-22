@@ -40,9 +40,8 @@ export default async function Image({ params }: CodePageProps) {
 
   const { title, detail, tags, date, blocks, content } = data;
   const versions = sortVersions(content.flatMap((c) => c.versions));
-  const codeStr = blocks.flatMap((b) => b.code).join("");
 
-  const displayDate = new Date(date).toLocaleDateString();
+  const displayDate = new Date(date).toLocaleDateString("ja-JP");
 
   return new ImageResponse(
     <div
