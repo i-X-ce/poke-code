@@ -283,34 +283,45 @@ export const updateHeadersFile = async (): Promise<ActionResult> => {
     const headers: CodeDataHeaderJson[] = (
       await Promise.all(
         folderNames.map(async (id) => {
-          const codeDataDir = path.join(
-            process.cwd(),
-            PATH.server.CODE_DATA(id),
-          );
-          const codeDataFilePath = path.join(codeDataDir, FILE_NAME.CODE_DATA);
-          const dataJson = JSON.parse(
-            await fs.readFile(codeDataFilePath, "utf-8"),
-          );
-          const { data, success } = CodeDataSchema.omit({
-            description: true,
-          }).safeParse(dataJson);
+          try {
+            const codeDataDir = path.join(
+              process.cwd(),
+              PATH.server.CODE_DATA(id),
+            );
+            const codeDataFilePath = path.join(
+              codeDataDir,
+              FILE_NAME.CODE_DATA,
+            );
+            const dataJson = JSON.parse(
+              await fs.readFile(codeDataFilePath, "utf-8"),
+            );
+            const { data, success } = CodeDataSchema.omit({
+              description: true,
+            }).safeParse(dataJson);
 
-          if (!success) {
+            if (!success) {
+              return null;
+            }
+
+            const parsedData = CodeDataHeaderJsonSchema.safeParse({
+              ...data,
+              id,
+              versions: data.content.flatMap((c) => c.versions),
+              codeSize: codeSize(data.blocks),
+            });
+
+            if (!parsedData.success) {
+              return null;
+            }
+
+            return parsedData.data;
+          } catch (error) {
+            console.error(
+              `コードデータの読み取りに失敗しました (ID: ${id})`,
+              error,
+            );
             return null;
           }
-
-          const parsedData = CodeDataHeaderJsonSchema.safeParse({
-            ...data,
-            id,
-            versions: data.content.flatMap((c) => c.versions),
-            codeSize: codeSize(data.blocks),
-          });
-
-          if (!parsedData.success) {
-            return null;
-          }
-
-          return parsedData.data;
         }),
       )
     ).filter((header) => header !== null);
@@ -333,6 +344,7 @@ export const updateHeadersFile = async (): Promise<ActionResult> => {
       ok: true,
     };
   } catch (error) {
+    console.error("ヘッダーファイルの更新に失敗しました", error);
     return {
       ok: false,
       message: "ヘッダーファイルの更新に失敗しました",

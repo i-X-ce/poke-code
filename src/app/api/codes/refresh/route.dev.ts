@@ -11,7 +11,7 @@ export const POST = async () => {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    NextResponse.json(
+    return NextResponse.json(
       {
         ok: false,
         message: (error as Error).message,
