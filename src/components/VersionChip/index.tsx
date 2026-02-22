@@ -20,14 +20,13 @@ function VersionChip({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "1.5rem",
+        height: { xs: "1.2rem", sm: "1.5rem" },
         aspectRatio: "1 / 1",
-        fontSize: "12px",
+        fontSize: { xs: "10.5px", sm: "12px" },
         fontFamily: "var(--font-zen-kaku-gothic-new)",
         backgroundColor: (theme) =>
           disabled ? theme.palette.action.disabledBackground : ver2css(version),
-      }}
-    >
+      }}>
       {version.toUpperCase()}
     </Box>
   );
@@ -36,8 +35,7 @@ function VersionChip({
     return (
       <CardActionArea
         onClick={onClick}
-        sx={{ borderRadius: 1, width: "fit-content" }}
-      >
+        sx={{ borderRadius: 1, width: "fit-content" }}>
         {content}
       </CardActionArea>
     );
