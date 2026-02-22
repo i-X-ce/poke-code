@@ -1,5 +1,13 @@
 "use client";
-import { Box, Divider, Typography } from "@mui/material";
+import {
+  Divider,
+  Paper,
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import CustomMarkdownCodeComponent from "./CustomMarkdownCodeComponent";
@@ -7,6 +15,9 @@ import rehypeRaw from "rehype-raw";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import { useParams, usePathname } from "next/navigation";
 import { PATH, withBasePath } from "@/lib/constant/paths";
+import remarkGfm from "remark-gfm";
+
+const styledDivider = <Divider sx={{ marginY: 2 }} />;
 
 interface CustomMarkdownProps {
   children?: string;
@@ -17,48 +28,45 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
 
   return (
     <ReactMarkdown
-      rehypePlugins={[rehypeRaw]}
+      rehypePlugins={[rehypeRaw, remarkGfm]}
       components={{
         h1: ({ children }) => (
           <>
             <Typography
-              variant="h3"
+              variant="h4"
               fontWeight={"500"}
               paddingTop={6}
               gutterBottom
-              color="textPrimary"
-            >
+              color="textPrimary">
               {children}
             </Typography>
-            <Divider />
+            {styledDivider}
           </>
         ),
         h2: ({ children }) => (
           <>
             <Typography
-              variant="h4"
+              variant="h5"
               fontWeight={"500"}
               paddingTop={5}
               gutterBottom
-              color="textPrimary"
-            >
+              color="textPrimary">
               {children}
             </Typography>
-            <Divider />
+            {styledDivider}
           </>
         ),
         h3: ({ children }) => (
           <>
             <Typography
-              variant="h5"
+              variant="h6"
               fontWeight={"500"}
               paddingTop={3}
               gutterBottom
-              color="textPrimary"
-            >
+              color="textPrimary">
               {children}
             </Typography>
-            <Divider />
+            {styledDivider}
           </>
         ),
         h4: ({ children }) => (
@@ -66,8 +74,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             variant="h6"
             paddingTop={2}
             gutterBottom
-            color="textPrimary"
-          >
+            color="textPrimary">
             {children}
           </Typography>
         ),
@@ -77,8 +84,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             fontWeight={"400"}
             paddingTop={1}
             gutterBottom
-            color="textPrimary"
-          >
+            color="textPrimary">
             {children}
           </Typography>
         ),
@@ -88,8 +94,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             fontWeight={"400"}
             paddingTop={1}
             gutterBottom
-            color="textPrimary"
-          >
+            color="textPrimary">
             {children}
           </Typography>
         ),
@@ -103,8 +108,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             component={"a"}
             href={href}
             color="primary"
-            sx={{ textDecoration: "underline" }}
-          >
+            sx={{ textDecoration: "underline" }}>
             {children}
           </Typography>
         ),
@@ -116,16 +120,14 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
         ul: ({ children }) => (
           <Typography
             component={"ul"}
-            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}
-          >
+            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}>
             {children}
           </Typography>
         ),
         ol: ({ children }) => (
           <Typography
             component={"ol"}
-            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}
-          >
+            sx={{ paddingLeft: 3, paddingTop: 1, paddingBottom: 1 }}>
             {children}
           </Typography>
         ),
@@ -149,8 +151,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
                 fontFamily: GoogleSansCode.style.fontFamily,
                 paddingX: isInline ? 1 : 0,
                 borderRadius: 1,
-              }}
-            >
+              }}>
               {children}
             </Typography>
           );
@@ -165,8 +166,7 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             ml={3}
             mr={0}
             p={1.5}
-            borderLeft={"2px solid var(--bc-gray)"}
-          >
+            borderLeft={"2px solid var(--bc-gray)"}>
             {children}
           </Typography>
         ),
@@ -192,8 +192,20 @@ function CustomMarkdown({ children }: CustomMarkdownProps) {
             />
           );
         },
-      }}
-    >
+        table: ({ node, ...props }) => (
+          <TableContainer component={Paper}>
+            <Table {...props} />
+          </TableContainer>
+        ),
+        thead: ({ node, ...props }) => <TableHead {...props} />,
+        tbody: ({ node, ...props }) => <tbody {...props} />,
+        th: ({ node, ...props }) => (
+          <TableCell variant="head" {...props} align="left" />
+        ),
+        td: ({ node, ...props }) => (
+          <TableCell variant="body" {...props} align="left" />
+        ),
+      }}>
       {children}
     </ReactMarkdown>
   );

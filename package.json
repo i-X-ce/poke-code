@@ -25,6 +25,7 @@
     "react-hook-form": "^7.65.0",
     "react-markdown": "^10.1.0",
     "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "zod": "^4.3.5"
   },
   "devDependencies": {
