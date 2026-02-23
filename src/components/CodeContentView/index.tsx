@@ -52,8 +52,7 @@ const CodeContentView = memo(
           alignItems={"end"}
           minWidth={0}
           maxWidth={"100%"}
-          sx={{ overflow: "hidden" }}
-        >
+          sx={{ overflow: "hidden" }}>
           <Stack
             direction={"row"}
             alignItems={"end"}
@@ -65,8 +64,7 @@ const CodeContentView = memo(
               overflowX: "auto",
               overflowY: "hidden",
               flexWrap: "nowrap",
-            }}
-          >
+            }}>
             {content &&
               content.map(
                 ({ id, versions }) =>
@@ -98,16 +96,17 @@ const CodeContentView = memo(
             minHeight: 200,
             borderStartStartRadius: 0,
             border: `1px solid ${theme.palette.divider}`,
-          })}
-        >
+          })}>
           {mode === "edit"
             ? children
             : content &&
-              blocks
-                ?.filter((block) => block.contentId === selectedIdView)
-                ?.map((block) => (
-                  <CodeBlockView key={block.id} block={block} />
-                ))}
+              blocks?.map((block) => (
+                <CodeBlockView
+                  hidden={block.contentId !== selectedIdView}
+                  key={block.id}
+                  block={block}
+                />
+              ))}
         </Stack>
       </Stack>
     );

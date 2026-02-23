@@ -23,8 +23,8 @@ function VersionTab({
         overflow: "hidden",
       }}>
       <Box
-        px={2}
-        py={selected ? 1 : 0.5}
+        px={{ xs: 1, sm: 2 }}
+        py={{ xs: selected ? 0.5 : 0.25, sm: selected ? 1 : 0.5 }}
         sx={{
           backgroundColor: version === "N" ? str2css("gray") : ver2css(version),
           opacity: selected ? 1 : 0.6,
@@ -32,7 +32,7 @@ function VersionTab({
         <Typography
           display={"flex"}
           alignItems={"center"}
-          fontSize={"large"}
+          fontSize={{ xs: "small", sm: "large" }}
           fontFamily={GoogleSansCode.style.fontFamily}
           color="var(--background)">
           {version.toUpperCase()}

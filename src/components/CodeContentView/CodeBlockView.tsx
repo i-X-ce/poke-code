@@ -1,8 +1,21 @@
 "use client";
-import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { type CodeBlock as CodeBlockView } from "@/lib/types/CodeDataModel";
-import { Box, Chip, Grid, Stack, useMediaQuery } from "@mui/material";
-import React, { memo, MouseEventHandler, useCallback, useRef } from "react";
+import {
+  Box,
+  Chip,
+  Grid,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import React, {
+  memo,
+  MouseEventHandler,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import CodeGrid from "./CodeGrid";
@@ -16,10 +29,10 @@ const num2Hex = (num: number, pad: number, fillString: string = "0") => {
 
 interface CodeBlockViewProps {
   block: CodeBlockView;
+  hidden?: boolean;
 }
 
-const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
-  const { handleCopy, copied } = useCopyClipboard(formatCode(block.code));
+const CodeBlockView = ({ block, hidden }: CodeBlockViewProps) => {
   const isSm = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,7 +46,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
   const endRange = (startAddress + codeLength - 1) | (stepNum - 1);
   const addressRange = endRange - startRange;
 
-  const handleMouseEnter = (pos: CellPos) => {
+  const handleMouseEnters = useCallback((pos: CellPos) => {
     const el = containerRef.current;
     if (!el) return;
 
@@ -46,7 +59,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
     }
     el.setAttribute(CODE_GRID_CSS_VARIABLES.dataHX, x.toString());
     el.setAttribute(CODE_GRID_CSS_VARIABLES.dataHY, y.toString());
-  };
+  }, []);
 
   const handleMouseLeave: MouseEventHandler<HTMLDivElement> = () => {
     const el = containerRef.current;
@@ -58,17 +71,111 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
 
   const { title } = block;
 
+  const topHeader = useMemo(
+    () =>
+      Array.from({ length: stepNum + 1 }).map((_, i) => {
+        const pos: CellPos = { x: i, y: 0 };
+        return (
+          <CodeGrid
+            key={`header-${i}`}
+            {...pos}
+            onMouseEnter={handleMouseEnters}>
+            {i === 0 ? "" : num2Hex(i - 1, 2)}
+          </CodeGrid>
+        );
+      }),
+    [stepNum, handleMouseEnters],
+  );
+
+  const topHeaderSm = useMemo(() => {
+    if (!isSm) return null;
+    return Array.from({ length: stepNum + 1 }).map((_, i) => {
+      const pos: CellPos = { x: i, y: 0 };
+      return (
+        <CodeGrid
+          key={`header-sm-${i}`}
+          {...pos}
+          onMouseEnter={handleMouseEnters}
+          stickyRow={1}>
+          {i === 0 ? "" : num2Hex(i + stepNum - 1, 2)}
+        </CodeGrid>
+      );
+    });
+  }, [isSm, stepNum, handleMouseEnters]);
+
+  const codeCells = useMemo(() => {
+    const cells: ReactNode[] = [];
+    const rowCount = Math.ceil(addressRange / stepNum);
+
+    for (let addressIndex = 0; addressIndex < rowCount; addressIndex++) {
+      const rowAddress = startRange + addressIndex * stepNum;
+      const addressPos: CellPos = { x: 0, y: addressIndex + 1 };
+
+      cells.push(
+        <CodeGrid
+          key={`address-${rowAddress}`}
+          {...addressPos}
+          onMouseEnter={handleMouseEnters}>
+          {num2Hex(rowAddress, 4)}
+        </CodeGrid>,
+      );
+
+      for (let byteIndex = 0; byteIndex < stepNum; byteIndex++) {
+        const address = rowAddress + byteIndex;
+        const sub = address - startAddress;
+        const value =
+          sub < 0 || sub >= codeLength
+            ? ""
+            : code.substring(sub * 2, (sub + 1) * 2);
+        const pos: CellPos = {
+          x: byteIndex + 1,
+          y: addressIndex + 1,
+        };
+
+        cells.push(
+          <CodeGrid
+            key={address}
+            {...pos}
+            onMouseEnter={handleMouseEnters}
+            label={`${num2Hex(address, 4)} : ${value}`}>
+            {value}
+          </CodeGrid>,
+        );
+      }
+    }
+
+    return cells;
+  }, [
+    addressRange,
+    stepNum,
+    startRange,
+    handleMouseEnters,
+    startAddress,
+    codeLength,
+    code,
+  ]);
+
   return (
-    <Stack position={"relative"} gap={1}>
+    <Stack
+      display={hidden ? "none" : ""}
+      position={"relative"}
+      gap={{ xs: 0, sm: 1 }}>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        position={"sticky"}
-      >
-        {title && <Chip label={title} />}
+        position={"sticky"}>
+        <Stack direction={"row"} alignItems={"center"} gap={1}>
+          {title && <Chip label={title} />}
+          <Typography
+            fontFamily={GoogleSansCode.style.fontFamily}
+            fontSize={{ xs: "small", sm: "1rem" }}
+            color="textSecondary">
+            {codeLength} Byte
+          </Typography>
+        </Stack>
         <Box ml={"auto"}>
-          <CopyButton copied={copied} onClick={handleCopy} />
+          <CopyButton copyValue={code} />
         </Box>
       </Stack>
 
@@ -79,93 +186,33 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
           // borderStartStartRadius: 0
           overflow: "clip",
           cursor: "default",
-        }}
-      >
+        }}>
         <Grid
           ref={containerRef}
           onMouseLeave={handleMouseLeave}
           container
           columns={stepNum + 2}
           fontFamily={GoogleSansCode.style.fontFamily}
-          position={"relative"}
-        >
+          position={"relative"}>
           {/* 上端の数値 */}
-          {Array.from({ length: stepNum + 1 }).map((_, i) => {
-            const pos: CellPos = { x: i, y: 0 };
-            return (
-              <CodeGrid
-                key={i}
-                pos={pos}
-                onMouseEnter={() => handleMouseEnter(pos)}
-              >
-                {i === 0 ? "" : num2Hex(i - 1, 2)}
-              </CodeGrid>
-            );
-          })}
-          {isSm &&
-            Array.from({ length: stepNum + 1 }).map((_, i) => {
-              const pos: CellPos = { x: i, y: 0 };
-              return (
-                <CodeGrid
-                  key={i}
-                  pos={pos}
-                  onMouseEnter={() => handleMouseEnter(pos)}
-                  stickyRow={1}
-                >
-                  {i === 0 ? "" : num2Hex(i + stepNum - 1, 2)}
-                </CodeGrid>
-              );
-            })}
-
-          {/* アドレスとコード部 */}
-          {Array.from({ length: Math.ceil(addressRange / stepNum) }).map(
-            (_, addressIndex) => {
-              const pos: CellPos = { x: 0, y: addressIndex + 1 };
-              return (
-                <React.Fragment key={addressIndex}>
-                  {/* アドレス部 */}
-                  <CodeGrid
-                    pos={pos}
-                    onMouseEnter={() => handleMouseEnter(pos)}
-                  >
-                    {num2Hex(startRange + addressIndex * stepNum, 4)}
-                  </CodeGrid>
-
-                  {/* コード部 */}
-                  {Array.from({ length: stepNum }).map((_, byteIndex) => {
-                    const address =
-                      startRange + addressIndex * stepNum + byteIndex;
-                    const sub = address - startAddress;
-                    const pos: CellPos = {
-                      x: byteIndex + 1,
-                      y: addressIndex + 1,
-                    };
-                    return (
-                      <CodeGrid
-                        key={address}
-                        pos={pos}
-                        onMouseEnter={() => handleMouseEnter(pos)}
-                        label={`${num2Hex(address, 4)} : ${
-                          sub < 0 || sub >= codeLength
-                            ? ""
-                            : code.substring(sub * 2, (sub + 1) * 2)
-                        }`}
-                      >
-                        {sub < 0 || sub >= codeLength
-                          ? ""
-                          : code.substring(sub * 2, (sub + 1) * 2)}
-                      </CodeGrid>
-                    );
-                  })}
-                </React.Fragment>
-              );
-            },
-          )}
+          {topHeader}
+          {topHeaderSm}
+          {codeCells}
         </Grid>
         {/* {block.code} */}
       </Box>
     </Stack>
   );
-});
+};
 
-export default CodeBlockView;
+const areEqual = (prev: CodeBlockViewProps, next: CodeBlockViewProps) => {
+  return (
+    prev.hidden === next.hidden &&
+    prev.block.id === next.block.id &&
+    prev.block.code === next.block.code &&
+    prev.block.address === next.block.address &&
+    prev.block.title === next.block.title
+  );
+};
+
+export default memo(CodeBlockView, areEqual);
