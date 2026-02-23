@@ -36,6 +36,7 @@ const EditPage: React.FC<EditPageProps> = async ({ params }) => {
         day: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
+        timeZone: "Asia/Tokyo",
       })
       .replaceAll("/", "-");
   }

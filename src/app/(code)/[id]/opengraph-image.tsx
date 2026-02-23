@@ -4,6 +4,7 @@ import { ImageResponse } from "next/og";
 import { codeSize } from "@/lib/util/codeDataFormat";
 import { sortVersions } from "@/lib/util/versionType";
 import { PROJECT_NAME } from "@/lib/constant/projectName";
+import { displayDate } from "@/lib/util/date";
 
 export { generateStaticParams } from "./page";
 
@@ -41,7 +42,7 @@ export default async function Image({ params }: CodePageProps) {
   const { title, detail, tags, date, blocks, content } = data;
   const versions = sortVersions(content.flatMap((c) => c.versions));
 
-  const displayDate = new Date(date).toLocaleDateString("ja-JP");
+  const _displayDate = displayDate(date);
 
   return new ImageResponse(
     <div
@@ -250,7 +251,7 @@ export default async function Image({ params }: CodePageProps) {
               flexShrink: 0,
             }}
           >
-            {displayDate}
+            {_displayDate}
           </div>
         </div>
       </div>
