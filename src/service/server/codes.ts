@@ -43,8 +43,6 @@ export async function readCode(
       };
     }
 
-    codeData.date = codeData.date.split(".")[0]; // 表示のとき困るのでミリ秒以下を削除
-
     return {
       ok: true,
       data: codeData,

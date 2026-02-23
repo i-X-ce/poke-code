@@ -23,8 +23,10 @@ export const CodeDataHeaderSchema = z.object({
     .max(50, "タイトルは50文字以内で入力してください"),
   date: z.preprocess((val) => {
     try {
-      if (typeof val === "string" || val instanceof Date) {
+      if (typeof val === "string") {
         return new Date(val).toISOString();
+      } else if (val instanceof Date) {
+        return val.toISOString();
       }
       return val;
     } catch {
