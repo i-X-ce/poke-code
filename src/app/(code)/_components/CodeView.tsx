@@ -21,8 +21,7 @@ function CodeView({ data }: CodeViewProps) {
         fontWeight={"500"}
         paddingRight={{ xs: 0, md: 12 }}
         gutterBottom
-        color="textPrimary"
-      >
+        color="textPrimary">
         {title}
       </Typography>
 
