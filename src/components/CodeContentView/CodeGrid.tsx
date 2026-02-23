@@ -1,30 +1,34 @@
 import { CellPos } from "@/components/CodeContentView/cellState";
 import { Box, Tooltip } from "@mui/material";
 import { Grid } from "@mui/material";
-import { memo, MouseEventHandler, ReactNode } from "react";
+import { memo, MouseEventHandler, useCallback } from "react";
 import { CODE_GRID_CSS_VARIABLES } from "./cssVariables";
 
-interface CodeGridParams {
-  children: ReactNode;
-  pos: CellPos;
-  onMouseEnter: MouseEventHandler<HTMLDivElement>;
+type CodeGridParams = {
+  children: string;
+  onMouseEnter: (pos: CellPos) => void;
   label?: string;
   stickyRow?: number;
-}
+} & CellPos;
 
 const CodeGrid = memo(
-  ({ pos, children, onMouseEnter, label, stickyRow = 0 }: CodeGridParams) => {
-    const isColumnEdge = pos.x === 0;
-    const isRowEdge = pos.y === 0;
+  ({ x, y, children, onMouseEnter, label, stickyRow = 0 }: CodeGridParams) => {
+    const isColumnEdge = x === 0;
+    const isRowEdge = y === 0;
+
+    const handleMouseEnter: MouseEventHandler<HTMLDivElement> =
+      useCallback(() => {
+        onMouseEnter({ x, y });
+      }, [onMouseEnter, x, y]);
 
     return (
       <Tooltip title={label} placement="top" arrow sx={{ userSelect: "none" }}>
         <Grid
           {...{
-            [CODE_GRID_CSS_VARIABLES.dataX]: pos.x,
-            [CODE_GRID_CSS_VARIABLES.dataY]: pos.y,
+            [CODE_GRID_CSS_VARIABLES.dataX]: x,
+            [CODE_GRID_CSS_VARIABLES.dataY]: y,
           }}
-          onMouseEnter={onMouseEnter}
+          onMouseEnter={handleMouseEnter}
           size={isColumnEdge ? 2 : 1}
           sx={(theme) => ({
             position: isRowEdge ? "sticky" : "relative",
@@ -39,7 +43,7 @@ const CodeGrid = memo(
               ? "none"
               : `1px ${theme.palette.divider} solid`,
 
-            [`[${CODE_GRID_CSS_VARIABLES.dataHX}="${pos.x}"] &, [${CODE_GRID_CSS_VARIABLES.dataHY}="${pos.y}"] &`]:
+            [`[${CODE_GRID_CSS_VARIABLES.dataHX}="${x}"] &, [${CODE_GRID_CSS_VARIABLES.dataHY}="${y}"] &`]:
               {
                 color:
                   isColumnEdge || isRowEdge ? "background.default" : "inherit",
@@ -56,10 +60,10 @@ const CodeGrid = memo(
               inset: 0,
               backgroundColor:
                 isColumnEdge || isRowEdge
-                  ? pos.y % 2 === 0
+                  ? y % 2 === 0
                     ? "action.selected"
                     : "action.hover"
-                  : pos.y % 2 === 0
+                  : y % 2 === 0
                     ? "action.hover"
                     : "background.paper",
 
@@ -68,7 +72,7 @@ const CodeGrid = memo(
                 : "none",
 
               // 親(data-h-x等)と自分の(data-x等)が一致した時のスタイル
-              [`[${CODE_GRID_CSS_VARIABLES.dataHX}="${pos.x}"] &, [${CODE_GRID_CSS_VARIABLES.dataHY}="${pos.y}"] &`]:
+              [`[${CODE_GRID_CSS_VARIABLES.dataHX}="${x}"] &, [${CODE_GRID_CSS_VARIABLES.dataHY}="${y}"] &`]:
                 {
                   backgroundColor:
                     isColumnEdge || isRowEdge
@@ -76,7 +80,7 @@ const CodeGrid = memo(
                       : "action.selected",
                 },
               // マウス直下のセル
-              [`[${CODE_GRID_CSS_VARIABLES.dataHX}="${pos.x}"][${CODE_GRID_CSS_VARIABLES.dataHY}="${pos.y}"] &`]:
+              [`[${CODE_GRID_CSS_VARIABLES.dataHX}="${x}"][${CODE_GRID_CSS_VARIABLES.dataHY}="${y}"] &`]:
                 {
                   backgroundColor:
                     isColumnEdge || isRowEdge ? "primary.dark" : "action.focus",
