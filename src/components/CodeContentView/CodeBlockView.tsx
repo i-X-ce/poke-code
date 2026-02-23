@@ -156,7 +156,10 @@ const CodeBlockView = ({ block, hidden }: CodeBlockViewProps) => {
   ]);
 
   return (
-    <Stack display={hidden ? "none" : ""} position={"relative"} gap={1}>
+    <Stack
+      display={hidden ? "none" : ""}
+      position={"relative"}
+      gap={{ xs: 0, sm: 1 }}>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
@@ -166,6 +169,7 @@ const CodeBlockView = ({ block, hidden }: CodeBlockViewProps) => {
           {title && <Chip label={title} />}
           <Typography
             fontFamily={GoogleSansCode.style.fontFamily}
+            fontSize={{ xs: "small", sm: "1rem" }}
             color="textSecondary">
             {codeLength} Byte
           </Typography>
