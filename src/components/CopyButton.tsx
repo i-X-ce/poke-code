@@ -1,20 +1,22 @@
-import { Check, ContentCopy } from '@mui/icons-material'
-import { IconButton, Tooltip } from '@mui/material'
-import React from 'react'
+"use client";
+import useCopyClipboard from "@/hooks/useCopyClipboard";
+import { Check, ContentCopy } from "@mui/icons-material";
+import { IconButton, Tooltip } from "@mui/material";
 
-function CopyButton({ copied = false, onClick }: { copied?: boolean, onClick?: () => void }) {
-    return (
-        <Tooltip title={copied ? "コピーしました" : "コピー"}>
-            <IconButton
-                color={copied ? "success" : "default"}
-                onClick={() => { onClick?.() }}
-            >
-                {
-                    copied ? <Check fontSize='small' /> : <ContentCopy fontSize='small' />
-                }
-            </IconButton>
-        </Tooltip>
-    )
+interface CopyButtonProps {
+  copyValue?: HTMLElement | string;
 }
 
-export default CopyButton
+function CopyButton({ copyValue }: CopyButtonProps) {
+  const { copied, handleCopy } = useCopyClipboard(copyValue || undefined);
+
+  return (
+    <Tooltip title={copied ? "コピーしました" : "コピー"}>
+      <IconButton color={copied ? "success" : "default"} onClick={handleCopy}>
+        {copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
+      </IconButton>
+    </Tooltip>
+  );
+}
+
+export default CopyButton;

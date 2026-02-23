@@ -1,15 +1,16 @@
 "use client";
-import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { Box } from "@mui/material";
-import React from "react";
+import { ReactNode, useRef } from "react";
 import CopyButton from "../CopyButton";
+
+interface CustomMarkdownCodeComponentProps {
+  children: ReactNode;
+}
 
 function CustomMarkdownCodeComponent({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { contentRef, handleCopy, copied } = useCopyClipboard<HTMLDivElement>();
+}: CustomMarkdownCodeComponentProps) {
+  const ref = useRef<HTMLDivElement>(null);
 
   return (
     <Box
@@ -18,9 +19,9 @@ function CustomMarkdownCodeComponent({
       boxShadow={"inset var(--sh-regular)"}
       p={2}
       position={"relative"}>
-      <div ref={contentRef}>{children}</div>
+      <Box ref={ref}>{children}</Box>
       <Box sx={{ position: "absolute", top: 0, right: 0, margin: 1 }}>
-        <CopyButton copied={copied} onClick={handleCopy} />
+        <CopyButton copyValue={ref.current ?? ""} />
       </Box>
     </Box>
   );

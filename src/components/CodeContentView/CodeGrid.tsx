@@ -1,9 +1,5 @@
-import {
-  CELL_STATES,
-  CellPos,
-  CellState,
-} from "@/components/CodeContentView/cellState";
-import { Box, SxProps, Theme, Tooltip } from "@mui/material";
+import { CellPos } from "@/components/CodeContentView/cellState";
+import { Box, Tooltip } from "@mui/material";
 import { Grid } from "@mui/material";
 import { memo, MouseEventHandler, ReactNode } from "react";
 import { CODE_GRID_CSS_VARIABLES } from "./cssVariables";
@@ -48,8 +44,7 @@ const CodeGrid = memo(
                 color:
                   isColumnEdge || isRowEdge ? "background.default" : "inherit",
               },
-          })}
-        >
+          })}>
           <Box
             zIndex={0}
             sx={{ position: "absolute", inset: 0, bgcolor: "background.paper" }}
@@ -97,8 +92,7 @@ const CodeGrid = memo(
             justifyContent={"center"}
             position={"relative"}
             zIndex={2}
-            fontSize={{ xs: 12, md: "1rem" }}
-          >
+            fontSize={{ xs: 12, md: "1rem" }}>
             {children}
           </Box>
         </Grid>

@@ -1,8 +1,14 @@
 "use client";
-import useCopyClipboard from "@/hooks/useCopyClipboard";
 import { type CodeBlock as CodeBlockView } from "@/lib/types/CodeDataModel";
-import { Box, Chip, Grid, Stack, useMediaQuery } from "@mui/material";
-import React, { memo, MouseEventHandler, useCallback, useRef } from "react";
+import {
+  Box,
+  Chip,
+  Grid,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import React, { memo, MouseEventHandler, useRef } from "react";
 import CopyButton from "../CopyButton";
 import { GoogleSansCode } from "@/lib/util/fonts";
 import CodeGrid from "./CodeGrid";
@@ -19,7 +25,6 @@ interface CodeBlockViewProps {
 }
 
 const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
-  const { handleCopy, copied } = useCopyClipboard(formatCode(block.code));
   const isSm = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,11 +69,17 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        position={"sticky"}
-      >
-        {title && <Chip label={title} />}
+        position={"sticky"}>
+        <Stack direction={"row"} alignItems={"center"} gap={1}>
+          {title && <Chip label={title} />}{" "}
+          <Typography
+            fontFamily={GoogleSansCode.style.fontFamily}
+            color="textSecondary">
+            {codeLength} Byte
+          </Typography>
+        </Stack>
         <Box ml={"auto"}>
-          <CopyButton copied={copied} onClick={handleCopy} />
+          <CopyButton copyValue={code} />
         </Box>
       </Stack>
 
@@ -79,16 +90,14 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
           // borderStartStartRadius: 0
           overflow: "clip",
           cursor: "default",
-        }}
-      >
+        }}>
         <Grid
           ref={containerRef}
           onMouseLeave={handleMouseLeave}
           container
           columns={stepNum + 2}
           fontFamily={GoogleSansCode.style.fontFamily}
-          position={"relative"}
-        >
+          position={"relative"}>
           {/* 上端の数値 */}
           {Array.from({ length: stepNum + 1 }).map((_, i) => {
             const pos: CellPos = { x: i, y: 0 };
@@ -96,8 +105,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
               <CodeGrid
                 key={i}
                 pos={pos}
-                onMouseEnter={() => handleMouseEnter(pos)}
-              >
+                onMouseEnter={() => handleMouseEnter(pos)}>
                 {i === 0 ? "" : num2Hex(i - 1, 2)}
               </CodeGrid>
             );
@@ -110,8 +118,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
                   key={i}
                   pos={pos}
                   onMouseEnter={() => handleMouseEnter(pos)}
-                  stickyRow={1}
-                >
+                  stickyRow={1}>
                   {i === 0 ? "" : num2Hex(i + stepNum - 1, 2)}
                 </CodeGrid>
               );
@@ -126,8 +133,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
                   {/* アドレス部 */}
                   <CodeGrid
                     pos={pos}
-                    onMouseEnter={() => handleMouseEnter(pos)}
-                  >
+                    onMouseEnter={() => handleMouseEnter(pos)}>
                     {num2Hex(startRange + addressIndex * stepNum, 4)}
                   </CodeGrid>
 
@@ -149,8 +155,7 @@ const CodeBlockView = memo(({ block }: CodeBlockViewProps) => {
                           sub < 0 || sub >= codeLength
                             ? ""
                             : code.substring(sub * 2, (sub + 1) * 2)
-                        }`}
-                      >
+                        }`}>
                         {sub < 0 || sub >= codeLength
                           ? ""
                           : code.substring(sub * 2, (sub + 1) * 2)}
