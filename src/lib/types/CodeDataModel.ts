@@ -80,7 +80,7 @@ export const CodeDataSchema = z.object({
   description: z
     .string()
     .min(1, "説明は1文字以上入力してください")
-    .max(10000, "説明は10000文字以内で入力してください"),
+    .max(50000, "説明は50000文字以内で入力してください"),
   content: z
     .array(CodeContentSchema)
     .min(1, "コンテンツは一つ以上必要です")
