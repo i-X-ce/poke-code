@@ -13,6 +13,7 @@ import { PROJECT_NAME } from "@/lib/constant/projectName";
 import isDevelopment from "@/lib/util/isDevelopment";
 import { PATH, withBasePath } from "@/lib/constant/paths";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { GOOGLE_SITE_VERIFICATION } from "@/lib/constant/userSetting";
 
 const metadataBase = (() => {
   const siteUrl = isDevelopment ? "http://localhost:3000" : PATH.GITHUB_PAGES;
@@ -38,6 +39,9 @@ export const metadata: Metadata = {
     icon: withBasePath("/favicon.svg"),
   },
   robots: "index, follow",
+  verification: {
+    google: GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({
