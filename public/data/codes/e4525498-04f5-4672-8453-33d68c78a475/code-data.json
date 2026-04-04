@@ -1,0 +1,34 @@
+{
+  "id": "e4525498-04f5-4672-8453-33d68c78a475",
+  "isPublic": false,
+  "title": "セレクトバグ修正パッチV1.3",
+  "date": "2026-04-04T15:03:00.000Z",
+  "tags": [
+    "パッチ",
+    "バグ修正"
+  ],
+  "detail": "メモリ番地FFB7を監視対象とし、戦闘中や施設内でのセレクトバグを広範に防止するプログラムです。",
+  "createdAt": "2026-04-04T17:43:48.092Z",
+  "updatedAt": "2026-04-04T17:43:48.092Z",
+  "content": [
+    {
+      "id": "8d4c8aef-9518-49b2-9691-0b66e46f2bce",
+      "versions": [
+        "R0",
+        "R1",
+        "G0",
+        "G1",
+        "B"
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "3df11a0f-caca-47c6-9278-cfdd9a0d24fc",
+      "contentId": "8d4c8aef-9518-49b2-9691-0b66e46f2bce",
+      "title": "",
+      "address": "DA00",
+      "code": "3e3de0843e20e0853efde0863ec3e0873e18e0883edae0892127daf0b7be77c8a7c0afea35ccc900"
+    }
+  ]
+}

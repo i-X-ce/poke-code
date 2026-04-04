@@ -1,0 +1,82 @@
+{
+  "id": "2e009274-2936-4009-9d5d-f3ef3faf81ae",
+  "isPublic": false,
+  "title": "セレクトバグ修正パッチV1.5",
+  "date": "2026-04-04T15:05:00.000Z",
+  "tags": [
+    "パッチ",
+    "バグ修正"
+  ],
+  "detail": "セレクトバグ修正パッチV1.4の効果を新規データへ永続的に引き継ぎ、ボックス切り替え時の安全性を向上させた改良版パッチです。",
+  "createdAt": "2026-04-04T18:11:27.500Z",
+  "updatedAt": "2026-04-04T18:11:38.786Z",
+  "content": [
+    {
+      "id": "15024964-fb7a-4f5d-9257-9d1691b117e9",
+      "versions": [
+        "R0"
+      ]
+    },
+    {
+      "id": "cc713129-0022-4a8e-b467-f94bac9eef3e",
+      "versions": [
+        "R1"
+      ]
+    },
+    {
+      "id": "b66aef91-cbc5-44ac-bd98-3cb52bbf09e0",
+      "versions": [
+        "G0"
+      ]
+    },
+    {
+      "id": "1a5796b2-3ba5-40b2-96f6-f8e538356b0a",
+      "versions": [
+        "G1"
+      ]
+    },
+    {
+      "id": "07da4125-8d56-4ca2-b9f0-4c03d046185a",
+      "versions": [
+        "B"
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "5ed573c5-7c4b-4bc9-9c22-b91a7af3010d",
+      "contentId": "1a5796b2-3ba5-40b2-96f6-f8e538356b0a",
+      "title": "",
+      "address": "DA00",
+      "code": "cd6701cd8c0acdfa3dcd8801cdb836cd8101afeaabcfeab2cfe0b72100c1010019cd183721fbda011d04cd18373e01ea0020e0b83effcd330e3e024f3eefcd230ecdbf03cdd836215adae5fad7d2f5fad4d2f5fab1d6f5c3ca5e060121155fcd0e360e14cd310b217eda11e9d5017d00cdbb01cd3ed60601215c5bc30e363ef5eaedd23ed5eaeed21862cd3ed6faddd2cd11d64f060021b91b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601210662cd0e36cd7b2acd3ed63e76cdbb2cf1c93e3de0843e20e0853efde0863ec3e0873ee9e0883ed5e089c92166d6f0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "a4fe6226-480f-4433-b96d-2ef8f97eead5",
+      "contentId": "b66aef91-cbc5-44ac-bd98-3cb52bbf09e0",
+      "title": "",
+      "address": "DA00",
+      "code": "cd6701cd8c0acd0c3ecd8801cdca36cd8101afeaabcfeab2cfe0b72100c1010019cd2a3721fbda011d04cd2a373e01ea0020e0b83effcd450e3e024f3eefcd350ecdbf03cdea36215adae5fad7d2f5fad4d2f5fab1d6f5c3255f060121705fcd20360e14cd310b217eda11e9d5017d00cdbb01cd3ed6060121b75bc320363ef5eaedd23ed5eaeed21862cd3ed6faddd2cd11d64f060021cb1b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601216162cd2036cd8d2acd3ed63e76cdcd2cf1c93e3de0843e20e0853efde0863ec3e0873ee9e0883ed5e089c92166d6f0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "e36c9599-bc41-4725-9e11-44b2755317f9",
+      "contentId": "15024964-fb7a-4f5d-9257-9d1691b117e9",
+      "title": "",
+      "address": "DA00",
+      "code": "cd6701cd8c0acd0c3ecd8801cdca36cd8101afeaabcfeab2cfe0b72100c1010019cd2a3721fbda011d04cd2a373e01ea0020e0b83effcd450e3e024f3eefcd350ecdbf03cdea36215adae5fad7d2f5fad4d2f5fab1d6f5c3245f0601216f5fcd20360e14cd310b217eda11e9d5017d00cdbb01cd3ed6060121b65bc320363ef5eaedd23ed5eaeed21862cd3ed6faddd2cd11d64f060021cb1b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601216062cd2036cd8d2acd3ed63e76cdcd2cf1c93e3de0843e20e0853efde0863ec3e0873ee9e0883ed5e089c92166d6f0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "390defb2-4ece-4e02-95f3-224227770357",
+      "contentId": "cc713129-0022-4a8e-b467-f94bac9eef3e",
+      "title": "",
+      "address": "DA00",
+      "code": "cd6701cd8c0acdfa3dcd8801cdb836cd8101afeaabcfeab2cfe0b72100c1010019cd183721fbda011d04cd18373e01ea0020e0b83effcd330e3e024f3eefcd230ecdbf03cdd836215adae5fad7d2f5fad4d2f5fab1d6f5c3c95e060121145fcd0e360e14cd310b217eda11e9d5017d00cdbb01cd3ed60601215b5bc30e363ef5eaedd23ed5eaeed21862cd3ed6faddd2cd11d64f060021b91b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601210562cd0e36cd7b2acd3ed63e76cdbb2cf1c93e3de0843e20e0853efde0863ec3e0873ee9e0883ed5e089c92166d6f0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "10517566-2de2-4719-86c0-48bd58546b51",
+      "contentId": "07da4125-8d56-4ca2-b9f0-4c03d046185a",
+      "title": "",
+      "address": "DA00",
+      "code": "cdc716cdea1fcd203ecde816cde036cde116afeaabcfeab2cfe0b72100c1010019cd403721fbda011d04cd40373e01ea0020e0b83effcd91233e024f3eefcd8123cd0419cd0037215adae5fad7d2f5fad4d2f5fab1d6f5c337600601218260cd36360e14cd8f20217eda11e9d5017d00cd1b17cd3ed6060121c95cc336363ef5eaedd23ed5eaeed21862cd3ed6faddd2cd11d64f060021670109092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601217363cd3636cd3510cd3ed63e76cd7512f1c93e3de0843e20e0853efde0863ec3e0873ee9e0883ed5e089c92166d6f0b7be77c8a7c0afea35ccc900"
+    }
+  ]
+}

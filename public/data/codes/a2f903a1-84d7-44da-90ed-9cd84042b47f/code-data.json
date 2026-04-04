@@ -1,0 +1,82 @@
+{
+  "id": "a2f903a1-84d7-44da-90ed-9cd84042b47f",
+  "isPublic": false,
+  "title": "セレクトバグ修正パッチV1.4",
+  "date": "2026-04-04T15:04:00.000Z",
+  "tags": [
+    "パッチ",
+    "バグ修正"
+  ],
+  "detail": "HRAMとマップスクリプトの相互補完により、リセット後も効果が永続するセレクトバグ修正パッチです。",
+  "createdAt": "2026-04-04T17:59:35.657Z",
+  "updatedAt": "2026-04-04T17:59:35.657Z",
+  "content": [
+    {
+      "id": "d358492f-b94d-4762-ab66-d32d755a9df5",
+      "versions": [
+        "R0"
+      ]
+    },
+    {
+      "id": "dc38022b-d479-489e-aed4-8109040c756b",
+      "versions": [
+        "R1"
+      ]
+    },
+    {
+      "id": "4604a91b-eaa4-482f-9b47-a2dab31c680e",
+      "versions": [
+        "G0"
+      ]
+    },
+    {
+      "id": "6a4c6b3e-3280-4df1-87d6-0393458b0cea",
+      "versions": [
+        "G1"
+      ]
+    },
+    {
+      "id": "9cb30c3b-96dc-4506-9e33-263f9f3e6c17",
+      "versions": [
+        "B"
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "id": "039458ed-021f-4d48-89bc-3484b10557d2",
+      "contentId": "d358492f-b94d-4762-ab66-d32d755a9df5",
+      "title": "",
+      "address": "DA00",
+      "code": "3e0ceaedd23edaeaeed21862cd55dafaddd2cd28da4f060021cb1b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601216062cd2036cd8d2acd55da3e76cdcd2cf1c93e3de0843e20e0853efde0863ec3e0873e00e0883edae089c9217ddaf0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "4cd1e7e3-cc3d-4f8d-9318-18d084d58cc3",
+      "contentId": "4604a91b-eaa4-482f-9b47-a2dab31c680e",
+      "title": "",
+      "address": "DA00",
+      "code": "3e0ceaedd23edaeaeed21862cd55dafaddd2cd28da4f060021cb1b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601216162cd2036cd8d2acd55da3e76cdcd2cf1c93e3de0843e20e0853efde0863ec3e0873e00e0883edae089c9217ddaf0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "68ba073e-c48c-44f7-9114-a10b590f2576",
+      "contentId": "6a4c6b3e-3280-4df1-87d6-0393458b0cea",
+      "title": "",
+      "address": "DA00",
+      "code": "3e0ceaedd23edaeaeed21862cd55dafaddd2cd28da4f060021b91b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601210662cd0e36cd7b2acd55da3e76cdbb2cf1c93e3de0843e20e0853efde0863ec3e0873e00e0883edae089c9217ddaf0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "a1be76d1-38af-4245-aec2-44ca756f062f",
+      "contentId": "dc38022b-d479-489e-aed4-8109040c756b",
+      "title": "",
+      "address": "DA00",
+      "code": "3e0ceaedd23edaeaeed21862cd55dafaddd2cd28da4f060021b91b09092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601210562cd0e36cd7b2acd55da3e76cdbb2cf1c93e3de0843e20e0853efde0863ec3e0873e00e0883edae089c9217ddaf0b7be77c8a7c0afea35ccc900"
+    },
+    {
+      "id": "6bc1c6cf-ecc2-4565-8784-bbcb78b26944",
+      "contentId": "9cb30c3b-96dc-4506-9e33-263f9f3e6c17",
+      "title": "",
+      "address": "DA00",
+      "code": "3e0ceaedd23edaeaeed21862cd55dafaddd2cd28da4f060021670109092a666f010700092a666fe9f5fe762026facad5fe02201fafeaddd2ea99d621b1d6cbd60601217363cd3636cd3510cd55da3e76cd7512f1c93e3de0843e20e0853efde0863ec3e0873e00e0883edae089c9217ddaf0b7be77c8a7c0afea35ccc900"
+    }
+  ]
+}
