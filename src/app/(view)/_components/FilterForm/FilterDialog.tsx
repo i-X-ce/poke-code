@@ -59,9 +59,7 @@ function FilterDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialog}>閉じる</Button>
-          <Button type="reset" variant="outlined">
-            クリアする
-          </Button>
+          <Button type="reset">クリアする</Button>
           <Button type="submit" variant="contained">
             絞り込む
           </Button>
