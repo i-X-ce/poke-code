@@ -3,12 +3,22 @@ import React from "react";
 import { useController, useFormContext } from "react-hook-form";
 import CreateFormTextField from "./CreateFormTextField";
 import DropzoneWrapper from "@/components/DropzoneWrapper";
-import { Stack, Typography } from "@mui/material";
-import { AddPhotoAlternate } from "@mui/icons-material";
+import { Button, ButtonGroup, Stack, Typography } from "@mui/material";
+import { AddPhotoAlternate, YouTube } from "@mui/icons-material";
 import { useImageUpload } from "@/hooks/images/useImage";
 import { useSnackbar } from "notistack";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { IMAGE_FOLDER } from "@/lib/constant/paths";
+
+// YouTubeの埋め込み動画を降る幅で表示するためにテキストをフォーマットする
+const formatYoutubeEmbedFullWidth = (text: string) => {
+  const youtubeUrlRegex = /<iframe\s+[^>]*?src="[^"]*?youtube\.com[^"]*?"[^>]*?>/g;
+
+  return text.replace(youtubeUrlRegex, (match) => {
+    const cleanedTag = match.replace(/\s(width|height)="\d+"/g, "");
+    return cleanedTag.replace("<iframe", '<iframe style="width: 100%; aspect-ratio: 16 / 9;"');
+  });
+};
 
 const DescriptionField = () => {
   const { control, getValues } = useFormContext<CodeDataInput>();
@@ -44,26 +54,37 @@ const DescriptionField = () => {
     }
   };
 
+  const handleYoutubeEmbedFullWidth = () => {
+    onChange(formatYoutubeEmbedFullWidth(value));
+  };
+
   return (
-    <DropzoneWrapper
-      dropzoneProps={{ accept: { "image/*": [] }, onDrop }}
-      dragActiveElement={
-        <Stack gap={1} alignItems={"center"} justifyContent={"center"}>
-          <AddPhotoAlternate fontSize="large" color="action" />
-          <Typography color="textSecondary">ここに画像をドロップ</Typography>
-        </Stack>
-      }
-      loading={isLoading}
-    >
-      <CreateFormTextField
-        fieldName="description"
-        minRows={10}
-        multiline
-        value={value}
-        onChange={onChange}
-        disabled={isLoading}
-      />
-    </DropzoneWrapper>
+    <>
+      <DropzoneWrapper
+        dropzoneProps={{ accept: { "image/*": [] }, onDrop }}
+        dragActiveElement={
+          <Stack gap={1} alignItems={"center"} justifyContent={"center"}>
+            <AddPhotoAlternate fontSize="large" color="action" />
+            <Typography color="textSecondary">ここに画像をドロップ</Typography>
+          </Stack>
+        }
+        loading={isLoading}
+      >
+        <CreateFormTextField
+          fieldName="description"
+          minRows={10}
+          multiline
+          value={value}
+          onChange={onChange}
+          disabled={isLoading}
+        />
+      </DropzoneWrapper>
+      <ButtonGroup>
+        <Button onClick={handleYoutubeEmbedFullWidth} startIcon={<YouTube />}>
+          full width
+        </Button>
+      </ButtonGroup>
+    </>
   );
 };
 
