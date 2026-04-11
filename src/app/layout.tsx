@@ -35,9 +35,6 @@ export const metadata: Metadata = {
   },
   description: "初代ポケモンのコードを共有するためのサイト",
   metadataBase,
-  icons: {
-    icon: withBasePath("/favicon.svg"),
-  },
   robots: "index, follow",
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
@@ -51,6 +48,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head>
+        <link
+          rel="icon"
+          href={withBasePath("/favicon-light.svg")}
+          media="(prefers-color-scheme: light)"
+        />
+        <link
+          rel="icon"
+          href={withBasePath("/favicon-dark.svg")}
+          media="(prefers-color-scheme: dark)"
+        />
+      </head>
       <body>
         <GoogleAnalytics />
         <AppRouterCacheProvider>
