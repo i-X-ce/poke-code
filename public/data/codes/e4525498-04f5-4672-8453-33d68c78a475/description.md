@@ -1,3 +1,5 @@
+<iframe width="560" height="315" src="https://www.youtube.com/embed/T1fc0CjAO1w?si=Nj2u3jvKgTKslM8v&amp;start=2255" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 本プログラムは、特定のメモリ番地を監視することで、戦闘中や各種イベント時におけるセレクトバグの発生を抑制する修正パッチです。
 
 ## 操作方法

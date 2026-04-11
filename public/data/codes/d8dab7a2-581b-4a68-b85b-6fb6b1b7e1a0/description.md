@@ -1,3 +1,5 @@
+<iframe style="width: 100%; aspect-ratio: 16 / 9;" src="https://www.youtube.com/embed/T1fc0CjAO1w?si=EY24Kw2LVVaA6Zay&amp;start=1883" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 概要
 
 このプログラムは、ゲーム内の入れ替えメモリ（アドレス：CC35）に「00」を書き込んで初期化することで、セレクトバグの発生原因となるフラグ状態を強制的に解除するものです。セレクトバグの状態をリセットし、意図しない挙動の継続を防ぐことができます。
