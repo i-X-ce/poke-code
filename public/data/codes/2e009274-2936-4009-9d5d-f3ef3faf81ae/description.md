@@ -1,4 +1,4 @@
-<iframe width="560" height="315" src="https://www.youtube.com/embed/T1fc0CjAO1w?si=V9GfepgXbD3Dz9dk&amp;start=2581" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe style="width: 100%; aspect-ratio: 16 / 9;" src="https://www.youtube.com/embed/T1fc0CjAO1w?si=V9GfepgXbD3Dz9dk&amp;start=2581" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 本プログラムは、[セレクトバグ修正パッチV1.4](https://i-x-ce.github.io/poke-code/a2f903a1-84d7-44da-90ed-9cd84042b47f)の効果を「さいしょからはじめる」で開始したゲームへ引き継ぎ、その効果を永続化させるためのものです。
 
