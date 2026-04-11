@@ -10,7 +10,7 @@ import { useSnackbar } from "notistack";
 import { INIT_CODE_DATA } from "../_util/initValues";
 import { IMAGE_FOLDER } from "@/lib/constant/paths";
 
-// YouTubeの埋め込み動画を降る幅で表示するためにテキストをフォーマットする
+// YouTubeの埋め込み動画をフル幅で表示するためにテキストをフォーマットする
 const formatYoutubeEmbedFullWidth = (text: string) => {
   const youtubeUrlRegex = /<iframe\s+[^>]*?src="[^"]*?youtube\.com[^"]*?"[^>]*?>/g;
 
